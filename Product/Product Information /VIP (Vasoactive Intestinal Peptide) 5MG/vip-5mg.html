@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP – Vasoactive Intestinal Peptide (5mg) | Research Peptide | 99%+ Purity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f5f7fa;
+    --bg2:     #ffffff;
+    --bg3:     #edf2f7;
+    --border:  #e1e8f0;
+    --border2: #c8d5e8;
+    --accent:  #1a4e6e;
+    --accent2: #0e7490;
+    --accent3: #7e3af2;
+    --text:    #0f1623;
+    --muted:   #6b7a99;
+    --muted2:  #4a5568;
+    --red:     #b91c1c;
+    --teal:    #0e7490;
+    --teal-bg: #ecfeff;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; font-size: 15px; }
+
+  .top-banner { background: linear-gradient(90deg, var(--accent), var(--teal)); text-align: center; padding: 9px 20px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: #fff; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; border-bottom: 1px solid var(--border); background: rgba(245,247,250,0.97); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); }
+  .nav-links { display: flex; gap: 30px; }
+  .nav-links a { color: var(--muted2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { background: var(--accent); color: #fff; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; }
+
+  .breadcrumb { padding: 14px 60px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .breadcrumb span { color: var(--muted2); margin: 0 6px; }
+
+  /* ── HERO ── */
+  .product-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 60px 60px 50px; max-width: 1280px; margin: 0 auto; }
+
+  .product-image-wrap {
+    background: linear-gradient(145deg, #fff 55%, var(--teal-bg));
+    border: 1px solid var(--border2); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    padding: 50px 40px; position: relative; overflow: hidden; min-height: 460px;
+  }
+  .product-image-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 15%, rgba(14,116,144,0.06), transparent 65%);
+  }
+  .vial-svg { width: 120px; margin-bottom: 28px; filter: drop-shadow(0 6px 18px rgba(26,78,110,0.15)); }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+  .badge.navy  { background: rgba(26,78,110,0.08);  border-color: rgba(26,78,110,0.25);  color: var(--accent); }
+  .badge.teal  { background: rgba(14,116,144,0.08); border-color: rgba(14,116,144,0.25); color: var(--teal); }
+  .badge.purple{ background: rgba(126,58,242,0.08); border-color: rgba(126,58,242,0.25); color: var(--accent3); }
+  .badge.gold  { background: rgba(180,120,40,0.09); border-color: rgba(180,120,40,0.28); color: #b47828; }
+
+  .product-info { display: flex; flex-direction: column; gap: 20px; }
+  .product-category { font-size: 11.5px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.15; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--teal); }
+  .product-short-desc { color: var(--muted2); font-size: 14px; line-height: 1.85; border-left: 3px solid var(--border2); padding-left: 16px; }
+
+  .price-row { display: flex; align-items: center; gap: 16px; }
+  .price { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); }
+  .price-note { font-size: 12px; color: var(--muted); }
+
+  .quick-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qs-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .qs-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .qs-value { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 500; }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #123d57; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,78,110,0.18); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .trust-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted2); }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+
+  /* ── SUPERFAMILY BANNER ── */
+  .superfamily-strip { max-width: 1280px; margin: 0 auto 0; padding: 0 60px; }
+  .sf-inner {
+    background: linear-gradient(135deg, rgba(26,78,110,0.04) 0%, rgba(14,116,144,0.06) 100%);
+    border: 1px solid var(--border2); border-radius: 12px; padding: 20px 28px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .sf-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .sf-members { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sf-tag { background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; color: var(--accent2); }
+  .sf-tag.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ── TRUST STRIP ── */
+  .trust-strip { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: 1280px; margin: 32px auto 0; }
+  .ts-item { padding: 24px 26px; display: flex; align-items: flex-start; gap: 14px; border-right: 1px solid var(--border); }
+  .ts-item:last-child { border-right: none; }
+  .ts-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .ts-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .ts-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONTENT ── */
+  .content-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 50px; max-width: 1280px; margin: 60px auto; padding: 0 60px; align-items: start; }
+
+  .tab-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 36px; flex-wrap: wrap; }
+  .tab-btn { background: none; border: none; padding: 13px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 10px; }
+  .section-sub { color: var(--muted2); font-size: 14px; margin-bottom: 28px; line-height: 1.8; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 26px 0 10px; }
+  h3:first-child { margin-top: 0; }
+  p { font-size: 13.5px; color: var(--muted2); line-height: 1.9; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── RECEPTOR COMPARISON ── */
+  .receptor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .receptor-card { border-radius: 12px; padding: 20px; border: 1px solid; }
+  .receptor-card.vpac1 { background: rgba(26,78,110,0.04); border-color: rgba(26,78,110,0.2); }
+  .receptor-card.vpac2 { background: rgba(14,116,144,0.04); border-color: rgba(14,116,144,0.2); }
+  .rc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .rc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .rc-dot.v1 { background: var(--accent); }
+  .rc-dot.v2 { background: var(--teal); }
+  .rc-name { font-size: 15px; font-weight: 700; }
+  .rc-name.v1 { color: var(--accent); }
+  .rc-name.v2 { color: var(--teal); }
+  .rc-gene { font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .rc-body { font-size: 12.5px; color: var(--muted2); line-height: 1.7; }
+
+  /* ── SIGNALLING FLOW ── */
+  .sig-flow { display: flex; flex-direction: column; gap: 0; margin: 14px 0 28px; }
+  .sf-step { display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .sf-step:last-child { border-bottom: none; }
+  .sf-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(26,78,110,0.09); border: 1px solid rgba(26,78,110,0.25); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  .sf-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .sf-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── RESEARCH DOMAINS ── */
+  .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  .domain-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color .2s, transform .2s; }
+  .domain-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .dc-icon { font-size: 22px; margin-bottom: 10px; }
+  .dc-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .dc-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+  /* ── SPEC TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .spec-table thead tr { background: var(--accent); }
+  .spec-table th { padding: 11px 16px; font-size: 12px; font-weight: 600; color: #fff; text-align: left; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 11px 16px; font-size: 13px; }
+  .spec-table td:first-child { color: var(--muted2); width: 42%; font-weight: 500; }
+  .spec-table td:last-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); }
+  .spec-table tr:nth-child(even) td { background: rgba(26,78,110,0.02); }
+  .spec-table tr:hover td { background: rgba(26,78,110,0.05); }
+
+  /* ── SEQUENCE BOX ── */
+  .seq-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 18px 20px; margin: 14px 0 24px; }
+  .seq-label { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
+  .seq-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); line-height: 2; word-break: break-all; }
+  .seq-hl { color: var(--teal); font-weight: 700; }
+  .seq-note { font-family: 'DM Sans', sans-serif; font-size: 11.5px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+
+  /* ── STORAGE LIST ── */
+  .storage-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .storage-list li { display: flex; gap: 12px; font-size: 13.5px; color: var(--muted2); line-height: 1.7; align-items: flex-start; }
+  .storage-list li::before { content: '→'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
+
+  /* ── WARNING BOX ── */
+  .warn-box { background: rgba(234,179,8,0.05); border: 1px solid rgba(234,179,8,0.3); border-radius: 10px; padding: 16px 18px; margin: 20px 0; font-size: 13px; color: var(--muted2); line-height: 1.65; }
+  .warn-box strong { color: #92400e; display: block; margin-bottom: 5px; }
+
+  /* ── QA GRID ── */
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .qa-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .qa-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; }
+  .qa-value { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .qa-detail { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  /* ── REFS ── */
+  .ref-item { border-left: 3px solid var(--border2); padding: 10px 16px; margin-bottom: 12px; font-size: 12.5px; color: var(--muted); line-height: 1.6; transition: border-color .2s; }
+  .ref-item:hover { border-color: var(--teal); }
+  .ref-num { color: var(--text); font-weight: 600; margin-right: 5px; }
+  .ref-item a { color: var(--teal); text-decoration: none; font-size: 11.5px; }
+  .ref-item a:hover { text-decoration: underline; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 80px; }
+  .sidebar-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .pk-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .pk-row:last-child { border-bottom: none; }
+  .pk-key { color: var(--muted); }
+  .pk-val { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  .pk-val.warn { color: var(--red); }
+
+  .bac-card { background: rgba(14,116,144,0.04) !important; border-color: rgba(14,116,144,0.22) !important; }
+  .disclaimer-box { background: rgba(185,28,28,0.04); border: 1px solid rgba(185,28,28,0.18); border-radius: 10px; padding: 16px; font-size: 12px; color: var(--muted2); line-height: 1.65; }
+  .disclaimer-box strong { color: var(--red); display: block; margin-bottom: 6px; font-size: 12.5px; }
+  .reviewer-box { display: flex; gap: 14px; align-items: flex-start; }
+  .reviewer-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .reviewer-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .reviewer-title { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  .page-disclaimer { background: var(--bg3); border-top: 1px solid var(--border); padding: 28px 60px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 60px; }
+  .page-disclaimer strong { color: var(--muted2); }
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 26px 60px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted2); text-decoration: none; margin-left: 20px; }
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { font-size: 13px; color: var(--muted2); padding: 5px 0; display: flex; gap: 8px; }
+  ul.plain li::before { content: '·'; color: var(--teal); font-size: 18px; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<div class="top-banner">🚚 Same-day shipping before 12 PM PT &nbsp;·&nbsp; Free domestic shipping over $400 &nbsp;·&nbsp; COA available pre-purchase</div>
+
+<nav>
+  <div class="nav-logo">PeptideLab</div>
+  <div class="nav-links"><a href="#">Peptides</a><a href="#">Research</a><a href="#">Lab Supplies</a><a href="#">COA Library</a><a href="#">About</a></div>
+  <a href="#" class="nav-cta">View Cart (0)</a>
+</nav>
+
+<div class="breadcrumb">Home <span>›</span> Peptides <span>›</span> Neuropeptides & Immunomodulators <span>›</span> VIP (Vasoactive Intestinal Peptide)</div>
+
+<!-- HERO -->
+<div class="product-hero">
+  <div class="product-image-wrap">
+    <svg class="vial-svg" viewBox="0 0 100 210" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="capV" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1a4e6e"/><stop offset="100%" stop-color="#0e7490"/>
+        </linearGradient>
+        <linearGradient id="bodyV" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f0f5f8"/><stop offset="100%" stop-color="#e8f4f8"/>
+        </linearGradient>
+        <linearGradient id="liqV" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#1a4e6e" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#0e7490" stop-opacity="0.18"/>
+        </linearGradient>
+      </defs>
+      <rect x="30" y="10" width="40" height="18" rx="5" fill="url(#capV)" opacity="0.93"/>
+      <rect x="35" y="26" width="30" height="8" rx="2" fill="#c8d5e8"/>
+      <rect x="28" y="34" width="44" height="140" rx="8" fill="url(#bodyV)" stroke="#c8d5e8" stroke-width="1.5"/>
+      <rect x="30" y="115" width="40" height="57" fill="url(#liqV)"/>
+      <ellipse cx="50" cy="115" rx="20" ry="3" fill="#1a4e6e" opacity="0.15"/>
+      <rect x="33" y="68" width="34" height="64" rx="4" fill="#fff" stroke="#c8d5e8" stroke-width="1"/>
+      <text x="50" y="80" text-anchor="middle" fill="#1a4e6e" font-size="7" font-family="monospace" font-weight="bold">VIP</text>
+      <text x="50" y="89" text-anchor="middle" fill="#0e7490" font-size="3.6" font-family="monospace" font-weight="600">VASOACTIVE</text>
+      <text x="50" y="96" text-anchor="middle" fill="#0e7490" font-size="3.6" font-family="monospace">INTESTINAL PEPTIDE</text>
+      <text x="50" y="103" text-anchor="middle" fill="#6b7a99" font-size="3.5" font-family="monospace">5mg / vial</text>
+      <line x1="36" y1="107" x2="64" y2="107" stroke="#e1e8f0" stroke-width="0.8"/>
+      <text x="50" y="114" text-anchor="middle" fill="#6b7a99" font-size="3.2" font-family="monospace">99%+ PURITY</text>
+      <text x="50" y="120" text-anchor="middle" fill="#6b7a99" font-size="3.2" font-family="monospace">CAS: 40077-57-4</text>
+      <text x="50" y="126" text-anchor="middle" fill="#1a4e6e" font-size="3.2" font-family="monospace">LOT: VIP-2024-10</text>
+      <ellipse cx="50" cy="174" rx="22" ry="5" fill="#c8d5e8" opacity="0.5"/>
+    </svg>
+    <div class="badge-row">
+      <span class="badge navy">99%+ Purity</span>
+      <span class="badge teal">28 Amino Acids</span>
+      <span class="badge purple">VPAC1 / VPAC2</span>
+      <span class="badge gold">USA Made</span>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-category">Research Peptide · Neuropeptides & Immunomodulators</div>
+    <h1>VIP <em>(5mg)</em><br><span style="font-family:'DM Sans',sans-serif; font-size:18px; font-weight:400; color:var(--muted2);">Vasoactive Intestinal Peptide</span></h1>
+    <p class="product-short-desc">A 28-amino acid neuropeptide belonging to the secretin/glucagon superfamily, found throughout the nervous, immune, gastrointestinal, cardiovascular, and respiratory systems. VIP signals through VPAC1 and VPAC2 receptors via cAMP to regulate smooth muscle tone, immune cell activity, neuronal survival, and the circadian clock of the suprachiasmatic nucleus.</p>
+
+    <div class="quick-specs">
+      <div class="qs-item"><div class="qs-label">Molecular Weight</div><div class="qs-value">3,325.8 Da</div></div>
+      <div class="qs-item"><div class="qs-label">CAS Number</div><div class="qs-value">40077-57-4</div></div>
+      <div class="qs-item"><div class="qs-label">Half-Life (plasma)</div><div class="qs-value">&lt;2 minutes</div></div>
+      <div class="qs-item"><div class="qs-label">Receptor Targets</div><div class="qs-value">VPAC1 + VPAC2</div></div>
+    </div>
+
+    <div class="price-row">
+      <div class="price">$86.00</div>
+      <div class="price-note">Per 5mg vial<br>Free shipping over $400</div>
+    </div>
+    <button class="btn-primary">Add to Cart — $86.00</button>
+    <button class="btn-secondary">📄 Request COA Before Purchase</button>
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-dot"></span> Third-party tested</div>
+      <div class="trust-item"><span class="trust-dot"></span> No fillers</div>
+      <div class="trust-item"><span class="trust-dot"></span> Same-day shipping</div>
+      <div class="trust-item"><span class="trust-dot"></span> GMP facility</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPERFAMILY BANNER -->
+<div class="superfamily-strip">
+  <div class="sf-inner">
+    <div class="sf-label">Peptide Superfamily</div>
+    <div class="sf-members">
+      <span class="sf-tag active">VIP ★</span>
+      <span class="sf-tag">PACAP</span>
+      <span class="sf-tag">Secretin</span>
+      <span class="sf-tag">Glucagon</span>
+      <span class="sf-tag">GIP</span>
+      <span class="sf-tag">GLP-1</span>
+      <span class="sf-tag">PHI</span>
+    </div>
+    <span style="font-size:12px; color:var(--muted); margin-left:auto;">Overlapping receptor pharmacology enables comparative peptide research</span>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="ts-item"><div class="ts-icon">🧪</div><div><div class="ts-title">99%+ Purity, 3rd Party Verified</div><div class="ts-desc">Three independent certified labs. C-terminal amidation confirmed per batch.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">🏭</div><div><div class="ts-title">GMP Manufacturing</div><div class="ts-desc">USA-registered facility. Full chain of custody and lot traceability.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">⚗️</div><div><div class="ts-title">Zero Fillers or Additives</div><div class="ts-desc">Pure active compound only. No carriers, excipients, or bulking agents.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">📦</div><div><div class="ts-title">Same-Day Fulfillment</div><div class="ts-desc">Orders before 12 PM PT ship same day. Free shipping over $400.</div></div></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+  <div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="showTab('mechanism',this)">Mechanism</button>
+      <button class="tab-btn" onclick="showTab('specs',this)">Specifications</button>
+      <button class="tab-btn" onclick="showTab('research',this)">Research</button>
+      <button class="tab-btn" onclick="showTab('storage',this)">Storage & Handling</button>
+      <button class="tab-btn" onclick="showTab('qa',this)">QA & Testing</button>
+      <button class="tab-btn" onclick="showTab('refs',this)">References</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="section-title">What Is VIP?</div>
+      <p class="section-sub">A multisystem regulatory neuropeptide with roles spanning immunity, neuroscience, chronobiology, and vascular biology.</p>
+      <p>Vasoactive Intestinal Peptide was first isolated in 1970 from porcine small intestine, and its original name reflects what researchers saw first — powerful vasodilation. That turned out to be just one piece of a much larger story. Over the following five decades, VIP was found in neural fibres throughout the gut, brain, lungs, and immune tissue, and its receptor targets — VPAC1 and VPAC2 — were found to be expressed across nearly every major organ system.</p>
+      <p>VIP belongs to the secretin/glucagon superfamily, which means it shares structural and evolutionary relationships with peptides including PACAP, secretin, glucagon, GIP, GLP-1, and PHI. These structural similarities produce overlapping receptor pharmacology that makes VIP useful for comparative studies — researchers can use it alongside or in contrast to PACAP and secretin to dissect receptor subtype-specific effects across this peptide family.</p>
+      <p>In practice, VIP is used in the laboratory as a probe for six broad research areas: neuroprotection and neuroinflammation, circadian rhythm regulation in the suprachiasmatic nucleus, immune cell modulation, cardiovascular vasodilation, gastrointestinal motility, and respiratory airway function. What makes it particularly interesting as a research tool is that these effects are not mediated through a single dominant mechanism — VIP's VPAC1 and VPAC2 receptors have different tissue distributions, and the downstream consequences of activating them depend heavily on the cell type being studied.</p>
+
+      <hr class="divider">
+      <div class="section-title">VPAC Receptor Comparison</div>
+      <div class="receptor-grid">
+        <div class="receptor-card vpac1">
+          <div class="rc-header">
+            <div class="rc-dot v1"></div>
+            <div class="rc-name v1">VPAC1 <span class="rc-gene">(VIPR1)</span></div>
+          </div>
+          <div class="rc-body">Broadly expressed across the CNS, peripheral organs, and immune cells. Primary mediator of VIP's anti-inflammatory effects on T cells, macrophages, and dendritic cells. Kd ≈1 nM. Also binds PACAP with similar affinity.</div>
+        </div>
+        <div class="receptor-card vpac2">
+          <div class="rc-header">
+            <div class="rc-dot v2"></div>
+            <div class="rc-name v2">VPAC2 <span class="rc-gene">(VIPR2)</span></div>
+          </div>
+          <div class="rc-body">Concentrated in the suprachiasmatic nucleus (SCN), smooth muscle, and pancreatic tissue. Primary mediator of VIP's circadian synchronisation function and bronchodilatory effects. Kd ≈1 nM. Also binds PACAP.</div>
+        </div>
+      </div>
+      <p>Both receptors couple to Gs proteins and raise intracellular cAMP as the primary second messenger. The tissue-specific distribution of each receptor is what determines which biological effect dominates in any given experimental context — VPAC1 drives most immune effects, VPAC2 drives circadian and smooth muscle effects.</p>
+    </div>
+
+    <!-- MECHANISM -->
+    <div id="tab-mechanism" class="tab-panel">
+      <div class="section-title">Mechanism of Action</div>
+      <p class="section-sub">From receptor binding to downstream signalling cascades — how VIP produces effects across multiple biological systems.</p>
+
+      <h3>Primary Signalling Cascade</h3>
+      <p>VIP binds VPAC1 or VPAC2 on the surface of target cells, triggering Gs protein activation. This stimulates adenylate cyclase to convert ATP into cyclic AMP (cAMP). Elevated intracellular cAMP activates protein kinase A (PKA), which phosphorylates CREB (cAMP response element-binding protein), driving transcriptional changes in genes involved in inflammation, survival, and metabolism. PKA also directly phosphorylates ion channels and other effector proteins, producing rapid non-transcriptional effects such as smooth muscle relaxation and ion transport changes.</p>
+      <div class="sig-flow">
+        <div class="sf-step"><div class="sf-num">1</div><div><div class="sf-title">VIP binds VPAC1 or VPAC2</div><div class="sf-desc">High-affinity binding (Kd ≈1 nM); receptor selection determined by tissue expression pattern</div></div></div>
+        <div class="sf-step"><div class="sf-num">2</div><div><div class="sf-title">Gs protein activation</div><div class="sf-desc">Receptor-coupled Gs protein stimulates adenylate cyclase on the inner plasma membrane</div></div></div>
+        <div class="sf-step"><div class="sf-num">3</div><div><div class="sf-title">cAMP accumulation</div><div class="sf-desc">Intracellular cAMP rises rapidly, acting as the central second messenger</div></div></div>
+        <div class="sf-step"><div class="sf-num">4</div><div><div class="sf-title">PKA and CREB activation</div><div class="sf-desc">PKA phosphorylates CREB, ion channels, and other effectors; CREB drives anti-inflammatory and pro-survival gene transcription</div></div></div>
+        <div class="sf-step"><div class="sf-num">5</div><div><div class="sf-title">Tissue-specific biological outcome</div><div class="sf-desc">Smooth muscle relaxation · cytokine suppression · neuroprotection · circadian synchronisation — depending on cell type</div></div></div>
+      </div>
+
+      <h3>Secondary Pathways</h3>
+      <p>In some cell types and at higher concentrations, VPAC receptor activation also engages phospholipase C (producing IP3 and DAG, and mobilising intracellular calcium), MAPK/ERK pathways, and PI3K/Akt signalling. These secondary cascades contribute to VIP's effects on cell proliferation, differentiation, and survival — effects that are not fully accounted for by cAMP alone. Researchers designing experiments to study specific downstream pathways should use appropriate pathway inhibitors to distinguish primary from secondary signalling contributions.</p>
+
+      <h3>Anti-Inflammatory Mechanism in More Detail</h3>
+      <p>VIP's immunosuppressive action is well characterised and operates through multiple parallel routes. On the transcription factor side, cAMP/PKA signalling inhibits NF-κB nuclear translocation — suppressing the expression of TNF-α, IL-6, and IL-12. Simultaneously, VIP promotes STAT6 phosphorylation and STAT1 dephosphorylation, shifting cytokine output toward the anti-inflammatory IL-4/IL-10 axis. On T cells specifically, VPAC1 activation suppresses TCR-driven proliferation and promotes the differentiation of regulatory T cells (Tregs) rather than effector Th1 cells. The combined result is a coordinated shift away from pro-inflammatory immune activation without causing broad immunosuppression.</p>
+    </div>
+
+    <!-- SPECS -->
+    <div id="tab-specs" class="tab-panel">
+      <div class="section-title">Full Peptide Specifications</div>
+      <table class="spec-table">
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tr><td>Peptide Name</td><td>Vasoactive Intestinal Peptide (VIP)</td></tr>
+        <tr><td>Synonyms</td><td>Aviptadil, Vasoactive Intestinal Polypeptide, VIP 1–28</td></tr>
+        <tr><td>CAS Number</td><td>40077-57-4</td></tr>
+        <tr><td>Molecular Formula</td><td>C₁₄₇H₂₃₈N₄₄O₄₂S</td></tr>
+        <tr><td>Molecular Weight</td><td>3,325.8 Da (3325.8 g/mol)</td></tr>
+        <tr><td>Monoisotopic Mass</td><td>3,324.74 Da</td></tr>
+        <tr><td>PubChem CID</td><td>53314964</td></tr>
+        <tr><td>Peptide Length</td><td>28 amino acids (linear)</td></tr>
+        <tr><td>C-Terminal</td><td>Amidated (–NH₂) — essential for receptor affinity</td></tr>
+        <tr><td>Peptide Family</td><td>Secretin/glucagon superfamily</td></tr>
+        <tr><td>Related Peptides</td><td>PACAP, secretin, glucagon, GIP, GLP-1, PHI</td></tr>
+        <tr><td>Receptor Targets</td><td>VPAC1 (VIPR1) and VPAC2 (VIPR2) — Class II GPCRs</td></tr>
+        <tr><td>Receptor Affinity</td><td>Kd ≈1 nM at both VPAC1 and VPAC2</td></tr>
+        <tr><td>Signalling</td><td>Gs → adenylate cyclase → cAMP → PKA / CREB</td></tr>
+        <tr><td>Isoelectric Point</td><td>≈10.5 (highly basic; positively charged at pH 7.4)</td></tr>
+        <tr><td>Key Sensitive Residue</td><td>Met17 — susceptible to oxidation under aerobic conditions</td></tr>
+        <tr><td>Plasma Half-Life</td><td>&lt;2 minutes (rapid peptidase degradation)</td></tr>
+        <tr><td>Disulfide Bonds</td><td>None</td></tr>
+        <tr><td>Appearance</td><td>White to off-white lyophilized powder</td></tr>
+        <tr><td>Solubility</td><td>Water, bacteriostatic water, PBS, physiological saline</td></tr>
+        <tr><td>Purity</td><td>≥99% by RP-HPLC</td></tr>
+        <tr><td>Vial Size</td><td>5mg</td></tr>
+        <tr><td>Shelf Life</td><td>12+ months at –80°C sealed</td></tr>
+      </table>
+
+      <h3>Amino Acid Sequence</h3>
+      <div class="seq-box">
+        <div class="seq-label">28-Amino Acid Sequence (C-terminally amidated)</div>
+        <div class="seq-text"><span class="seq-hl">His</span>-Ser-Asp-Ala-Val-Phe-Thr-Asp-Asn-<span class="seq-hl">Tyr</span>-Thr-Arg-Leu-Arg-Lys-Gln-<span class="seq-hl">Met</span>-Ala-Val-Lys-Lys-<span class="seq-hl">Tyr</span>-Leu-Asn-Ser-Ile-Leu-<span class="seq-hl">Asn-NH₂</span></div>
+        <div class="seq-note">Highlighted: His¹ (receptor affinity) · Tyr¹⁰ and Tyr²² (potential post-translational modification sites) · Met¹⁷ (oxidation-sensitive) · Asn²⁸ + C-terminal amide (essential for VPAC binding)</div>
+      </div>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="tab-research" class="tab-panel">
+      <div class="section-title">Research Applications</div>
+      <p class="section-sub">VIP's broad receptor distribution makes it useful across six distinct research domains.</p>
+      <div class="domain-grid">
+        <div class="domain-card"><div class="dc-icon">🧠</div><div class="dc-title">Neuroprotection & CNS</div><div class="dc-desc">Protects dopaminergic and other neurons from excitotoxicity, oxidative stress, and microglial-mediated inflammatory damage. Studied in Alzheimer's, Parkinson's, and MS models.</div></div>
+        <div class="domain-card"><div class="dc-icon">🕐</div><div class="dc-title">Circadian Rhythm Research</div><div class="dc-desc">Essential synchroniser of SCN neuronal oscillators via VPAC2. Studied via SCN electrophysiology, wheel-running activity, and clock gene expression profiling.</div></div>
+        <div class="domain-card"><div class="dc-icon">🛡️</div><div class="dc-title">Immune Modulation</div><div class="dc-desc">Suppresses Th1 responses, promotes Treg differentiation, inhibits NF-κB and TNF-α. Used in autoimmune models: colitis, arthritis, EAE, type 1 diabetes.</div></div>
+        <div class="domain-card"><div class="dc-icon">🫀</div><div class="dc-title">Cardiovascular Research</div><div class="dc-desc">Potent vasodilator via cAMP and nitric oxide in coronary, cerebral, and pulmonary vessels. Used in ischaemia-reperfusion, blood pressure, and endothelial function studies.</div></div>
+        <div class="domain-card"><div class="dc-icon">🫁</div><div class="dc-title">Respiratory Research</div><div class="dc-desc">NANC neurotransmitter providing bronchodilatory and anti-inflammatory tone. Studied in asthma, COPD, pulmonary fibrosis, and pulmonary hypertension models.</div></div>
+        <div class="domain-card"><div class="dc-icon">🫃</div><div class="dc-title">Gastrointestinal Research</div><div class="dc-desc">Major enteric nervous system neurotransmitter. Regulates sphincter relaxation, pancreatic secretion, intestinal motility, and microbiome-immune communication.</div></div>
+      </div>
+
+      <h3>Pharmacokinetic Design Considerations</h3>
+      <p>VIP's plasma half-life of less than two minutes is one of the most practically important facts about this peptide for experimental design. In cell culture (in vitro) work, this is less of an issue because the enzymatic degradation environment is minimal. But in in vivo animal studies, a single bolus intravenous injection will produce only transient measurable effects lasting a few minutes at most. Researchers studying sustained physiological responses must use continuous infusion protocols or repeated dosing. When designing sampling timepoints, they need to align collection windows with the dosing schedule rather than assuming a prolonged active period. The short half-life can also be used advantageously in experiments requiring precise temporal control — the effect window shuts off quickly when dosing stops.</p>
+      <table class="spec-table" style="margin-top:14px;">
+        <thead><tr><th>Design Factor</th><th>Practical Implication</th></tr></thead>
+        <tr><td>Plasma half-life &lt;2 min</td><td>Continuous infusion needed for sustained in vivo effects</td></tr>
+        <tr><td>Concentration range</td><td>Picomolar (circadian SCN studies) to micromolar (some in vitro systems)</td></tr>
+        <tr><td>Adsorption risk</td><td>Use low-binding tubes; pre-rinse containers with 0.1% BSA</td></tr>
+        <tr><td>Met17 oxidation</td><td>Work quickly; minimise air exposure; use antioxidants in some buffers</td></tr>
+        <tr><td>VPAC1 vs VPAC2 selectivity</td><td>Use PACAP6-38 antagonist or receptor knockout models for subtype specificity</td></tr>
+        <tr><td>Circadian timing</td><td>Time of day affects SCN responses; document light cycle and ZT of all administrations</td></tr>
+      </table>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="tab-storage" class="tab-panel">
+      <div class="section-title">Storage & Reconstitution</div>
+      <div class="warn-box">
+        <strong>⚡ Key handling notes for VIP</strong>
+        VIP is more handling-sensitive than most peptides in this catalogue. The combination of photosensitivity, Met17 oxidation risk, and strong plastic adsorption tendency means each step below matters more than it would for a structurally simpler peptide.
+      </div>
+      <h3>Lyophilized Powder — Storage</h3>
+      <ul class="storage-list">
+        <li>Primary storage at –80°C for long-term stability; –20°C acceptable for shorter-term use</li>
+        <li>Protect rigorously from light — keep in original packaging or opaque container at all times</li>
+        <li>Store in a dry, desiccated environment; inert gas (nitrogen or argon) atmosphere for long-term storage</li>
+        <li>Stable for 12+ months at –80°C when sealed correctly</li>
+        <li>Minimise time at room temperature during each handling session</li>
+      </ul>
+      <h3>Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Use sterile water, bacteriostatic water, PBS, or HEPES buffer; maintain pH 7.0–7.4</li>
+        <li>Add solvent slowly down the inner wall of the vial — do not jet directly onto the powder to prevent foaming</li>
+        <li>Swirl gently at 4°C; full dissolution typically takes 2–5 minutes; never shake or vortex</li>
+        <li>Add 0.1% BSA to working solutions when using low peptide concentrations to prevent adsorption losses</li>
+        <li>Consider protease inhibitors for extended cell culture incubations where media enzymes could degrade VIP over time</li>
+      </ul>
+      <h3>After Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Use within 48 hours when stored at 4°C; fresh preparation is preferred for each experiment</li>
+        <li>For longer storage, freeze in single-use aliquots at –80°C; limit freeze-thaw cycles to a maximum of 1–2</li>
+        <li>Use low-binding microcentrifuge tubes and pipette tips throughout</li>
+        <li>Pre-rinse all containers with BSA solution or VIP working solution to saturate non-specific binding sites before adding experimental doses</li>
+        <li>Minimise oxygen exposure to protect the Met17 residue from oxidation</li>
+      </ul>
+    </div>
+
+    <!-- QA -->
+    <div id="tab-qa" class="tab-panel">
+      <div class="section-title">Quality Assurance & Testing</div>
+      <p class="section-sub">Every VIP batch undergoes comprehensive independent testing including C-terminal amidation verification — a modification critical for receptor binding that is not always confirmed in standard peptide QA.</p>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-label">HPLC Purity</div><div class="qa-value">≥99%</div><div class="qa-detail">RP-HPLC, UV at 220nm and 280nm</div></div>
+        <div class="qa-item"><div class="qa-label">Mass Verification</div><div class="qa-value">3,325.8 Da</div><div class="qa-detail">ESI-MS + high-resolution MS per batch</div></div>
+        <div class="qa-item"><div class="qa-label">C-Terminal Amidation</div><div class="qa-value">Confirmed</div><div class="qa-detail">Verified per batch — required for VPAC binding</div></div>
+        <div class="qa-item"><div class="qa-label">Amino Acid Analysis</div><div class="qa-value">Confirmed</div><div class="qa-detail">28-residue composition verified quantitatively</div></div>
+        <div class="qa-item"><div class="qa-label">Endotoxin</div><div class="qa-value">&lt;5 EU/mg</div><div class="qa-detail">LAL method</div></div>
+        <div class="qa-item"><div class="qa-label">Water Content</div><div class="qa-value">&lt;8%</div><div class="qa-detail">Karl Fischer titration</div></div>
+        <div class="qa-item"><div class="qa-label">Residual Solvents</div><div class="qa-value">ICH Compliant</div><div class="qa-detail">TFA and acetonitrile within Q3C limits</div></div>
+        <div class="qa-item"><div class="qa-label">Bioassay</div><div class="qa-value">Available</div><div class="qa-detail">cAMP assay in VPAC-expressing cells; vasodilation assay on request</div></div>
+      </div>
+      <p>A Certificate of Analysis (COA) is included with each batch and is available for review before purchase. COAs include full chromatograms, mass spectra, and amidation confirmation data.</p>
+    </div>
+
+    <!-- REFS -->
+    <div id="tab-refs" class="tab-panel">
+      <div class="section-title">Scientific References</div>
+      <p class="section-sub">Foundational and recent peer-reviewed publications on VIP biology and research applications.</p>
+      <div class="ref-item"><span class="ref-num">[1]</span>Said, S.I. & Mutt, V. (1970). Polypeptide with broad biological activity: isolation from small intestine. <em>Science, 169(3951), 1217–1218.</em></div>
+      <div class="ref-item"><span class="ref-num">[2]</span>Delgado, M. et al. (2004). Vasoactive intestinal peptide: a regulator of innate and adaptive immune responses. <em>Journal of Immunology.</em></div>
+      <div class="ref-item"><span class="ref-num">[3]</span>González-Rey, E. & Delgado, M. (2008). Therapeutic potential of VIP in inflammatory diseases. <em>Current Pharmaceutical Design, 14(24).</em></div>
+      <div class="ref-item"><span class="ref-num">[4]</span>Harmar, A.J. et al. (2012). VPAC and PAC receptors: From ligands to pharmacology. <em>British Journal of Pharmacology.</em></div>
+      <div class="ref-item"><span class="ref-num">[5]</span>Martínez, C. et al. (2019). A clinical approach for the use of VIP axis in inflammatory and autoimmune diseases. <em>International Journal of Molecular Sciences, 21(1), 65.</em><br><a href="https://doi.org/10.3390/ijms21010065">doi.org/10.3390/ijms21010065</a></div>
+      <div class="ref-item"><span class="ref-num">[6]</span>Iwasaki, M., Akiba, Y. & Kaunitz, J.D. (2019). Recent advances in vasoactive intestinal peptide physiology and pathophysiology: focus on the gastrointestinal system. <em>F1000Research.</em><br><a href="https://doi.org/10.12688/f1000research.18039.1">doi.org/10.12688/f1000research.18039.1</a></div>
+      <div class="ref-item"><span class="ref-num">[7]</span>Langer, I. (2012). Mechanisms involved in VPAC receptors activation and regulation. <em>Frontiers in Endocrinology.</em><br><a href="https://doi.org/10.3389/fendo.2012.00129">doi.org/10.3389/fendo.2012.00129</a></div>
+      <div class="ref-item"><span class="ref-num">[8]</span>Henning, R. (2001). Vasoactive intestinal peptide: cardiovascular effects. <em>Cardiovascular Research.</em><br><a href="https://doi.org/10.1016/s0008-6363(00)00229-7">doi.org/10.1016/s0008-6363(00)00229-7</a></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">⚡ Quick Reference</div>
+      <div class="pk-row"><span class="pk-key">Amino acids</span><span class="pk-val">28 (linear)</span></div>
+      <div class="pk-row"><span class="pk-key">MW</span><span class="pk-val">3,325.8 Da</span></div>
+      <div class="pk-row"><span class="pk-key">Plasma t½</span><span class="pk-val warn">&lt;2 minutes ⚠</span></div>
+      <div class="pk-row"><span class="pk-key">Receptor Kd</span><span class="pk-val">≈1 nM</span></div>
+      <div class="pk-row"><span class="pk-key">Receptors</span><span class="pk-val">VPAC1 + VPAC2</span></div>
+      <div class="pk-row"><span class="pk-key">Pathway</span><span class="pk-val">Gs → cAMP</span></div>
+      <div class="pk-row"><span class="pk-key">Photosensitive</span><span class="pk-val warn">Yes — protect ⚠</span></div>
+      <div class="pk-row"><span class="pk-key">Lyoph. stability</span><span class="pk-val">12+ mo @ –80°C</span></div>
+    </div>
+
+    <div class="sidebar-card bac-card">
+      <div class="sidebar-title" style="color:var(--teal);">💧 Don't Forget BAC Water</div>
+      <p style="font-size:13px; color:var(--muted2); margin-bottom:14px;">You'll need Bacteriostatic Water to reconstitute VIP. Helps maintain pH stability and reduces contamination risk in working solutions.</p>
+      <button class="btn-secondary" style="font-size:13px; padding:10px 16px; border-color:rgba(14,116,144,0.3); color:var(--teal);">+ Add BAC Water (30ml) — $19.97</button>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">✅ Scientifically Reviewed</div>
+      <div class="reviewer-box">
+        <div class="reviewer-avatar">👨‍⚕️</div>
+        <div><div class="reviewer-name">Dr. Ky H. Le, MD</div><div class="reviewer-title">Board-Certified Family Medicine<br>20+ years clinical experience</div></div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-top:12px; margin-bottom:0;">Technical content and research citations validated for scientific accuracy per batch.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>⚠️ Research Use Only</strong>
+      For in vitro laboratory and approved preclinical research only. Not FDA-approved for human use, therapy, or supplementation. Must be handled by licensed, qualified professionals in an appropriate institutional setting.
+    </div>
+  </div>
+</div>
+
+<div class="page-disclaimer">
+  <strong>Disclaimer:</strong> All content on this page is provided for scientific reference and educational purposes only and does not constitute medical advice, a clinical recommendation, or legal guidance of any kind. VIP (Vasoactive Intestinal Peptide) is a research chemical intended for in vitro laboratory use and approved preclinical animal studies only. It has not been approved by the FDA, EMA, or any other regulatory authority for therapeutic, diagnostic, or supplementation use in humans. Bodily introduction into humans or animals outside of a formally approved institutional research framework is strictly prohibited. In vivo animal studies require IACUC approval and compliance with applicable animal welfare regulations. This product must be handled only by licensed, qualified research professionals with proper institutional oversight. All waste must be disposed of in accordance with applicable biological and chemical waste regulations.
+</div>
+
+<footer>
+  <div>© 2025 PeptideLab. All rights reserved.</div>
+  <div><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Shipping Policy</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 90, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semax – ACTH(4-10) Analog (5mg) | Research Peptide | 99%+ Purity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f5f6fa;
+    --bg2:     #ffffff;
+    --bg3:     #f0eef8;
+    --border:  #e2ddf2;
+    --border2: #c9c0e8;
+    --accent:  #5b2d8e;
+    --accent2: #2563a8;
+    --accent3: #0e7490;
+    --text:    #0f1020;
+    --muted:   #7a7a99;
+    --muted2:  #4a4a68;
+    --red:     #b91c1c;
+    --gold:    #b07828;
+    --gold-bg: #fdf8ee;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; font-size: 15px; }
+
+  .top-banner { background: linear-gradient(90deg, var(--accent), #7c3aed); text-align: center; padding: 9px 20px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: #fff; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; border-bottom: 1px solid var(--border); background: rgba(245,246,250,0.97); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); }
+  .nav-links { display: flex; gap: 30px; }
+  .nav-links a { color: var(--muted2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { background: var(--accent); color: #fff; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; }
+
+  .breadcrumb { padding: 14px 60px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .breadcrumb span { color: var(--muted2); margin: 0 6px; }
+
+  /* ── HERO ── */
+  .product-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 60px 60px 50px; max-width: 1280px; margin: 0 auto; }
+
+  .product-image-wrap {
+    background: linear-gradient(145deg, #fff 55%, var(--bg3));
+    border: 1px solid var(--border2); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    padding: 50px 40px; position: relative; overflow: hidden; min-height: 460px;
+  }
+  .product-image-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 15%, rgba(91,45,142,0.06), transparent 65%);
+  }
+  .vial-svg { width: 120px; margin-bottom: 28px; filter: drop-shadow(0 6px 18px rgba(91,45,142,0.15)); }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+  .badge.purple { background: rgba(91,45,142,0.08);  border-color: rgba(91,45,142,0.25); color: var(--accent); }
+  .badge.blue   { background: rgba(37,99,168,0.08);  border-color: rgba(37,99,168,0.25); color: var(--accent2); }
+  .badge.teal   { background: rgba(14,116,144,0.08); border-color: rgba(14,116,144,0.25);color: var(--accent3); }
+  .badge.gold   { background: rgba(176,120,40,0.09); border-color: rgba(176,120,40,0.28);color: var(--gold); }
+
+  .product-info { display: flex; flex-direction: column; gap: 20px; }
+  .product-category { font-size: 11.5px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.15; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .product-short-desc { color: var(--muted2); font-size: 14px; line-height: 1.85; border-left: 3px solid var(--border2); padding-left: 16px; }
+
+  .price-row { display: flex; align-items: center; gap: 16px; }
+  .price { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); }
+  .price-note { font-size: 12px; color: var(--muted); }
+
+  .quick-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qs-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .qs-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .qs-value { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 500; }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #4a2478; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(91,45,142,0.2); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .trust-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted2); }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ── LINEAGE BANNER ── */
+  .lineage-strip { max-width: 1280px; margin: 0 auto; padding: 0 60px; }
+  .lin-inner {
+    background: linear-gradient(135deg, rgba(91,45,142,0.04), rgba(37,99,168,0.05));
+    border: 1px solid var(--border2); border-radius: 12px; padding: 18px 28px;
+    display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+  }
+  .lin-step { display: flex; align-items: center; gap: 8px; }
+  .lin-pill { background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 6px 14px; font-size: 12.5px; font-weight: 600; color: var(--muted2); }
+  .lin-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .lin-arrow { font-size: 16px; color: var(--muted); margin: 0 8px; }
+  .lin-note { font-size: 11.5px; color: var(--muted); margin-left: auto; padding-left: 20px; }
+
+  /* ── TRUST STRIP ── */
+  .trust-strip { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: 1280px; margin: 28px auto 0; }
+  .ts-item { padding: 24px 24px; display: flex; align-items: flex-start; gap: 14px; border-right: 1px solid var(--border); }
+  .ts-item:last-child { border-right: none; }
+  .ts-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .ts-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .ts-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONTENT ── */
+  .content-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 50px; max-width: 1280px; margin: 60px auto; padding: 0 60px; align-items: start; }
+
+  .tab-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 36px; flex-wrap: wrap; }
+  .tab-btn { background: none; border: none; padding: 13px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 10px; }
+  .section-sub { color: var(--muted2); font-size: 14px; margin-bottom: 28px; line-height: 1.8; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 26px 0 10px; }
+  h3:first-child { margin-top: 0; }
+  p { font-size: 13.5px; color: var(--muted2); line-height: 1.9; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── MECHANISM CARDS ── */
+  .mech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  .mech-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: border-color .2s, transform .2s; }
+  .mech-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .mc-icon { font-size: 22px; margin-bottom: 8px; }
+  .mc-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .mc-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+  /* ── RESEARCH STUDIES ── */
+  .study-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 20px 22px; margin-bottom: 16px; }
+  .study-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent); margin-bottom: 6px; }
+  .study-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .study-body { font-size: 13px; color: var(--muted2); line-height: 1.75; }
+
+  /* ── COMPARISON TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .spec-table thead tr { background: var(--accent); }
+  .spec-table th { padding: 11px 16px; font-size: 12px; font-weight: 600; color: #fff; text-align: left; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 11px 16px; font-size: 13px; }
+  .spec-table td:first-child { color: var(--muted2); width: 42%; font-weight: 500; }
+  .spec-table td:last-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); }
+  .spec-table tr:nth-child(even) td { background: rgba(91,45,142,0.025); }
+  .spec-table tr:hover td { background: rgba(91,45,142,0.05); }
+
+  /* ── SEQ BOX ── */
+  .seq-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 18px 20px; margin: 14px 0 22px; }
+  .seq-label { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
+  .seq-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); line-height: 2; }
+  .seq-hl { color: var(--accent); font-weight: 700; }
+  .seq-note { font-family: 'DM Sans', sans-serif; font-size: 11.5px; color: var(--muted); margin-top: 10px; line-height: 1.55; }
+
+  /* ── STORAGE ── */
+  .storage-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .storage-list li { display: flex; gap: 12px; font-size: 13.5px; color: var(--muted2); line-height: 1.7; align-items: flex-start; }
+  .storage-list li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* ── OXIDATION WARN ── */
+  .ox-warn { display: flex; gap: 14px; align-items: flex-start; background: rgba(176,120,40,0.05); border: 1px solid rgba(176,120,40,0.25); border-radius: 10px; padding: 16px 18px; margin: 18px 0; }
+  .ox-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .ox-text { font-size: 13px; color: var(--muted2); line-height: 1.65; }
+  .ox-text strong { color: var(--gold); display: block; margin-bottom: 4px; }
+
+  /* ── QA ── */
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .qa-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .qa-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; }
+  .qa-value { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .qa-detail { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  /* ── REFS ── */
+  .ref-item { border-left: 3px solid var(--border2); padding: 10px 16px; margin-bottom: 12px; font-size: 12.5px; color: var(--muted); line-height: 1.6; transition: border-color .2s; }
+  .ref-item:hover { border-color: var(--accent); }
+  .ref-num { color: var(--text); font-weight: 600; margin-right: 5px; }
+  .ref-item a { color: var(--accent2); text-decoration: none; font-size: 11.5px; }
+  .ref-item a:hover { text-decoration: underline; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 80px; }
+  .sidebar-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .pk-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .pk-row:last-child { border-bottom: none; }
+  .pk-key { color: var(--muted); }
+  .pk-val { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  .pk-val.warn { color: var(--gold); }
+
+  .bac-card { background: rgba(91,45,142,0.04) !important; border-color: rgba(91,45,142,0.2) !important; }
+  .disclaimer-box { background: rgba(185,28,28,0.04); border: 1px solid rgba(185,28,28,0.18); border-radius: 10px; padding: 16px; font-size: 12px; color: var(--muted2); line-height: 1.65; }
+  .disclaimer-box strong { color: var(--red); display: block; margin-bottom: 6px; font-size: 12.5px; }
+  .reviewer-box { display: flex; gap: 14px; align-items: flex-start; }
+  .reviewer-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .reviewer-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .reviewer-title { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  .page-disclaimer { background: var(--bg3); border-top: 1px solid var(--border); padding: 28px 60px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 60px; }
+  .page-disclaimer strong { color: var(--muted2); }
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 26px 60px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted2); text-decoration: none; margin-left: 20px; }
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { font-size: 13px; color: var(--muted2); padding: 5px 0; display: flex; gap: 8px; }
+  ul.plain li::before { content: '·'; color: var(--accent); font-size: 18px; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<div class="top-banner">🚚 Same-day shipping before 12 PM PT &nbsp;·&nbsp; Free domestic shipping over $400 &nbsp;·&nbsp; COA available pre-purchase</div>
+
+<nav>
+  <div class="nav-logo">PeptideLab</div>
+  <div class="nav-links"><a href="#">Peptides</a><a href="#">Research</a><a href="#">Lab Supplies</a><a href="#">COA Library</a><a href="#">About</a></div>
+  <a href="#" class="nav-cta">View Cart (0)</a>
+</nav>
+
+<div class="breadcrumb">Home <span>›</span> Peptides <span>›</span> Nootropic & Neuroprotective Research <span>›</span> Semax</div>
+
+<!-- HERO -->
+<div class="product-hero">
+  <div class="product-image-wrap">
+    <svg class="vial-svg" viewBox="0 0 100 210" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="capS" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#5b2d8e"/><stop offset="100%" stop-color="#7c3aed"/>
+        </linearGradient>
+        <linearGradient id="bodyS" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f5f3fb"/><stop offset="100%" stop-color="#ede9f8"/>
+        </linearGradient>
+        <linearGradient id="liqS" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#5b2d8e" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.14"/>
+        </linearGradient>
+      </defs>
+      <rect x="30" y="10" width="40" height="18" rx="5" fill="url(#capS)" opacity="0.93"/>
+      <rect x="35" y="26" width="30" height="8" rx="2" fill="#c9c0e8"/>
+      <rect x="28" y="34" width="44" height="140" rx="8" fill="url(#bodyS)" stroke="#c9c0e8" stroke-width="1.5"/>
+      <rect x="30" y="115" width="40" height="57" fill="url(#liqS)"/>
+      <ellipse cx="50" cy="115" rx="20" ry="3" fill="#5b2d8e" opacity="0.13"/>
+      <rect x="33" y="68" width="34" height="64" rx="4" fill="#fff" stroke="#c9c0e8" stroke-width="1"/>
+      <text x="50" y="81" text-anchor="middle" fill="#5b2d8e" font-size="7.5" font-family="monospace" font-weight="bold">SEMAX</text>
+      <text x="50" y="91" text-anchor="middle" fill="#7c3aed" font-size="3.6" font-family="monospace" font-weight="600">ACTH(4-10)</text>
+      <text x="50" y="98" text-anchor="middle" fill="#7c3aed" font-size="3.4" font-family="monospace">ANALOG</text>
+      <text x="50" y="105" text-anchor="middle" fill="#7a7a99" font-size="3.4" font-family="monospace">5mg / vial</text>
+      <line x1="36" y1="109" x2="64" y2="109" stroke="#e2ddf2" stroke-width="0.8"/>
+      <text x="50" y="116" text-anchor="middle" fill="#7a7a99" font-size="3.2" font-family="monospace">99%+ PURITY</text>
+      <text x="50" y="122" text-anchor="middle" fill="#7a7a99" font-size="3.2" font-family="monospace">CAS: 80714-61-0</text>
+      <text x="50" y="128" text-anchor="middle" fill="#5b2d8e" font-size="3.2" font-family="monospace">LOT: SMX-2024-11</text>
+      <ellipse cx="50" cy="174" rx="22" ry="5" fill="#c9c0e8" opacity="0.5"/>
+    </svg>
+    <div class="badge-row">
+      <span class="badge purple">99%+ Purity</span>
+      <span class="badge gold">N-Acetylated</span>
+      <span class="badge blue">MC₄R / MC₅R</span>
+      <span class="badge teal">USA Made</span>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-category">Research Peptide · Nootropic & Neuroprotective</div>
+    <h1>Semax <em>(5mg)</em><br><span style="font-family:'DM Sans',sans-serif; font-size:18px; font-weight:400; color:var(--muted2);">N-Acetyl ACTH(4-10) Synthetic Analog</span></h1>
+    <p class="product-short-desc">A synthetic seven-amino acid peptide derived from the core neurological activity region of adrenocorticotropic hormone (ACTH positions 4–10), with N-terminal acetylation for enzymatic stability. Studied for its effects on BDNF and NGF upregulation, dopamine and serotonin modulation, neuroprotection in ischaemic models, stress physiology, and Alzheimer's-related pathways in preclinical settings.</p>
+
+    <div class="quick-specs">
+      <div class="qs-item"><div class="qs-label">Molecular Weight</div><div class="qs-value">813.93 Da</div></div>
+      <div class="qs-item"><div class="qs-label">CAS Number</div><div class="qs-value">80714-61-0</div></div>
+      <div class="qs-item"><div class="qs-label">Sequence</div><div class="qs-value">Ac-MEHFPGP</div></div>
+      <div class="qs-item"><div class="qs-label">Receptor Targets</div><div class="qs-value">MC₄R / MC₅R</div></div>
+    </div>
+
+    <div class="price-row">
+      <div class="price">$72.00</div>
+      <div class="price-note">Per 5mg vial<br>Free shipping over $400</div>
+    </div>
+    <button class="btn-primary">Add to Cart — $72.00</button>
+    <button class="btn-secondary">📄 Request COA Before Purchase</button>
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-dot"></span> Third-party tested</div>
+      <div class="trust-item"><span class="trust-dot"></span> No fillers</div>
+      <div class="trust-item"><span class="trust-dot"></span> Same-day shipping</div>
+      <div class="trust-item"><span class="trust-dot"></span> GMP facility</div>
+    </div>
+  </div>
+</div>
+
+<!-- LINEAGE BANNER -->
+<div class="lineage-strip">
+  <div class="lin-inner">
+    <div class="lin-step"><span class="lin-pill">ACTH (full 39 AA)</span></div>
+    <span class="lin-arrow">→</span>
+    <div class="lin-step"><span class="lin-pill">ACTH(4–10) fragment</span></div>
+    <span class="lin-arrow">→</span>
+    <div class="lin-step"><span class="lin-pill active">Semax (Ac-MEHFPGP) ★</span></div>
+    <span class="lin-arrow">→</span>
+    <div class="lin-step"><span class="lin-pill">NA-Semax Amidate (bilateral protection)</span></div>
+    <span class="lin-note">N-acetylation blocks aminopeptidase attack · two prolines add conformational rigidity</span>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="ts-item"><div class="ts-icon">🧪</div><div><div class="ts-title">99%+ Purity, 3rd Party Verified</div><div class="ts-desc">Three independent certified labs. Methionine oxidation product monitored per batch.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">🏭</div><div><div class="ts-title">GMP Manufacturing</div><div class="ts-desc">USA-registered facility. Full chain of custody and lot traceability.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">⚗️</div><div><div class="ts-title">Zero Fillers or Additives</div><div class="ts-desc">Pure active compound only. N-terminal acetylation confirmed per batch.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">📦</div><div><div class="ts-title">Same-Day Fulfillment</div><div class="ts-desc">Orders before 12 PM PT ship same day. Free shipping over $400.</div></div></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+  <div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="showTab('mechanism',this)">Mechanism</button>
+      <button class="tab-btn" onclick="showTab('specs',this)">Specifications</button>
+      <button class="tab-btn" onclick="showTab('research',this)">Research</button>
+      <button class="tab-btn" onclick="showTab('storage',this)">Storage & Handling</button>
+      <button class="tab-btn" onclick="showTab('qa',this)">QA & Testing</button>
+      <button class="tab-btn" onclick="showTab('refs',this)">References</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="section-title">What Is Semax?</div>
+      <p class="section-sub">A compact, chemically stabilised fragment of ACTH engineered to carry neurotrophic and neuroprotective activity without hormonal side effects.</p>
+      <p>Adrenocorticotropic hormone (ACTH) is a 39-residue pituitary hormone best known for driving cortisol production. But within its sequence, the seven-residue stretch at positions 4–10 — Met-Glu-His-Phe-Pro-Gly-Pro — turns out to carry the neurological activity of the full hormone. Research in the 1970s and 1980s established that this fragment engages melanocortin receptors in the brain and influences memory, attention, and stress adaptation in animal models, without triggering the adrenocortical activity that makes full-length ACTH unsuitable for CNS research. Semax is this fragment, stabilised by N-terminal acetylation.</p>
+      <p>The acetyl group at the N-terminus blocks aminopeptidase-mediated degradation, extending the working lifespan of the peptide in plasma and tissue. Two proline residues within the sequence add structural rigidity. Together, these features make Semax a practical laboratory research tool where the native ACTH(4-10) fragment would be too short-lived to study.</p>
+      <p>The five research areas where Semax has the most published preclinical evidence are: upregulation of BDNF and NGF in neural tissue, modulation of dopaminergic and serotonergic systems, neuroprotection in cerebral ischaemia models, stress and immune physiology, and inhibition of amyloid-beta aggregation in Alzheimer's disease contexts.</p>
+
+      <hr class="divider">
+      <div class="section-title">Four Parallel Mechanisms</div>
+      <div class="mech-grid">
+        <div class="mech-card"><div class="mc-icon">🧬</div><div class="mc-title">MC₄R / MC₅R Receptor Activation</div><div class="mc-desc">Engages melanocortin receptors in hippocampus, hypothalamus, and cortex via Gs/cAMP. Drives transcriptional programmes including BDNF and NGF upregulation.</div></div>
+        <div class="mech-card"><div class="mc-icon">🌱</div><div class="mc-title">Neurotrophic Factor Induction</div><div class="mc-desc">Raises BDNF protein in hippocampus, frontal cortex, and basal forebrain. Elevates NGF in cortical tissue. Relevant to synaptic plasticity and neuronal survival.</div></div>
+        <div class="mech-card"><div class="mc-icon">⚡</div><div class="mc-title">Monoaminergic Modulation</div><div class="mc-desc">Increases dopamine and serotonin turnover in striatum and frontal cortex. Induces tyrosine hydroxylase. Alters D1/D2 receptor density in targeted brain regions.</div></div>
+        <div class="mech-card"><div class="mc-icon">🛡️</div><div class="mc-title">Anti-Inflammatory & Neuroprotective</div><div class="mc-desc">Reduces IL-6, TNF-α, IL-1β in glial cultures and ischaemia models. Protects against glutamate excitotoxicity and oxidative stress in neuronal cultures.</div></div>
+      </div>
+    </div>
+
+    <!-- MECHANISM -->
+    <div id="tab-mechanism" class="tab-panel">
+      <div class="section-title">Mechanism of Action</div>
+      <p class="section-sub">How a seven-amino acid peptide produces broad neurological effects through melanocortin receptors and downstream signalling cascades.</p>
+
+      <h3>Melanocortin Receptor Binding</h3>
+      <p>The core ACTH(4-10) sequence in Semax — particularly the phenylalanine and histidine residues — engages melanocortin receptors MC₄R and MC₅R. These are Gs-protein-coupled receptors distributed across the hippocampus, hypothalamus, frontal cortex, and brainstem. Receptor activation raises intracellular cAMP, which activates protein kinase A (PKA) and drives CREB phosphorylation. The resulting transcriptional changes — including upregulation of BDNF and NGF — are understood to be the primary driver of Semax's cognitive and neuroprotective effects in preclinical models.</p>
+
+      <h3>BDNF Upregulation and TrkB Signalling</h3>
+      <p>BDNF is the principal ligand for TrkB (tropomyosin receptor kinase B), a receptor tyrosine kinase expressed on neurons throughout the brain. When Semax raises BDNF levels in hippocampal and cortical tissue, it indirectly amplifies TrkB signalling, which promotes long-term potentiation, synapse formation, and anti-apoptotic cell survival programmes. Dolotov et al. (2006) confirmed specific binding of Semax to basal forebrain tissue with direct measurement of BDNF protein elevation — establishing this as a genuine receptor-mediated effect rather than non-specific peptide activity.</p>
+
+      <h3>Dopamine and Serotonin System Effects</h3>
+      <p>Semax increases the turnover rates of dopamine and serotonin in the striatum and frontal cortex — measurable by elevated metabolite-to-neurotransmitter ratios and enzyme activity. It induces tyrosine hydroxylase, the rate-limiting enzyme in catecholamine synthesis, and alters dopamine D1 and D2 receptor density in specific brain regions. These monoaminergic changes contribute to the normalisation of anxiety-like behaviour and stress response dysregulation observed in chronic stress models, where baseline dopamine and serotonin levels are depressed.</p>
+
+      <h3>Anti-Inflammatory Pathway Coordination</h3>
+      <p>In both glial cell cultures and in vivo ischaemia models, Semax reduces the production of IL-6, TNF-α, and IL-1β while promoting anti-inflammatory mediator balance. Genome-wide transcriptional analysis in focal cerebral ischaemia (Medvedeva et al., 2014) showed that Semax upregulates immune coordination genes, chemokine signalling networks, and vascular remodelling programmes — suggesting the peptide does not simply dampen inflammation but helps organise it toward a reparative pattern rather than a destructive one. This mechanistic nuance is important when interpreting Semax's anti-inflammatory effects in experimental contexts.</p>
+
+      <div class="ox-warn">
+        <div class="ox-icon">⚠️</div>
+        <div class="ox-text">
+          <strong>Methionine Oxidation Note</strong>
+          The methionine at position 1 of Semax is susceptible to oxidation under aerobic conditions. Met oxidation to sulfoxide alters the N-terminal steric environment and can reduce MC₄R / MC₅R receptor affinity. Use deaerated solvents for reconstitution, work quickly after thawing, and store reconstituted solution with minimal headspace.
+        </div>
+      </div>
+    </div>
+
+    <!-- SPECS -->
+    <div id="tab-specs" class="tab-panel">
+      <div class="section-title">Full Peptide Specifications</div>
+      <table class="spec-table">
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tr><td>Peptide Name</td><td>Semax</td></tr>
+        <tr><td>Synonyms</td><td>ACTH(4-7)-Pro-Gly-Pro, MEHFPGP, Met-Glu-His-Phe-Pro-Gly-Pro</td></tr>
+        <tr><td>CAS Number</td><td>80714-61-0</td></tr>
+        <tr><td>Molecular Formula</td><td>C₃₇H₅₁N₉O₁₀S</td></tr>
+        <tr><td>Molecular Weight</td><td>813.93 Da</td></tr>
+        <tr><td>Monoisotopic Mass</td><td>813.348 Da</td></tr>
+        <tr><td>PubChem CID</td><td>122178</td></tr>
+        <tr><td>Peptide Length</td><td>7 amino acids (heptapeptide)</td></tr>
+        <tr><td>Full Sequence</td><td>Ac-Met-Glu-His-Phe-Pro-Gly-Pro</td></tr>
+        <tr><td>N-Terminal Modification</td><td>Acetylation — blocks aminopeptidase degradation</td></tr>
+        <tr><td>C-Terminal</td><td>Free carboxylic acid (standard Semax)</td></tr>
+        <tr><td>Parent Sequence</td><td>ACTH residues 4–10</td></tr>
+        <tr><td>Receptor Targets</td><td>MC₄R and MC₅R (melanocortin receptors)</td></tr>
+        <tr><td>Key Research Readouts</td><td>BDNF, NGF, dopamine/serotonin turnover, IL-6/TNF-α</td></tr>
+        <tr><td>Met¹ Oxidation Risk</td><td>Yes — use deaerated solvents; monitor by HPLC</td></tr>
+        <tr><td>Appearance</td><td>White to off-white lyophilized powder</td></tr>
+        <tr><td>Solubility</td><td>Water, bacteriostatic water, PBS</td></tr>
+        <tr><td>Target pH</td><td>6.0–7.0 for optimal stability</td></tr>
+        <tr><td>Purity</td><td>≥99% by RP-HPLC</td></tr>
+        <tr><td>Vial Size</td><td>5mg</td></tr>
+        <tr><td>Shelf Life</td><td>12+ months at –20°C sealed</td></tr>
+      </table>
+
+      <h3>Amino Acid Sequence</h3>
+      <div class="seq-box">
+        <div class="seq-label">7-Amino Acid Sequence (N-terminal acetylated)</div>
+        <div class="seq-text"><span class="seq-hl">Ac</span>-<span class="seq-hl">Met</span>-Glu-<span class="seq-hl">His</span>-<span class="seq-hl">Phe</span>-<span class="seq-hl">Pro</span>-Gly-<span class="seq-hl">Pro</span></div>
+        <div class="seq-note">Highlighted: Ac = N-terminal acetyl group (enzymatic stability) · Met = oxidation-sensitive residue · His + Phe = melanocortin receptor interaction residues · Pro×2 = conformational rigidity, protease resistance</div>
+      </div>
+
+      <h3>Semax vs. NA-Semax Amidate — Key Differences</h3>
+      <table class="spec-table">
+        <thead><tr><th>Property</th><th>Semax (standard)</th><th>NA-Semax Amidate</th></tr></thead>
+        <tr><td>N-Terminal</td><td>Acetylated</td><td>Acetylated</td></tr>
+        <tr><td>C-Terminal</td><td>Free –COOH</td><td>Amidated –NH₂</td></tr>
+        <tr><td>Half-Life</td><td>15–20 minutes</td><td>180–240 minutes</td></tr>
+        <tr><td>Stability increase</td><td>Reference</td><td>8–12× vs. unmodified</td></tr>
+        <tr><td>Effect duration</td><td>Shorter; acute studies</td><td>8–16 hrs; chronic studies</td></tr>
+        <tr><td>Best use case</td><td>Acute dosing, comparators</td><td>Chronic protocols, simplified dosing</td></tr>
+      </table>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="tab-research" class="tab-panel">
+      <div class="section-title">Published Research Overview</div>
+      <p class="section-sub">Key research areas and select study findings from the preclinical literature.</p>
+
+      <div class="study-card">
+        <div class="study-label">Cerebral Ischaemia</div>
+        <div class="study-title">Dose-Dependent Neuroprotection in Focal Stroke Models</div>
+        <div class="study-body">At 50–250 µg/kg (intraperitoneal), Semax reduced infarct volume by 30–50% in rat focal cerebral ischaemia models, improved neurological recovery scores, and elevated BDNF and NGF in peri-infarct regions. Inflammatory infiltration was reduced and genome-wide transcriptomics confirmed upregulation of vascular, immune coordination, and chemokine genes consistent with active tissue repair.</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-label">Cognitive Models</div>
+        <div class="study-title">Learning and Memory Enhancement (Morris Maze, Passive Avoidance)</div>
+        <div class="study-body">At 100–300 µg/kg, Semax improved acquisition speed and memory retention in both normal and cognitively impaired rats. Effects were strongest in ischaemia and neurotoxin impairment models and correlated directly with BDNF protein levels in hippocampal tissue. Kirchev (2023) documented enhanced cognitive recovery in chronic brain ischaemia using Semax in combination with hopantenic acid.</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-label">Alzheimer's Disease Models</div>
+        <div class="study-title">Amyloid-Beta Aggregation Inhibition and Cholinergic Neuron Support</div>
+        <div class="study-body">Semax binds Cu²⁺ ions and inhibits Aβ:Cu²⁺ complex formation, a step involved in amyloid oligomer nucleation. In vitro studies showed reduced fibrillogenesis in membrane models (Sciacca et al., 2022). Separately, basal forebrain cholinergic neuron survival was increased 1.5–1.7 fold, and choline acetyltransferase activity was stimulated — findings relevant to the selective neuronal vulnerability in Alzheimer's dementia.</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-label">Stress & Immunity</div>
+        <div class="study-title">Stress-Protective and Immunomodulatory Effects in Social Stress Models</div>
+        <div class="study-body">Semax normalised elevated cytokines (IL-1β, IL-6, TNF-α), reduced adrenal hypertrophy and gastric ulceration in chronic stress models, and decreased lipid peroxidation in immune organs (thymus, spleen). It restored monoamine levels in stress-affected brain regions and selectively blocked the opioid form of stress-induced analgesia without altering the behavioural stress response — indicating mechanistic specificity in its stress modulation.</div>
+      </div>
+
+      <h3>Preclinical Dosing Reference</h3>
+      <table class="spec-table">
+        <thead><tr><th>Application</th><th>Typical Range in Published Research</th></tr></thead>
+        <tr><td>Cerebral ischaemia (rodent in vivo)</td><td>50–250 µg/kg, i.p.</td></tr>
+        <tr><td>Cognitive / learning models (rodent)</td><td>100–300 µg/kg</td></tr>
+        <tr><td>In vitro neuronal cultures</td><td>10–500 nM (application-dependent)</td></tr>
+        <tr><td>Glial / neuroinflammation models</td><td>1–100 µM (varies by cell type)</td></tr>
+      </table>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="tab-storage" class="tab-panel">
+      <div class="section-title">Storage & Reconstitution</div>
+      <div class="ox-warn">
+        <div class="ox-icon">🔬</div>
+        <div class="ox-text"><strong>Met¹ Oxidation — Key Handling Priority</strong>The methionine at position 1 is Semax's primary chemical vulnerability. Oxidation to methionine sulfoxide alters receptor affinity. Use deaerated solvents, minimise air headspace in reconstituted vials, and work promptly after thawing.</div>
+      </div>
+      <h3>Lyophilized Powder</h3>
+      <ul class="storage-list">
+        <li>Store at –20°C to –80°C in the original sealed vial</li>
+        <li>Protect from light, moisture, and oxygen — inert gas (nitrogen or argon) atmosphere recommended for long-term storage</li>
+        <li>Stable for 12+ months at –20°C under proper conditions</li>
+        <li>Avoid temperature cycling of sealed vials</li>
+      </ul>
+      <h3>Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Use sterile water, bacteriostatic water, or PBS; target pH 6.0–7.0</li>
+        <li>Use deaerated solvent where possible to minimise dissolved oxygen exposure at Met¹</li>
+        <li>Add solvent slowly down the inner wall of the vial; swirl gently 1–2 minutes</li>
+        <li>Do not shake or vortex; solution should be clear and colourless when ready</li>
+      </ul>
+      <h3>After Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Store at 4°C for up to 14 days in sealed single-use aliquots</li>
+        <li>Freeze at –20°C for longer storage; maximum 3–4 freeze-thaw cycles</li>
+        <li>Low-concentration ascorbic acid may be added to protect Met¹ in extended incubation experiments</li>
+        <li>Discard if solution appears cloudy, discoloured, or contains particulates</li>
+        <li>Follow standard PPE and biosafety protocols throughout handling</li>
+      </ul>
+    </div>
+
+    <!-- QA -->
+    <div id="tab-qa" class="tab-panel">
+      <div class="section-title">Quality Assurance & Testing</div>
+      <p class="section-sub">Each Semax batch includes methionine oxidation product monitoring as a standard QA step — not all suppliers do this, but it matters given Met¹'s chemical vulnerability.</p>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-label">HPLC Purity</div><div class="qa-value">≥99%</div><div class="qa-detail">RP-HPLC, UV at 214nm and 280nm</div></div>
+        <div class="qa-item"><div class="qa-label">Oxidation Monitoring</div><div class="qa-value">Tracked</div><div class="qa-detail">Met sulfoxide product monitored; within spec</div></div>
+        <div class="qa-item"><div class="qa-label">Mass Verification</div><div class="qa-value">813.93 Da</div><div class="qa-detail">ESI-MS confirmed per batch</div></div>
+        <div class="qa-item"><div class="qa-label">Acetylation Confirmed</div><div class="qa-value">Yes</div><div class="qa-detail">N-terminal modification verified by MS</div></div>
+        <div class="qa-item"><div class="qa-label">Endotoxin</div><div class="qa-value">&lt;5 EU/mg</div><div class="qa-detail">LAL method</div></div>
+        <div class="qa-item"><div class="qa-label">Water Content</div><div class="qa-value">&lt;8%</div><div class="qa-detail">Karl Fischer titration</div></div>
+        <div class="qa-item"><div class="qa-label">Residual Solvents</div><div class="qa-value">ICH Compliant</div><div class="qa-detail">TFA and acetonitrile within limits</div></div>
+        <div class="qa-item"><div class="qa-label">COA</div><div class="qa-value">Each Batch</div><div class="qa-detail">Available pre-purchase on request</div></div>
+      </div>
+    </div>
+
+    <!-- REFS -->
+    <div id="tab-refs" class="tab-panel">
+      <div class="section-title">Scientific References</div>
+      <p class="section-sub">Peer-reviewed publications from the Semax research literature.</p>
+      <div class="ref-item"><span class="ref-num">[1]</span>Dolotov, O. et al. (2006). Semax, an analogue of ACTH(4-10), binds specifically and increases levels of brain-derived neurotrophic factor protein in rat basal forebrain. <em>Journal of Neurochemistry, 97.</em><br><a href="https://doi.org/10.1111/j.1471-4159.2006.03658.x">doi.org/10.1111/j.1471-4159.2006.03658.x</a></div>
+      <div class="ref-item"><span class="ref-num">[2]</span>Medvedeva, E. et al. (2014). The peptide Semax affects the expression of genes related to the immune and vascular systems in rat brain focal ischemia: genome-wide transcriptional analysis. <em>BMC Genomics, 15, 228.</em><br><a href="https://doi.org/10.1186/1471-2164-15-228">doi.org/10.1186/1471-2164-15-228</a></div>
+      <div class="ref-item"><span class="ref-num">[3]</span>Sciacca, M. et al. (2022). Semax, a synthetic regulatory peptide, affects copper-induced Abeta aggregation and amyloid formation in artificial membrane models. <em>ACS Chemical Neuroscience, 13, 486–496.</em><br><a href="https://doi.org/10.1021/acschemneuro.1c00707">doi.org/10.1021/acschemneuro.1c00707</a></div>
+      <div class="ref-item"><span class="ref-num">[4]</span>Eremin, K. et al. (2004). Effects of Semax on dopaminergic and serotonergic systems of the brain. <em>Doklady Biological Sciences, 394, 1–3.</em><br><a href="https://doi.org/10.1023/B:DOBS.0000017114.24474.40">doi.org/10.1023/B:DOBS.0000017114.24474.40</a></div>
+      <div class="ref-item"><span class="ref-num">[5]</span>Yasenyavskaya, A. et al. (2022). Experimental study of the immunomodulating action of Semax and Selank on the model of 'social' stress. <em>European Pharmaceutical Journal, 69, 54–60.</em><br><a href="https://doi.org/10.2478/afpuc-2022-0004">doi.org/10.2478/afpuc-2022-0004</a></div>
+      <div class="ref-item"><span class="ref-num">[6]</span>Grivennikov, I. et al. (2008). Effects of behaviorally active ACTH(4-10) analogue Semax on rat basal forebrain cholinergic neurons. <em>Restorative Neurology and Neuroscience, 26(1), 35–43.</em><br><a href="https://pubmed.ncbi.nlm.nih.gov/18431004/">pubmed.ncbi.nlm.nih.gov/18431004</a></div>
+      <div class="ref-item"><span class="ref-num">[7]</span>Kirchev, V. (2023). Cognitive function restoration in rats with chronic brain ischemia using Semax and hopantenic acid. <em>Journal of Education, Health and Sport.</em><br><a href="https://doi.org/10.12775/jehs.2023.13.04.046">doi.org/10.12775/jehs.2023.13.04.046</a></div>
+      <div class="ref-item"><span class="ref-num">[8]</span>Glazova, N. et al. (2023). Effects of Semax in the models of acute stress. <em>Russian Journal of Physiology.</em><br><a href="https://doi.org/10.31857/s0869813923010053">doi.org/10.31857/s0869813923010053</a></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">⚡ Quick Reference</div>
+      <div class="pk-row"><span class="pk-key">Sequence</span><span class="pk-val">Ac-MEHFPGP</span></div>
+      <div class="pk-row"><span class="pk-key">Length</span><span class="pk-val">7 amino acids</span></div>
+      <div class="pk-row"><span class="pk-key">MW</span><span class="pk-val">813.93 Da</span></div>
+      <div class="pk-row"><span class="pk-key">Receptors</span><span class="pk-val">MC₄R + MC₅R</span></div>
+      <div class="pk-row"><span class="pk-key">N-Terminal</span><span class="pk-val">Acetylated</span></div>
+      <div class="pk-row"><span class="pk-key">Met¹ oxidation</span><span class="pk-val warn">⚠ Monitor</span></div>
+      <div class="pk-row"><span class="pk-key">Target pH</span><span class="pk-val">6.0–7.0</span></div>
+      <div class="pk-row"><span class="pk-key">Stability (lyoph.)</span><span class="pk-val">12+ mo @ –20°C</span></div>
+    </div>
+
+    <div class="sidebar-card bac-card">
+      <div class="sidebar-title" style="color:var(--accent);">💧 Don't Forget BAC Water</div>
+      <p style="font-size:13px; color:var(--muted2); margin-bottom:14px;">You'll need Bacteriostatic Water for reconstitution. Deaerated BAC water is preferred to reduce dissolved oxygen that could oxidise Met¹.</p>
+      <button class="btn-secondary" style="font-size:13px; padding:10px 16px; border-color:rgba(91,45,142,0.25); color:var(--accent);">+ Add BAC Water (30ml) — $19.97</button>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">✅ Scientifically Reviewed</div>
+      <div class="reviewer-box">
+        <div class="reviewer-avatar">👨‍⚕️</div>
+        <div><div class="reviewer-name">Dr. Ky H. Le, MD</div><div class="reviewer-title">Board-Certified Family Medicine<br>20+ years clinical experience</div></div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-top:12px; margin-bottom:0;">All technical content and research citations validated for scientific accuracy per batch.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>⚠️ Research Use Only</strong>
+      For in vitro laboratory and approved preclinical research only. Not FDA-approved for human use, therapy, or supplementation. Must be handled by licensed, qualified professionals in an appropriate institutional setting only.
+    </div>
+  </div>
+</div>
+
+<div class="page-disclaimer">
+  <strong>Disclaimer:</strong> All content on this page is provided for scientific reference and educational purposes only. It does not constitute medical advice, a clinical recommendation, or legal guidance. Semax is a research chemical for in vitro laboratory and approved preclinical use only. It has not been approved by the FDA, EMA, or any other regulatory authority for human therapeutic, diagnostic, or supplementation use. Administration to humans or animals outside of a formally approved institutional research framework is strictly prohibited. In vivo animal studies require IACUC approval. This product must be handled only by licensed, qualified professionals with proper institutional oversight.
+</div>
+
+<footer>
+  <div>© 2025 PeptideLab. All rights reserved.</div>
+  <div><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Shipping Policy</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 90, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

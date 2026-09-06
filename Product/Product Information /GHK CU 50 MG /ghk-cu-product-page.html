@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHK-Cu Copper Peptide (50mg) | Research Peptide | 99%+ Purity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #f5f7fa;
+    --bg2:     #ffffff;
+    --bg3:     #eef1f6;
+    --border:  #e2e7f0;
+    --border2: #cdd4e3;
+    --accent:  #1a6b4a;   /* deep teal-green — copper peptide feel */
+    --accent2: #0070b8;
+    --accent3: #7b4f9e;
+    --text:    #0f1623;
+    --muted:   #7a869a;
+    --muted2:  #4a5568;
+    --red:     #c0392b;
+    --copper:  #b87333;   /* actual copper color accent */
+    --copper-light: #f5ede3;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+
+  /* ── BANNER ── */
+  .top-banner {
+    background: linear-gradient(90deg, var(--accent), #0f9b67);
+    text-align: center; padding: 9px 20px;
+    font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: #fff;
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 60px; border-bottom: 1px solid var(--border);
+    background: rgba(245,247,250,0.97); position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); }
+  .nav-links { display: flex; gap: 30px; }
+  .nav-links a { color: var(--muted2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { background: var(--accent); color: #fff; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb { padding: 14px 60px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .breadcrumb span { color: var(--muted2); margin: 0 6px; }
+
+  /* ── HERO ── */
+  .product-hero {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    padding: 60px 60px 50px; max-width: 1280px; margin: 0 auto;
+  }
+
+  .product-image-wrap {
+    background: linear-gradient(145deg, #fff 60%, var(--copper-light));
+    border: 1px solid var(--border2); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; padding: 50px 40px;
+    position: relative; overflow: hidden; min-height: 440px;
+  }
+  .product-image-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 20%, rgba(184,115,51,0.06), transparent 65%);
+  }
+  .vial-svg { width: 130px; margin-bottom: 24px; filter: drop-shadow(0 6px 18px rgba(26,107,74,0.14)); }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+  .badge.green  { background: rgba(26,107,74,0.08); border-color: rgba(26,107,74,0.25); color: var(--accent); }
+  .badge.blue   { background: rgba(0,112,184,0.08); border-color: rgba(0,112,184,0.25); color: var(--accent2); }
+  .badge.copper { background: rgba(184,115,51,0.1); border-color: rgba(184,115,51,0.3);  color: var(--copper); }
+  .badge.purple { background: rgba(123,79,158,0.08); border-color: rgba(123,79,158,0.25); color: var(--accent3); }
+
+  .product-info { display: flex; flex-direction: column; gap: 20px; }
+  .product-category { font-size: 11.5px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  h1 { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.15; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--copper); }
+
+  .product-short-desc { color: var(--muted2); font-size: 14.5px; line-height: 1.75; border-left: 3px solid var(--border2); padding-left: 16px; }
+
+  .price-row { display: flex; align-items: center; gap: 16px; }
+  .price { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); }
+  .price-note { font-size: 12px; color: var(--muted); }
+
+  .quick-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qs-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .qs-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .qs-value { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--accent); font-weight: 500; }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #155a3d; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,107,74,0.18); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .trust-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted2); }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ── TRUST STRIP ── */
+  .trust-strip { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: 1280px; margin: 0 auto; }
+  .ts-item { padding: 26px 28px; display: flex; align-items: flex-start; gap: 14px; border-right: 1px solid var(--border); }
+  .ts-item:last-child { border-right: none; }
+  .ts-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .ts-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .ts-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONTENT ── */
+  .content-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 50px; max-width: 1280px; margin: 60px auto; padding: 0 60px; align-items: start; }
+
+  /* ── TABS ── */
+  .tab-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 36px; flex-wrap: wrap; }
+  .tab-btn { background: none; border: none; padding: 13px 20px; font-size: 13.5px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── HEADINGS & TYPE ── */
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 10px; }
+  .section-sub { color: var(--muted2); font-size: 14px; margin-bottom: 28px; line-height: 1.7; }
+  h3 { font-size: 16.5px; font-weight: 600; color: var(--text); margin: 26px 0 10px; }
+  h3:first-child { margin-top: 0; }
+  p { font-size: 13.5px; color: var(--muted2); line-height: 1.8; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── RESEARCH GRID ── */
+  .research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
+  .rc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color .2s, transform .2s; }
+  .rc:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .rc-icon { font-size: 22px; margin-bottom: 10px; }
+  .rc-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .rc-desc { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  /* ── MECHANISM ROW ── */
+  .mech-list { display: flex; flex-direction: column; gap: 0; margin: 16px 0 28px; }
+  .mech-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .mech-item:last-child { border-bottom: none; }
+  .mech-bullet { width: 28px; height: 28px; border-radius: 50%; background: rgba(26,107,74,0.09); border: 1px solid rgba(26,107,74,0.25); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+  .mech-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .mech-desc { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  /* ── SPEC TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .spec-table thead tr { background: var(--bg3); }
+  .spec-table th { padding: 11px 16px; font-size: 11.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; text-align: left; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 11px 16px; font-size: 13px; }
+  .spec-table td:first-child { color: var(--muted2); width: 42%; }
+  .spec-table td:last-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); }
+  .spec-table tr:hover td { background: rgba(26,107,74,0.03); }
+
+  /* ── QA GRID ── */
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .qa-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .qa-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; }
+  .qa-value { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .qa-detail { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  /* ── STORAGE LIST ── */
+  .storage-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .storage-list li { display: flex; gap: 12px; font-size: 13.5px; color: var(--muted2); line-height: 1.6; align-items: flex-start; }
+  .storage-list li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* ── COLOR INDICATOR BOX ── */
+  .color-box {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--copper-light); border: 1px solid rgba(184,115,51,0.25);
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 22px;
+  }
+  .copper-swatch { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #c8853a, #8b5e3c); flex-shrink: 0; }
+  .color-note { font-size: 13px; color: var(--muted2); line-height: 1.5; }
+  .color-note strong { color: var(--copper); }
+
+  /* ── REFS ── */
+  .ref-item { border-left: 3px solid var(--border2); padding: 10px 16px; margin-bottom: 12px; font-size: 12.5px; color: var(--muted); line-height: 1.6; transition: border-color .2s; }
+  .ref-item:hover { border-color: var(--accent); }
+  .ref-num { color: var(--text); font-weight: 600; margin-right: 5px; }
+  .ref-item a { color: var(--accent2); text-decoration: none; font-size: 11.5px; }
+  .ref-item a:hover { text-decoration: underline; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 80px; }
+  .sidebar-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+  .pk-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .pk-row:last-child { border-bottom: none; }
+  .pk-key { color: var(--muted); }
+  .pk-val { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+
+  .bac-card { background: rgba(26,107,74,0.04); border: 1px solid rgba(26,107,74,0.22) !important; }
+  .bac-card .sidebar-title { color: var(--accent); }
+
+  .disclaimer-box { background: rgba(192,57,43,0.04); border: 1px solid rgba(192,57,43,0.18); border-radius: 10px; padding: 16px; font-size: 12px; color: var(--muted2); line-height: 1.65; }
+  .disclaimer-box strong { color: var(--red); display: block; margin-bottom: 6px; font-size: 12.5px; }
+
+  .reviewer-box { display: flex; gap: 14px; align-items: flex-start; }
+  .reviewer-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #0070b8); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .reviewer-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .reviewer-title { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  /* ── RESEARCH STUDY CARD ── */
+  .study-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
+  .study-card .study-tag { display: inline-block; background: rgba(26,107,74,0.08); color: var(--accent); border: 1px solid rgba(26,107,74,0.2); border-radius: 4px; font-size: 11px; font-weight: 600; padding: 3px 9px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px; }
+  .study-card .study-title { font-size: 14.5px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .study-card .study-body { font-size: 13px; color: var(--muted2); line-height: 1.75; }
+
+  /* ── STAT ROW ── */
+  .stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 20px 0 28px; }
+  .stat-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--accent); }
+  .stat-label { font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+  /* ── FOOTER ── */
+  .page-disclaimer { background: var(--bg3); border-top: 1px solid var(--border); padding: 28px 60px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 60px; }
+  .page-disclaimer strong { color: var(--muted2); }
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 26px 60px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted2); text-decoration: none; margin-left: 20px; }
+
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { font-size: 13px; color: var(--muted2); padding: 5px 0; display: flex; gap: 8px; }
+  ul.plain li::before { content: '·'; color: var(--accent); font-size: 18px; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<div class="top-banner">
+  🚚 Same-day shipping on orders before 12 PM PT &nbsp;·&nbsp; Free domestic shipping over $400 &nbsp;·&nbsp; COA available pre-purchase
+</div>
+
+<nav>
+  <div class="nav-logo">PeptideLab</div>
+  <div class="nav-links">
+    <a href="#">Peptides</a>
+    <a href="#">Research</a>
+    <a href="#">Lab Supplies</a>
+    <a href="#">COA Library</a>
+    <a href="#">About</a>
+  </div>
+  <a href="#" class="nav-cta">View Cart (0)</a>
+</nav>
+
+<div class="breadcrumb">
+  Home <span>›</span> Peptides <span>›</span> Tissue Repair & Regeneration <span>›</span> GHK-Cu Copper Peptide
+</div>
+
+<!-- HERO -->
+<div class="product-hero">
+  <div class="product-image-wrap">
+    <svg class="vial-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="capG" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#b87333"/>
+          <stop offset="100%" stop-color="#1a6b4a"/>
+        </linearGradient>
+        <linearGradient id="bodyG" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f0f5f2"/>
+          <stop offset="100%" stop-color="#e8f0eb"/>
+        </linearGradient>
+        <linearGradient id="liquidG" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#5fa8d0" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#1a8c6a" stop-opacity="0.35"/>
+        </linearGradient>
+      </defs>
+      <!-- Cap -->
+      <rect x="30" y="10" width="40" height="18" rx="5" fill="url(#capG)" opacity="0.92"/>
+      <rect x="35" y="26" width="30" height="8" rx="2" fill="#cdd4e3"/>
+      <!-- Body -->
+      <rect x="28" y="34" width="44" height="130" rx="8" fill="url(#bodyG)" stroke="#cdd4e3" stroke-width="1.5"/>
+      <!-- Liquid (blue-green copper color) -->
+      <rect x="30" y="105" width="40" height="57" fill="url(#liquidG)"/>
+      <!-- Liquid surface curve -->
+      <ellipse cx="50" cy="105" rx="20" ry="3" fill="#5fa8d0" opacity="0.3"/>
+      <!-- Label -->
+      <rect x="33" y="68" width="34" height="60" rx="4" fill="#fff" stroke="#cdd4e3" stroke-width="1"/>
+      <text x="50" y="82" text-anchor="middle" fill="#b87333" font-size="4.8" font-family="monospace" font-weight="bold">GHK-Cu</text>
+      <text x="50" y="90" text-anchor="middle" fill="#1a6b4a" font-size="4.2" font-family="monospace" font-weight="600">COPPER PEPTIDE</text>
+      <text x="50" y="97" text-anchor="middle" fill="#7a869a" font-size="3.8" font-family="monospace">50mg / vial</text>
+      <line x1="36" y1="101" x2="64" y2="101" stroke="#e2e7f0" stroke-width="0.8"/>
+      <text x="50" y="108" text-anchor="middle" fill="#7a869a" font-size="3.5" font-family="monospace">99%+ PURITY</text>
+      <text x="50" y="114" text-anchor="middle" fill="#7a869a" font-size="3.5" font-family="monospace">CAS: 49557-75-7</text>
+      <text x="50" y="120" text-anchor="middle" fill="#1a6b4a" font-size="3.5" font-family="monospace">LOT: GHK-2024-11</text>
+      <!-- Bottom -->
+      <ellipse cx="50" cy="164" rx="22" ry="5" fill="#cdd4e3" opacity="0.5"/>
+    </svg>
+    <div class="badge-row">
+      <span class="badge green">99%+ Purity</span>
+      <span class="badge copper">Copper Complex</span>
+      <span class="badge blue">USA Made</span>
+      <span class="badge purple">GMP Certified</span>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-category">Research Peptide · Tissue Repair & Regeneration</div>
+    <h1>GHK-Cu <em>Copper Peptide</em> (50mg)</h1>
+    <p class="product-short-desc">
+      A tripeptide-copper complex found naturally in human plasma, urine, and saliva. GHK-Cu binds tightly to copper ions and has been studied for its role in wound healing, collagen synthesis, anti-inflammatory signaling, neuroprotection, and gene expression regulation. Plasma levels decline with age, making it a subject of active interest in aging and regenerative biology research.
+    </p>
+
+    <div class="quick-specs">
+      <div class="qs-item">
+        <div class="qs-label">Molecular Weight</div>
+        <div class="qs-value">401.91 g/mol</div>
+      </div>
+      <div class="qs-item">
+        <div class="qs-label">CAS Number</div>
+        <div class="qs-value">89030-95-5</div>
+      </div>
+      <div class="qs-item">
+        <div class="qs-label">Peptide Sequence</div>
+        <div class="qs-value">Gly-His-Lys</div>
+      </div>
+      <div class="qs-item">
+        <div class="qs-label">Binding Constant</div>
+        <div class="qs-value">Ka ~10¹⁶</div>
+      </div>
+    </div>
+
+    <div class="price-row">
+      <div class="price">$94.00</div>
+      <div class="price-note">Per 50mg vial<br>Free shipping over $400</div>
+    </div>
+
+    <button class="btn-primary">Add to Cart — $94.00</button>
+    <button class="btn-secondary">📄 Request COA Before Purchase</button>
+
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-dot"></span> Third-party tested</div>
+      <div class="trust-item"><span class="trust-dot"></span> No fillers</div>
+      <div class="trust-item"><span class="trust-dot"></span> Same-day shipping</div>
+      <div class="trust-item"><span class="trust-dot"></span> GMP facility</div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="ts-item">
+    <div class="ts-icon">🧪</div>
+    <div>
+      <div class="ts-title">99%+ Purity, 3rd Party Verified</div>
+      <div class="ts-desc">Independently tested by three certified labs. COA available before purchase.</div>
+    </div>
+  </div>
+  <div class="ts-item">
+    <div class="ts-icon">🏭</div>
+    <div>
+      <div class="ts-title">GMP Manufacturing</div>
+      <div class="ts-desc">Made in USA-registered facilities with full chain of custody documentation.</div>
+    </div>
+  </div>
+  <div class="ts-item">
+    <div class="ts-icon">⚗️</div>
+    <div>
+      <div class="ts-title">Zero Fillers or Additives</div>
+      <div class="ts-desc">Pure active compound only. Copper stoichiometry verified 1:1 per batch.</div>
+    </div>
+  </div>
+  <div class="ts-item">
+    <div class="ts-icon">📦</div>
+    <div>
+      <div class="ts-title">Same-Day Fulfillment</div>
+      <div class="ts-desc">Orders before 12 PM PT ship same day. Free domestic shipping over $400.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+  <div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="showTab('specs',this)">Specifications</button>
+      <button class="tab-btn" onclick="showTab('research',this)">Research</button>
+      <button class="tab-btn" onclick="showTab('storage',this)">Storage & Handling</button>
+      <button class="tab-btn" onclick="showTab('qa',this)">QA & Testing</button>
+      <button class="tab-btn" onclick="showTab('refs',this)">References</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="section-title">What Is GHK-Cu?</div>
+      <p class="section-sub">A naturally occurring copper-binding tripeptide with a surprisingly wide range of biological activity.</p>
+
+      <p>GHK-Cu was first identified by Dr. Loren Pickart in the 1970s in human plasma. It's made up of three amino acids — Glycine, Histidine, and Lysine — which together form a specific binding pocket for copper ions (Cu²⁺). The resulting complex is highly stable (binding constant ~10¹⁶) and characteristic blue-green in color.</p>
+      <p>Despite being a small tripeptide, GHK-Cu has been found to influence the expression of hundreds of genes, regulate extracellular matrix protease activity, modulate inflammatory signaling, and support tissue repair processes. Natural plasma levels peak in early adulthood and decline progressively with age — a pattern that has driven substantial research into its role in tissue maintenance and age-related changes.</p>
+      <p>GHK-Cu delivers copper to cells in a controlled way, activating copper-dependent enzymes while avoiding the cellular toxicity associated with free copper ions. Beyond copper delivery, the peptide itself appears to engage multiple intracellular pathways, giving it an unusually broad range of effects relative to its size.</p>
+
+      <div class="color-box">
+        <div class="copper-swatch"></div>
+        <div class="color-note"><strong>Blue-green color = intact complex.</strong> When reconstituted, GHK-Cu solution should appear clear to light blue-green. Loss of color may indicate copper dissociation and should prompt evaluation of storage conditions or pH.</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-num">~10¹⁶</div>
+          <div class="stat-label">Copper binding stability constant</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">~200</div>
+          <div class="stat-label">ng/ml natural plasma level in youth</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">1000s</div>
+          <div class="stat-label">Genes influenced in expression studies</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-title">Key Research Areas</div>
+
+      <div class="research-grid">
+        <div class="rc">
+          <div class="rc-icon">🩹</div>
+          <div class="rc-title">Wound Healing & Tissue Repair</div>
+          <div class="rc-desc">Promotes collagen synthesis, fibroblast recruitment, and angiogenesis. Studied in burn, diabetic, and open-wound models across multiple species.</div>
+        </div>
+        <div class="rc">
+          <div class="rc-icon">🧬</div>
+          <div class="rc-title">Skin Aging & Structural Integrity</div>
+          <div class="rc-desc">Improves elasticity, reduces fine lines and hyperpigmentation, inhibits elastase activity, and modulates collagen formation and breakdown.</div>
+        </div>
+        <div class="rc">
+          <div class="rc-icon">🫁</div>
+          <div class="rc-title">Pulmonary & Respiratory Research</div>
+          <div class="rc-desc">Studied in pulmonary fibrosis, COPD, and acute lung injury models. Reduces inflammatory cytokines and supports Nrf2-mediated antioxidant defenses.</div>
+        </div>
+        <div class="rc">
+          <div class="rc-icon">🧠</div>
+          <div class="rc-title">Neuroprotection</div>
+          <div class="rc-desc">Prevents metal-induced protein aggregation, supports nerve fiber extension, and has shown cognitive benefits in Alzheimer's mouse models via intranasal delivery.</div>
+        </div>
+        <div class="rc">
+          <div class="rc-icon">🔬</div>
+          <div class="rc-title">Cancer Biology & Gene Modulation</div>
+          <div class="rc-desc">Reverses pathological gene expression in breast and prostate cancer cell lines. Shifts metastasis-prone colon cancer gene profiles toward healthier patterns.</div>
+        </div>
+        <div class="rc">
+          <div class="rc-icon">🦠</div>
+          <div class="rc-title">Antibacterial Activity</div>
+          <div class="rc-desc">GHK-Cu nanoparticles show antibacterial activity against E. coli and S. aureus, with improved stability in biological fluids versus free peptide.</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-title">How It Works</div>
+      <div class="mech-list">
+        <div class="mech-item">
+          <div class="mech-bullet">⚛️</div>
+          <div>
+            <div class="mech-title">Copper Delivery & Redox Catalysis</div>
+            <div class="mech-desc">Delivers Cu²⁺ directly to cells in a stable, non-toxic form. Activates copper-dependent enzymes and participates in redox reactions central to antioxidant defense.</div>
+          </div>
+        </div>
+        <div class="mech-item">
+          <div class="mech-bullet">🧬</div>
+          <div>
+            <div class="mech-title">Gene Expression Regulation</div>
+            <div class="mech-desc">Influences hundreds of genes in parallel — pushing pathological expression patterns back toward healthier baselines across multiple tissue types.</div>
+          </div>
+        </div>
+        <div class="mech-item">
+          <div class="mech-bullet">⚖️</div>
+          <div>
+            <div class="mech-title">MMP / TIMP Balance</div>
+            <div class="mech-desc">Modulates matrix metalloproteinases and their inhibitors to maintain a healthy balance between tissue breakdown and matrix rebuilding.</div>
+          </div>
+        </div>
+        <div class="mech-item">
+          <div class="mech-bullet">🔥</div>
+          <div>
+            <div class="mech-title">NF-κB & p38 MAPK Suppression</div>
+            <div class="mech-desc">Inhibits two major inflammatory signaling drivers, reducing cytokine output (TNF-α, IL-6) without broad immune suppression.</div>
+          </div>
+        </div>
+        <div class="mech-item">
+          <div class="mech-bullet">🛡️</div>
+          <div>
+            <div class="mech-title">Antioxidant Enzyme Upregulation</div>
+            <div class="mech-desc">Increases expression of SOD, catalase, and glutathione peroxidase — strengthening the cell's own defenses against oxidative damage.</div>
+          </div>
+        </div>
+        <div class="mech-item">
+          <div class="mech-bullet">📍</div>
+          <div>
+            <div class="mech-title">Cellular Recruitment</div>
+            <div class="mech-desc">Attracts fibroblasts, immune cells, and endothelial cells to damaged tissue — acting as a biological signal that coordinates the repair response.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPECS -->
+    <div id="tab-specs" class="tab-panel">
+      <div class="section-title">Full Peptide Specifications</div>
+
+      <table class="spec-table">
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tr><td>Peptide Sequence</td><td>Gly-His-Lys</td></tr>
+        <tr><td>Molecular Formula (peptide)</td><td>C₁₄H₂₂N₆O₄</td></tr>
+        <tr><td>Molecular Formula (complex)</td><td>C₁₄H₂₃CuN₆O₄</td></tr>
+        <tr><td>Molecular Weight (peptide)</td><td>340.38 g/mol</td></tr>
+        <tr><td>Molecular Weight (complex)</td><td>401.91 g/mol</td></tr>
+        <tr><td>CAS (GHK peptide)</td><td>49557-75-7</td></tr>
+        <tr><td>CAS (GHK-Cu complex)</td><td>89030-95-5</td></tr>
+        <tr><td>PubChem CID</td><td>73587</td></tr>
+        <tr><td>Appearance</td><td>Blue to blue-green lyophilized powder</td></tr>
+        <tr><td>Solubility</td><td>Water, PBS (pH 6.0–7.5)</td></tr>
+        <tr><td>Copper binding constant (Ka)</td><td>~10¹⁶</td></tr>
+        <tr><td>Copper coordination</td><td>Square planar via His imidazole & Gly amino terminus</td></tr>
+        <tr><td>Synonyms</td><td>Glycyl-L-Histidyl-L-Lysine, Prezatide, GHK copper complex</td></tr>
+      </table>
+
+      <h3>Structural Notes</h3>
+      <p>The N-terminal glycine amino group and histidine imidazole nitrogen serve as the primary Cu²⁺ coordination sites, with additional coordination completing the square planar geometry. This specific coordination geometry is what gives GHK-Cu its characteristic color and biological activity — free GHK without copper shows reduced potency in most studied applications.</p>
+      <p>The extremely high binding constant (~10¹⁶) means copper stays coordinated under physiological conditions, allowing targeted delivery to tissues while preventing free copper toxicity. This stability also contributes to the peptide's resistance to peptidase degradation when in the copper-bound form.</p>
+
+      <h3>Pharmacokinetic Summary</h3>
+      <table class="spec-table">
+        <thead><tr><th>Parameter</th><th>Detail</th></tr></thead>
+        <tr><td>Copper binding stability</td><td>Ka ~10¹⁶ — very high affinity</td></tr>
+        <tr><td>Plasma half-life (free peptide)</td><td>Short (minutes to hours)</td></tr>
+        <tr><td>Peptidase resistance</td><td>Improved when copper-coordinated</td></tr>
+        <tr><td>Tissue retention</td><td>Extended via cellular uptake</td></tr>
+        <tr><td>Biological effect duration</td><td>Persists beyond plasma clearance</td></tr>
+        <tr><td>Natural plasma level (young adults)</td><td>~200 ng/ml</td></tr>
+        <tr><td>Natural plasma level (older adults)</td><td>~80 ng/ml</td></tr>
+      </table>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="tab-research" class="tab-panel">
+      <div class="section-title">Published Research Overview</div>
+      <p class="section-sub">A selection of research areas and findings from peer-reviewed studies on GHK-Cu.</p>
+
+      <div class="study-card">
+        <span class="study-tag">Wound Healing</span>
+        <div class="study-title">Topical GHK-Cu vs. Zinc Oxide in Open-Wound Models (Cangul et al.)</div>
+        <div class="study-body">In rabbit open-wound models, topical GHK-Cu produced significantly smaller unhealed wound areas by day 7 (2.76 cm² vs. 3.22 cm² for zinc oxide). Wound contraction at day 7 was 30.96% in the GHK-Cu group vs. 19.38% for zinc oxide. Histological analysis showed significantly higher vascularization on day 14 (vessel count 5.35 vs. 1.92 for zinc oxide). Average full epithelialization time was 18.4 days for GHK-Cu vs. 21.5 for zinc oxide, and the untreated group had not fully healed by day 21.</div>
+      </div>
+
+      <div class="study-card">
+        <span class="study-tag">Acute Lung Injury</span>
+        <div class="study-title">GHK-Cu in LPS-Induced Acute Lung Injury (Park et al.)</div>
+        <div class="study-body">In macrophage cultures, GHK-Cu pretreatment at 1–10 µM reversed LPS-induced ROS increases and restored SOD activity. TNF-α and IL-6 secretion were both significantly reduced. In vivo in mice with LPS-induced ALI, GHK-Cu pretreatment (10 µg/g) reduced lung injury scores, restored GSH and SOD activity, lowered inflammatory cytokines in lung fluid, and reduced neutrophil infiltration. The mechanism involved suppression of NF-κB p65 phosphorylation and p38 MAPK activation — with no effect on ERK1/2.</div>
+      </div>
+
+      <div class="study-card">
+        <span class="study-tag">Neuroprotection</span>
+        <div class="study-title">Intranasal GHK in Alzheimer's Mouse Model (Tucker et al.)</div>
+        <div class="study-body">In 5xFAD Alzheimer's mice, intranasal GHK peptide treatment improved cognitive performance, reduced amyloid plaque burden, and lowered neuroinflammation markers. Researchers identified GHK-Cu's capacity to prevent copper- and zinc-induced protein aggregation as a mechanism potentially relevant to conditions where metal ion imbalance promotes toxic protein clustering.</div>
+      </div>
+
+      <div class="study-card">
+        <span class="study-tag">Gene Modulation</span>
+        <div class="study-title">GHK-Cu and Cancer Cell Gene Expression (Pickart & Margolina)</div>
+        <div class="study-body">In MCF7 breast cancer and PC3 prostate cancer cell lines, GHK-Cu reversed pathological gene expression patterns associated with cancer progression. Separately, it shifted gene expression in metastasis-prone colon cancer cells toward healthier profiles, and demonstrated the ability to reverse the COPD-associated gene signature in lung tissue toward one of active repair and remodeling.</div>
+      </div>
+
+      <hr class="divider">
+      <h3>Additional Research Areas</h3>
+      <ul class="plain">
+        <li>Bleomycin-induced pulmonary fibrosis: reduced TNF-α, IL-6, and collagen deposition; corrected MMP-9/TIMP-1 imbalance</li>
+        <li>COPD models: reduced oxidative stress and inflammatory markers; upregulated Nrf2 antioxidant expression</li>
+        <li>Burn wound healing: accelerated closure by up to one-third in mouse scald models</li>
+        <li>Diabetic wound care: 40% faster wound closure and 27% fewer infections vs. standard care alone</li>
+        <li>GHK-Cu nanoparticles: antibacterial activity against E. coli and S. aureus in wound contexts</li>
+        <li>Pain modulation: dose-dependent analgesic effects in rat models, linked to L-lysine and L-arginine elevation</li>
+        <li>Cardiac research: antioxidant protection in ischemic models</li>
+      </ul>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="tab-storage" class="tab-panel">
+      <div class="section-title">Storage & Reconstitution</div>
+
+      <div class="color-box" style="margin-bottom:24px;">
+        <div class="copper-swatch"></div>
+        <div class="color-note"><strong>Visual check:</strong> the blue-green color of the powder and reconstituted solution confirms the copper complex is intact. If solution appears colorless, verify pH and storage conditions.</div>
+      </div>
+
+      <h3>Lyophilized Powder — Storage</h3>
+      <ul class="storage-list">
+        <li>Store at -20°C to -80°C in the original sealed vial</li>
+        <li>Keep away from light and moisture at all times</li>
+        <li>Stable for 24+ months under proper conditions</li>
+        <li>Blue-green color of the powder confirms copper complex integrity</li>
+        <li>Do not temperature-cycle sealed vials unnecessarily</li>
+      </ul>
+
+      <h3>Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Use sterile water or PBS; maintain pH between 6.0 and 7.5</li>
+        <li>Add solvent slowly down the inside wall of the vial — not directly onto the powder</li>
+        <li>Swirl gently for 1–2 minutes until fully dissolved; do not shake</li>
+        <li>Solution should appear clear to light blue-green when ready</li>
+        <li>Avoid strongly acidic conditions (pH below 5) — these can dissociate the copper from the peptide</li>
+        <li>Also avoid high chelator concentrations in the buffer, which can compete for copper binding</li>
+      </ul>
+
+      <h3>Reconstituted Solution — Storage</h3>
+      <ul class="storage-list">
+        <li>Short-term: refrigerate at 4°C for up to 7–10 days</li>
+        <li>Long-term: freeze at -20°C in single-use aliquots</li>
+        <li>Prefer refrigeration over freezing for active use — repeated freeze-thaw affects stability</li>
+        <li>Maintain pH 6.0–7.5 in storage; use aliquots from a fresh tube for each experiment where possible</li>
+      </ul>
+
+      <h3>Safety & Waste Handling</h3>
+      <ul class="storage-list">
+        <li>Wear lab coat, gloves, and safety glasses when handling</li>
+        <li>Work in a well-ventilated area or under a fume hood</li>
+        <li>Dispose of waste according to local regulations for both biological materials and copper-containing compounds</li>
+        <li>Consult the Material Safety Data Sheet (MSDS) for full handling details</li>
+      </ul>
+    </div>
+
+    <!-- QA -->
+    <div id="tab-qa" class="tab-panel">
+      <div class="section-title">Quality Assurance & Testing</div>
+      <p class="section-sub">Every GHK-Cu batch is independently verified across multiple analytical methods, including copper-specific testing not standard for peptide-only products.</p>
+
+      <div class="qa-grid">
+        <div class="qa-item">
+          <div class="qa-label">HPLC Purity</div>
+          <div class="qa-value">≥99%</div>
+          <div class="qa-detail">RP-HPLC with UV + metal detection</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-label">Mass Confirmation</div>
+          <div class="qa-value">401.91 Da</div>
+          <div class="qa-detail">ESI-MS verified per batch</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-label">Copper Stoichiometry</div>
+          <div class="qa-value">1:1 Molar</div>
+          <div class="qa-detail">Atomic absorption or ICP-MS</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-label">Endotoxin</div>
+          <div class="qa-value">&lt; 5 EU/mg</div>
+          <div class="qa-detail">LAL method</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-label">Water Content</div>
+          <div class="qa-value">&lt; 8%</div>
+          <div class="qa-detail">Karl Fischer titration</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-label">Free Copper</div>
+          <div class="qa-value">Minimal</div>
+          <div class="qa-detail">Uncoordinated copper levels confirmed low</div>
+        </div>
+      </div>
+
+      <h3>Documentation Provided</h3>
+      <ul class="plain">
+        <li>Certificate of Analysis (COA) with every batch — chromatograms, mass spectra, copper data</li>
+        <li>Copper content and 1:1 stoichiometry verification included as standard</li>
+        <li>Third-party analytical reports available on request</li>
+        <li>Batch results traceable by lot number</li>
+        <li>COA available for review before placing an order</li>
+      </ul>
+
+      <h3>What Makes GHK-Cu Testing Different</h3>
+      <p>Standard peptide QA covers purity, sequence, and mass. GHK-Cu additionally requires verification of copper coordination — specifically confirming the 1:1 molar copper-to-peptide ratio and checking that free (uncoordinated) copper is minimal. Without copper, the biological activity profile changes substantially. Every batch includes these metal-specific tests as a standard part of the release process.</p>
+    </div>
+
+    <!-- REFS -->
+    <div id="tab-refs" class="tab-panel">
+      <div class="section-title">Scientific References</div>
+      <p class="section-sub">Peer-reviewed publications supporting the research applications described on this page.</p>
+
+      <div class="ref-item"><span class="ref-num">[1]</span>Pickart, L. (2008). The human tri-peptide GHK and tissue remodeling. <em>Journal of Biomaterials Science, Polymer Edition, 19, 969–988.</em><br><a href="https://doi.org/10.1163/156856208784909435">doi.org/10.1163/156856208784909435</a></div>
+      <div class="ref-item"><span class="ref-num">[2]</span>Pickart, L., Vasquez-Soltero, J., & Margolina, A. (2015). GHK Peptide as a Natural Modulator of Multiple Cellular Pathways in Skin Regeneration. <em>BioMed Research International, 2015.</em><br><a href="https://doi.org/10.1155/2015/648108">doi.org/10.1155/2015/648108</a></div>
+      <div class="ref-item"><span class="ref-num">[3]</span>Dymek, M. et al. (2023). Liposomes as Carriers of GHK-Cu Tripeptide for Cosmetic Application. <em>Pharmaceutics, 15.</em><br><a href="https://doi.org/10.3390/pharmaceutics15102485">doi.org/10.3390/pharmaceutics15102485</a></div>
+      <div class="ref-item"><span class="ref-num">[4]</span>Wang, X. et al. (2017). GHK‐Cu‐liposomes accelerate scald wound healing in mice by promoting cell proliferation and angiogenesis. <em>Wound Repair and Regeneration, 25.</em><br><a href="https://doi.org/10.1111/wrr.12520">doi.org/10.1111/wrr.12520</a></div>
+      <div class="ref-item"><span class="ref-num">[5]</span>Maquart, F. et al. (1993). In vivo stimulation of connective tissue accumulation by the tripeptide-copper complex GHK-Cu²⁺ in rat experimental wounds. <em>Journal of Clinical Investigation, 92(5), 2368–76.</em><br><a href="https://doi.org/10.1172/JCI116842">doi.org/10.1172/JCI116842</a></div>
+      <div class="ref-item"><span class="ref-num">[6]</span>Hou, G. & Zhou, X. (2018). Antioxidant and anti-inflammation effect of GHK-Cu in bleomycin-induced pulmonary fibrosis. <em>ILD/DPLD of known origin.</em><br><a href="https://doi.org/10.1183/13993003.CONGRESS-2018.PA2957">doi.org/10.1183/13993003.CONGRESS-2018.PA2957</a></div>
+      <div class="ref-item"><span class="ref-num">[7]</span>Zhang, Q. et al. (2022). Glycyl-L-histidyl-L-lysine-Cu²⁺ attenuates cigarette smoke-induced pulmonary emphysema. <em>Frontiers in Molecular Biosciences, 9.</em><br><a href="https://doi.org/10.3389/fmolb.2022.925700">doi.org/10.3389/fmolb.2022.925700</a></div>
+      <div class="ref-item"><span class="ref-num">[8]</span>Park, J. et al. (2016). The tri-peptide GHK-Cu complex ameliorates lipopolysaccharide-induced acute lung injury in mice. <em>Oncotarget, 7, 58405–58417.</em><br><a href="https://doi.org/10.18632/oncotarget.11168">doi.org/10.18632/oncotarget.11168</a></div>
+      <div class="ref-item"><span class="ref-num">[9]</span>Min, J. et al. (2024). Glycyl-l-histidyl-l-lysine prevents copper- and zinc-induced protein aggregation and CNS cell death in vitro. <em>Metallomics, 16.</em><br><a href="https://doi.org/10.1093/mtomics/mfae019">doi.org/10.1093/mtomics/mfae019</a></div>
+      <div class="ref-item"><span class="ref-num">[10]</span>Tucker, M. et al. (2023). Behavioral and neuropathological features of Alzheimer's disease are attenuated in 5xFAD mice treated with intranasal GHK peptide. <em>bioRxiv.</em><br><a href="https://doi.org/10.1101/2023.11.20.567908">doi.org/10.1101/2023.11.20.567908</a></div>
+      <div class="ref-item"><span class="ref-num">[11]</span>Pickart, L., Vasquez-Soltero, J., & Margolina, A. (2017). The Effect of the Human Peptide GHK on Gene Expression Relevant to Nervous System Function and Cognitive Decline. <em>Brain Sciences, 7.</em><br><a href="https://doi.org/10.3390/brainsci7020020">doi.org/10.3390/brainsci7020020</a></div>
+      <div class="ref-item"><span class="ref-num">[12]</span>Sun, L. et al. (2019). Self‐Assembled Fluorescent and Antibacterial GHK‐Cu Nanoparticles for Wound Healing Applications. <em>Particle & Particle Systems Characterization, 36.</em><br><a href="https://doi.org/10.1002/ppsc.201800420">doi.org/10.1002/ppsc.201800420</a></div>
+      <div class="ref-item"><span class="ref-num">[13]</span>Pickart, L. & Margolina, A. (2021). Modulation of Gene Expression in Human Breast Cancer MCF7 and Prostate Cancer PC3 Cells by the Human Copper-Binding Peptide GHK-Cu. <em>OBM Genetics, 05, 1–1.</em><br><a href="https://doi.org/10.21926/OBM.GENET.2102128">doi.org/10.21926/OBM.GENET.2102128</a></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">⚡ Quick Reference</div>
+      <div class="pk-row"><span class="pk-key">Peptide</span><span class="pk-val">Gly-His-Lys</span></div>
+      <div class="pk-row"><span class="pk-key">Copper ratio</span><span class="pk-val">1:1 (verified)</span></div>
+      <div class="pk-row"><span class="pk-key">Binding Ka</span><span class="pk-val">~10¹⁶</span></div>
+      <div class="pk-row"><span class="pk-key">MW (complex)</span><span class="pk-val">401.91 g/mol</span></div>
+      <div class="pk-row"><span class="pk-key">Optimal pH</span><span class="pk-val">6.0 – 7.5</span></div>
+      <div class="pk-row"><span class="pk-key">Complex color</span><span class="pk-val">Blue-green ✓</span></div>
+      <div class="pk-row"><span class="pk-key">Lyophilized stability</span><span class="pk-val">24+ months</span></div>
+    </div>
+
+    <div class="sidebar-card bac-card">
+      <div class="sidebar-title">💧 Don't Forget BAC Water</div>
+      <p style="font-size:13px; color:var(--muted2); margin-bottom:14px;">You'll need Bacteriostatic Water (30ml) to reconstitute this peptide. Maintains pH stability and extends usable life of the solution.</p>
+      <div style="font-size:12.5px; color:var(--muted); margin-bottom:14px;">Reconstitution Solution (30ml) — <strong style="color:var(--text);">$19.97</strong></div>
+      <button class="btn-secondary" style="font-size:13px; padding:10px 16px;">+ Add BAC Water</button>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">✅ Scientifically Reviewed</div>
+      <div class="reviewer-box">
+        <div class="reviewer-avatar">👨‍⚕️</div>
+        <div>
+          <div class="reviewer-name">Dr. Ky H. Le, MD</div>
+          <div class="reviewer-title">Board-Certified Family Medicine<br>20+ years clinical experience</div>
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-top:12px; margin-bottom:0;">All technical content and research citations have been validated for scientific accuracy by Dr. Le.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>⚠️ Research Use Only</strong>
+      For in vitro laboratory and preclinical use only. Not approved by the FDA for human use, therapeutic application, or dietary supplementation. Must be handled by licensed, qualified professionals in an appropriate research setting only.
+    </div>
+  </div>
+</div>
+
+<div class="page-disclaimer">
+  <strong>Disclaimer:</strong> All content on this page is provided for research and informational purposes only. It does not constitute medical advice, a clinical recommendation, or legal guidance of any kind. GHK-Cu is a research chemical intended exclusively for in vitro laboratory use and preclinical research by authorized individuals. It has not been reviewed or approved by the FDA for human therapeutic use. In vivo animal studies require IACUC approval and must adhere to Animal Welfare Act guidelines. Clinical research in humans requires IND approval and IRB oversight. Copper-containing waste must be disposed of in compliance with local regulations for both biological and heavy metal materials. Consult the Material Safety Data Sheet for full handling and disposal instructions.
+</div>
+
+<footer>
+  <div>© 2025 PeptideLab. All rights reserved.</div>
+  <div>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Shipping Policy</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 90, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

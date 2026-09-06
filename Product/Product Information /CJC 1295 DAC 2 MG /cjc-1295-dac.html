@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CJC-1295 with DAC | Extended Half-Life GHRH Analog | Research Peptide | 99%+ Purity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f4f6fa;
+    --bg2:     #ffffff;
+    --bg3:     #eaeff8;
+    --border:  #dce4f0;
+    --border2: #c0cfea;
+    --accent:  #1b5e8a;
+    --accent2: #2e7d32;
+    --accent3: #7b4f9e;
+    --text:    #0e1520;
+    --muted:   #6b7a9a;
+    --muted2:  #445068;
+    --red:     #b91c1c;
+    --gold:    #b07828;
+    --gold-bg: #fdf8ee;
+    --teal:    #0e7490;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; font-size: 15px; }
+
+  .top-banner { background: linear-gradient(90deg, var(--accent), #2176ae); text-align: center; padding: 9px 20px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: #fff; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; border-bottom: 1px solid var(--border); background: rgba(244,246,250,0.97); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); }
+  .nav-links { display: flex; gap: 30px; }
+  .nav-links a { color: var(--muted2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { background: var(--accent); color: #fff; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; }
+
+  .breadcrumb { padding: 14px 60px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .breadcrumb span { color: var(--muted2); margin: 0 6px; }
+
+  /* ── HERO ── */
+  .product-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 60px 60px 50px; max-width: 1280px; margin: 0 auto; }
+
+  .product-image-wrap {
+    background: linear-gradient(145deg, #fff 55%, var(--bg3));
+    border: 1px solid var(--border2); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    padding: 50px 40px; position: relative; overflow: hidden; min-height: 460px;
+  }
+  .product-image-wrap::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 60% 15%, rgba(27,94,138,0.06), transparent 65%); }
+  .vial-svg { width: 120px; margin-bottom: 28px; filter: drop-shadow(0 6px 18px rgba(27,94,138,0.16)); }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+  .badge.blue   { background: rgba(27,94,138,0.08);  border-color: rgba(27,94,138,0.25); color: var(--accent); }
+  .badge.green  { background: rgba(46,125,50,0.08);  border-color: rgba(46,125,50,0.25); color: var(--accent2); }
+  .badge.gold   { background: rgba(176,120,40,0.09); border-color: rgba(176,120,40,0.28);color: var(--gold); }
+  .badge.purple { background: rgba(123,79,158,0.08); border-color: rgba(123,79,158,0.25);color: var(--accent3); }
+
+  .product-info { display: flex; flex-direction: column; gap: 20px; }
+  .product-category { font-size: 11.5px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.12; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .product-short-desc { color: var(--muted2); font-size: 14px; line-height: 1.85; border-left: 3px solid var(--border2); padding-left: 16px; }
+
+  .price-row { display: flex; align-items: center; gap: 16px; }
+  .price { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); }
+  .price-note { font-size: 12px; color: var(--muted); }
+
+  .quick-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qs-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .qs-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .qs-value { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 500; }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #154b6e; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(27,94,138,0.2); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .trust-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted2); }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ── HALF LIFE COMPARISON ── */
+  .hl-strip { max-width: 1280px; margin: 0 auto; padding: 0 60px; }
+  .hl-inner {
+    background: linear-gradient(135deg, rgba(27,94,138,0.04), rgba(14,116,144,0.05));
+    border: 1px solid var(--border2); border-radius: 12px; padding: 22px 30px;
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;
+  }
+  .hl-box { text-align: center; }
+  .hl-name { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+  .hl-name.nodac { color: var(--teal); }
+  .hl-name.dac   { color: var(--accent); }
+  .hl-value { font-family: 'DM Serif Display', serif; font-size: 26px; margin-bottom: 4px; }
+  .hl-value.nodac { color: var(--teal); }
+  .hl-value.dac   { color: var(--accent); }
+  .hl-detail { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+  .vs-circle { width: 44px; height: 44px; border-radius: 50%; background: var(--bg2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--muted2); flex-shrink: 0; }
+
+  /* ── TRUST STRIP ── */
+  .trust-strip { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: 1280px; margin: 28px auto 0; }
+  .ts-item { padding: 24px 24px; display: flex; align-items: flex-start; gap: 14px; border-right: 1px solid var(--border); }
+  .ts-item:last-child { border-right: none; }
+  .ts-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .ts-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .ts-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONTENT ── */
+  .content-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 50px; max-width: 1280px; margin: 60px auto; padding: 0 60px; align-items: start; }
+
+  .tab-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 36px; flex-wrap: wrap; }
+  .tab-btn { background: none; border: none; padding: 13px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 10px; }
+  .section-sub { color: var(--muted2); font-size: 14px; margin-bottom: 28px; line-height: 1.8; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 26px 0 10px; }
+  h3:first-child { margin-top: 0; }
+  p { font-size: 13.5px; color: var(--muted2); line-height: 1.9; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── HOW DAC WORKS ── */
+  .dac-flow { display: flex; flex-direction: column; gap: 0; margin: 14px 0 28px; }
+  .df-step { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .df-step:last-child { border-bottom: none; }
+  .df-num { width: 30px; height: 30px; border-radius: 50%; background: rgba(27,94,138,0.09); border: 1px solid rgba(27,94,138,0.25); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  .df-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .df-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+  /* ── COMPARISON TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .spec-table thead tr { background: var(--accent); }
+  .spec-table th { padding: 11px 16px; font-size: 12px; font-weight: 600; color: #fff; text-align: left; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 11px 16px; font-size: 13px; }
+  .spec-table td:first-child { color: var(--muted2); width: 38%; font-weight: 500; }
+  .spec-table td:not(:first-child) { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); }
+  .spec-table tr:nth-child(even) td { background: rgba(27,94,138,0.025); }
+  .spec-table tr:hover td { background: rgba(27,94,138,0.05); }
+
+  /* ── RESEARCH DOMAINS ── */
+  .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  .dc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color .2s, transform .2s; }
+  .dc:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .dc-icon { font-size: 22px; margin-bottom: 10px; }
+  .dc-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .dc-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+  /* ── SEQ BOX ── */
+  .seq-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 18px 20px; margin: 14px 0 22px; }
+  .seq-label { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
+  .seq-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); line-height: 2; word-break: break-all; }
+  .seq-hl { color: var(--accent); font-weight: 700; }
+  .seq-hl2 { color: var(--gold); font-weight: 700; }
+  .seq-note { font-family: 'DM Sans', sans-serif; font-size: 11.5px; color: var(--muted); margin-top: 10px; line-height: 1.55; }
+
+  /* ── STORAGE ── */
+  .storage-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .storage-list li { display: flex; gap: 12px; font-size: 13.5px; color: var(--muted2); line-height: 1.7; align-items: flex-start; }
+  .storage-list li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* ── QA ── */
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .qa-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .qa-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; }
+  .qa-value { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .qa-detail { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  /* ── REFS ── */
+  .ref-item { border-left: 3px solid var(--border2); padding: 10px 16px; margin-bottom: 12px; font-size: 12.5px; color: var(--muted); line-height: 1.6; transition: border-color .2s; }
+  .ref-item:hover { border-color: var(--accent); }
+  .ref-num { color: var(--text); font-weight: 600; margin-right: 5px; }
+  .ref-item a { color: var(--accent); text-decoration: none; font-size: 11.5px; }
+  .ref-item a:hover { text-decoration: underline; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 80px; }
+  .sidebar-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .pk-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .pk-row:last-child { border-bottom: none; }
+  .pk-key { color: var(--muted); }
+  .pk-val { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  .pk-val.good { color: var(--accent2); }
+
+  .bac-card { background: rgba(27,94,138,0.04) !important; border-color: rgba(27,94,138,0.22) !important; }
+  .disclaimer-box { background: rgba(185,28,28,0.04); border: 1px solid rgba(185,28,28,0.18); border-radius: 10px; padding: 16px; font-size: 12px; color: var(--muted2); line-height: 1.65; }
+  .disclaimer-box strong { color: var(--red); display: block; margin-bottom: 6px; font-size: 12.5px; }
+  .reviewer-box { display: flex; gap: 14px; align-items: flex-start; }
+  .reviewer-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .reviewer-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .reviewer-title { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  .page-disclaimer { background: var(--bg3); border-top: 1px solid var(--border); padding: 28px 60px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 60px; }
+  .page-disclaimer strong { color: var(--muted2); }
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 26px 60px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted2); text-decoration: none; margin-left: 20px; }
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { font-size: 13px; color: var(--muted2); padding: 5px 0; display: flex; gap: 8px; }
+  ul.plain li::before { content: '·'; color: var(--accent); font-size: 18px; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<div class="top-banner">🚚 Same-day shipping before 12 PM PT &nbsp;·&nbsp; Free domestic shipping over $400 &nbsp;·&nbsp; COA available pre-purchase</div>
+
+<nav>
+  <div class="nav-logo">PeptideLab</div>
+  <div class="nav-links"><a href="#">Peptides</a><a href="#">Research</a><a href="#">Lab Supplies</a><a href="#">COA Library</a><a href="#">About</a></div>
+  <a href="#" class="nav-cta">View Cart (0)</a>
+</nav>
+
+<div class="breadcrumb">Home <span>›</span> Peptides <span>›</span> GH Axis & Somatotropic Research <span>›</span> CJC-1295 with DAC</div>
+
+<!-- HERO -->
+<div class="product-hero">
+  <div class="product-image-wrap">
+    <svg class="vial-svg" viewBox="0 0 100 210" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="capC" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1b5e8a"/><stop offset="100%" stop-color="#2176ae"/>
+        </linearGradient>
+        <linearGradient id="bodyC" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f0f4f9"/><stop offset="100%" stop-color="#e8f0f8"/>
+        </linearGradient>
+        <linearGradient id="liqC" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#1b5e8a" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#2176ae" stop-opacity="0.15"/>
+        </linearGradient>
+      </defs>
+      <rect x="30" y="10" width="40" height="18" rx="5" fill="url(#capC)" opacity="0.93"/>
+      <rect x="35" y="26" width="30" height="8" rx="2" fill="#c0cfea"/>
+      <rect x="28" y="34" width="44" height="140" rx="8" fill="url(#bodyC)" stroke="#c0cfea" stroke-width="1.5"/>
+      <rect x="30" y="112" width="40" height="60" fill="url(#liqC)"/>
+      <ellipse cx="50" cy="112" rx="20" ry="3" fill="#1b5e8a" opacity="0.15"/>
+      <rect x="33" y="65" width="34" height="68" rx="4" fill="#fff" stroke="#c0cfea" stroke-width="1"/>
+      <!-- DAC indicator line -->
+      <rect x="33" y="107" width="34" height="3" fill="#1b5e8a" opacity="0.15"/>
+      <text x="50" y="78" text-anchor="middle" fill="#1b5e8a" font-size="5.8" font-family="monospace" font-weight="bold">CJC-1295</text>
+      <text x="50" y="86" text-anchor="middle" fill="#b07828" font-size="4.8" font-family="monospace" font-weight="700">+ DAC</text>
+      <text x="50" y="95" text-anchor="middle" fill="#2e7d32" font-size="3.4" font-family="monospace">6-8 DAY HALF-LIFE</text>
+      <text x="50" y="102" text-anchor="middle" fill="#6b7a9a" font-size="3.4" font-family="monospace">GHRH ANALOG</text>
+      <line x1="36" y1="106" x2="64" y2="106" stroke="#dce4f0" stroke-width="0.8"/>
+      <text x="50" y="113" text-anchor="middle" fill="#6b7a9a" font-size="3.2" font-family="monospace">99%+ PURITY</text>
+      <text x="50" y="119" text-anchor="middle" fill="#6b7a9a" font-size="3.2" font-family="monospace">CAS: 863288-34-0</text>
+      <text x="50" y="125" text-anchor="middle" fill="#1b5e8a" font-size="3.2" font-family="monospace">LOT: CJC-2024-12</text>
+      <ellipse cx="50" cy="174" rx="22" ry="5" fill="#c0cfea" opacity="0.5"/>
+    </svg>
+    <div class="badge-row">
+      <span class="badge blue">99%+ Purity</span>
+      <span class="badge gold">DAC Albumin-Binding</span>
+      <span class="badge green">6–8 Day Half-Life</span>
+      <span class="badge purple">GMP Certified</span>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-category">Research Peptide · GH Axis & Somatotropic Research</div>
+    <h1>CJC-1295 <em>with DAC</em><br><span style="font-family:'DM Sans',sans-serif; font-size:17px; font-weight:400; color:var(--muted2);">Extended Half-Life GHRH Analog</span></h1>
+    <p class="product-short-desc">A 29-residue synthetic GHRH analogue with a Drug Affinity Complex (DAC) that enables reversible albumin binding in plasma, extending the half-life to 6–8 days. Designed for laboratory research into sustained GH axis stimulation, chronic IGF-1 elevation, long-term body composition changes, and anabolic pathway modulation in preclinical models.</p>
+
+    <div class="quick-specs">
+      <div class="qs-item"><div class="qs-label">Molecular Weight</div><div class="qs-value">≈3,883 Da</div></div>
+      <div class="qs-item"><div class="qs-label">Plasma Half-Life</div><div class="qs-value">≈6–8 days</div></div>
+      <div class="qs-item"><div class="qs-label">Receptor Target</div><div class="qs-value">GHRH-R (pituitary)</div></div>
+      <div class="qs-item"><div class="qs-label">DAC Binding</div><div class="qs-value">Albumin (reversible)</div></div>
+    </div>
+
+    <div class="price-row">
+      <div class="price">$98.00</div>
+      <div class="price-note">Per research vial<br>Free shipping over $400</div>
+    </div>
+    <button class="btn-primary">Add to Cart — $98.00</button>
+    <button class="btn-secondary">📄 Request COA Before Purchase</button>
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-dot"></span> Third-party tested</div>
+      <div class="trust-item"><span class="trust-dot"></span> No fillers</div>
+      <div class="trust-item"><span class="trust-dot"></span> Same-day shipping</div>
+      <div class="trust-item"><span class="trust-dot"></span> GMP facility</div>
+    </div>
+  </div>
+</div>
+
+<!-- HALF-LIFE COMPARISON STRIP -->
+<div class="hl-strip">
+  <div class="hl-inner">
+    <div class="hl-box">
+      <div class="hl-name nodac">CJC-1295 No DAC</div>
+      <div class="hl-value nodac">30–60 min</div>
+      <div class="hl-detail">Rapid clearance · multiple daily doses required · pulsatile GH pattern · efficient GHRP combination</div>
+    </div>
+    <div class="vs-circle">vs</div>
+    <div class="hl-box">
+      <div class="hl-name dac">CJC-1295 with DAC ★</div>
+      <div class="hl-value dac">6–8 days</div>
+      <div class="hl-detail">Albumin-bound depot · once or twice weekly dosing · sustained GH elevation · chronic IGF-1 studies</div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="ts-item"><div class="ts-icon">🧪</div><div><div class="ts-title">99%+ Purity, 3rd Party Verified</div><div class="ts-desc">DAC modification confirmed by mass shift analysis per batch.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">🏭</div><div><div class="ts-title">GMP Manufacturing</div><div class="ts-desc">USA-registered facility. Full chain of custody and lot traceability.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">⚗️</div><div><div class="ts-title">Zero Fillers or Additives</div><div class="ts-desc">Pure active compound. DAC conjugation verified, no excipients added.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">📦</div><div><div class="ts-title">Same-Day Fulfillment</div><div class="ts-desc">Orders before 12 PM PT ship same day. Free domestic shipping over $400.</div></div></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+  <div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="showTab('dac',this)">The DAC System</button>
+      <button class="tab-btn" onclick="showTab('mechanism',this)">Mechanism</button>
+      <button class="tab-btn" onclick="showTab('specs',this)">Specifications</button>
+      <button class="tab-btn" onclick="showTab('research',this)">Research</button>
+      <button class="tab-btn" onclick="showTab('storage',this)">Storage</button>
+      <button class="tab-btn" onclick="showTab('qa',this)">QA</button>
+      <button class="tab-btn" onclick="showTab('refs',this)">References</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="section-title">What Is CJC-1295 with DAC?</div>
+      <p class="section-sub">A long-acting GHRH analogue engineered for sustained pituitary stimulation and extended GH/IGF-1 research.</p>
+      <p>Natural GHRH is a 44-amino acid hypothalamic hormone that tells the pituitary to release growth hormone. It's released in pulses, cleared from the bloodstream within minutes, and is practically useless as a research tool in its unmodified form. CJC-1295 with DAC is a synthetic solution to this problem: a 29-residue GHRH analogue with stability modifications and an albumin-binding Drug Affinity Complex that keeps the molecule active in circulation for 6 to 8 days from a single dose.</p>
+      <p>The DAC component — maleimidopropionic acid attached via a lysine linker — reacts with free thiol groups on serum albumin to form a stable, reversible bond. The peptide-albumin complex then circulates slowly, continuously releasing free active peptide that engages GHRH receptors on pituitary somatotroph cells. The result is sustained GH secretion, progressive IGF-1 elevation, and a single-dose pharmacokinetic window spanning a week — conditions impossible to replicate with shorter-acting GHRH peptides.</p>
+      <p>In laboratory research, CJC-1295 with DAC is used to study: sustained GH axis activation and receptor regulation; chronic IGF-1 elevation and downstream anabolic signalling; body composition changes in animal models over weeks of treatment; and the metabolic consequences of maintained rather than pulsatile GH elevation. It can also be compared directly with CJC-1295 without DAC to isolate the effects of pulsatile versus continuous GH stimulation patterns.</p>
+
+      <hr class="divider">
+      <div class="section-title">Key Research Areas</div>
+      <div class="domain-grid">
+        <div class="dc"><div class="dc-icon">📡</div><div class="dc-title">Sustained GH Axis Investigation</div><div class="dc-desc">Studies receptor regulation, somatotroph signalling, somatostatin feedback, and GH biosynthesis under conditions of continuous GHRH-R stimulation.</div></div>
+        <div class="dc"><div class="dc-icon">⚖️</div><div class="dc-title">Body Composition Research</div><div class="dc-desc">Longitudinal fat mass reduction and lean mass accretion in animal models via sustained lipolysis and IGF-1-mediated protein anabolic signalling.</div></div>
+        <div class="dc"><div class="dc-icon">🔬</div><div class="dc-title">Anabolic Pathway Studies</div><div class="dc-desc">mTOR activation, myofibrillar protein synthesis, collagen production, and bone formation marker changes over weeks of sustained GH/IGF-1 elevation.</div></div>
+        <div class="dc"><div class="dc-icon">🩺</div><div class="dc-title">Metabolic Research</div><div class="dc-desc">Chronic effects on insulin sensitivity, glucose handling, lipid profiles, and energy expenditure — including the potentially diabetogenic effects of sustained GH excess.</div></div>
+        <div class="dc"><div class="dc-icon">🔄</div><div class="dc-title">Pulsatile vs. Sustained GH Comparisons</div><div class="dc-desc">Direct comparison with no-DAC version to isolate the biological effects of continuous versus pulsatile GH release patterns on metabolic and anabolic outcomes.</div></div>
+        <div class="dc"><div class="dc-icon">🌱</div><div class="dc-title">Ageing and Regeneration Models</div><div class="dc-desc">GH restoration studies in ageing animal models examining sarcopenia, bone density, and metabolic deterioration reversal with sustained GH/IGF-1 elevation.</div></div>
+      </div>
+    </div>
+
+    <!-- DAC SYSTEM -->
+    <div id="tab-dac" class="tab-panel">
+      <div class="section-title">Understanding the Drug Affinity Complex</div>
+      <p class="section-sub">How a chemical modification extends a peptide's working life from minutes to days.</p>
+
+      <h3>The Half-Life Problem with GHRH Peptides</h3>
+      <p>Standard GHRH and even optimised GHRH analogues are degraded rapidly by dipeptidyl peptidase IV (DPP-IV), which cleaves at the Ala-Asp bond near the N-terminus, and by other serum proteases. Modified GRF(1-29) — the same 29-residue backbone as CJC-1295 — has a half-life of 30–60 minutes, which is workable for studying acute GH pulses but impractical for research requiring days of sustained GH elevation. Multiple daily injections are required, introducing variability, stress effects, and practical limitations for longer experimental designs.</p>
+
+      <h3>How the DAC Solves This</h3>
+      <div class="dac-flow">
+        <div class="df-step"><div class="df-num">1</div><div><div class="df-title">Maleimide conjugation</div><div class="df-desc">The DAC's maleimide group reacts rapidly with free cysteine thiol groups on albumin in plasma within minutes of administration</div></div></div>
+        <div class="df-step"><div class="df-num">2</div><div><div class="df-title">Stable albumin complex forms</div><div class="df-desc">A thioether bond is formed between DAC and albumin — non-covalent enough to be reversible but stable under physiological conditions</div></div></div>
+        <div class="df-step"><div class="df-num">3</div><div><div class="df-title">Albumin acts as slow-release depot</div><div class="df-desc">Albumin circulates for ≈19 days, shielded from renal filtration by the FcRn recycling system — the peptide-albumin complex inherits this protection</div></div></div>
+        <div class="df-step"><div class="df-num">4</div><div><div class="df-title">Continuous free peptide release</div><div class="df-desc">As the complex slowly equilibrates, free active CJC-1295 is released into circulation — continuously activating GHRH receptors over 6–8 days</div></div></div>
+        <div class="df-step"><div class="df-num">5</div><div><div class="df-title">Sustained GH and IGF-1 elevation</div><div class="df-desc">Maintained GHRH-R stimulation drives continuous GH production; hepatic IGF-1 rises cumulatively over 2–4 days and remains elevated 1–2 weeks post-dose</div></div></div>
+      </div>
+
+      <h3>CJC-1295 with DAC vs. Without DAC — When to Use Which</h3>
+      <table class="spec-table">
+        <thead><tr><th>Feature</th><th>With DAC</th><th>Without DAC (Mod GRF 1-29)</th></tr></thead>
+        <tr><td>Plasma half-life</td><td>≈6–8 days</td><td>≈30–60 minutes</td></tr>
+        <tr><td>GH release pattern</td><td>Sustained amplitude increase</td><td>More pulsatile, closer to natural</td></tr>
+        <tr><td>Dosing frequency</td><td>Once or twice weekly</td><td>Multiple daily doses</td></tr>
+        <tr><td>Best use case</td><td>Chronic GH elevation studies</td><td>Pulsatile GH pattern research</td></tr>
+        <tr><td>GHRP combination</td><td>Less efficient (lower free peaks)</td><td>More efficient (lock-step peaks)</td></tr>
+        <tr><td>Experimental timeline</td><td>Days to weeks per dose</td><td>Hours per dose</td></tr>
+      </table>
+    </div>
+
+    <!-- MECHANISM -->
+    <div id="tab-mechanism" class="tab-panel">
+      <div class="section-title">Mechanism of Action</div>
+      <p class="section-sub">From GHRH receptor binding to sustained GH release and downstream IGF-1 signalling.</p>
+
+      <h3>GHRH Receptor Activation</h3>
+      <p>CJC-1295 binds the GHRH receptor (GHRH-R), a Gs-protein-coupled receptor on somatotroph cells of the anterior pituitary. Receptor activation drives adenylate cyclase to produce cyclic AMP (cAMP). Elevated cAMP activates protein kinase A (PKA), which drives two parallel outcomes simultaneously: stimulation of GH gene transcription via CREB phosphorylation (building the GH biosynthesis capacity of somatotrophs over time), and triggering of GH granule exocytosis for immediate release into the portal blood supply. With the DAC-maintained sustained free peptide levels, both of these processes receive continuous stimulation over the 6–8 day pharmacokinetic window.</p>
+
+      <h3>Sustained vs. Pulsatile GH Patterns</h3>
+      <p>Under natural physiology, GHRH is released in pulses from the hypothalamus while somatostatin provides the inhibitory counterpart — the interplay between them creates the pulsatile GH release pattern with characteristic sleep-associated peaks. CJC-1295 with DAC's continuous GHRH-R stimulation raises the amplitude of each existing GH pulse over time rather than adding new ones. Ionescu and Frohman (2006) demonstrated that pulsatile GH secretion is preserved even during continuous CJC-1295 stimulation — the pulses just occur at a higher amplitude baseline. This distinction matters for researchers studying the physiological consequences of different GH release patterns.</p>
+
+      <h3>IGF-1 Production and Downstream Effects</h3>
+      <p>Elevated GH from sustained GHRH-R stimulation drives hepatic insulin-like growth factor 1 (IGF-1) production. IGF-1 activates its receptor (IGF-1R) in muscle, bone, and adipose tissue, engaging the PI3K/Akt/mTOR pathway to promote protein synthesis and cell survival. GH also directly activates hormone-sensitive lipase (HSL) in adipocytes, promoting lipolysis. The sustained nature of the GH signal from CJC-1295 with DAC means IGF-1 rises cumulatively over 2–4 days and can remain elevated for 1–2 weeks in some animal models — creating a prolonged window for studying downstream anabolic, metabolic, and body composition effects that simply cannot be achieved with shorter-acting GH secretagogues.</p>
+    </div>
+
+    <!-- SPECS -->
+    <div id="tab-specs" class="tab-panel">
+      <div class="section-title">Full Peptide Specifications</div>
+      <table class="spec-table">
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tr><td>Peptide Name</td><td>CJC-1295 with DAC</td></tr>
+        <tr><td>Also Known As</td><td>CJC-1295 DAC, hGRF(1-29)-DAC</td></tr>
+        <tr><td>CAS Number (base)</td><td>863288-34-0</td></tr>
+        <tr><td>Molecular Formula (base)</td><td>C₁₆₅H₂₆₉N₄₇O₄₆</td></tr>
+        <tr><td>Molecular Weight (with DAC)</td><td>≈3,883 Da</td></tr>
+        <tr><td>Molecular Weight (base)</td><td>≈3,368 Da (no DAC)</td></tr>
+        <tr><td>Amino Acid Count</td><td>29 (modified GHRH 1–29) + DAC moiety</td></tr>
+        <tr><td>DAC Component</td><td>Maleimidopropionic acid via lysine linker</td></tr>
+        <tr><td>Albumin Binding</td><td>Non-covalent thioether bond to albumin Cys residues</td></tr>
+        <tr><td>Plasma Half-Life (with DAC)</td><td>≈6–8 days</td></tr>
+        <tr><td>Receptor Target</td><td>GHRH receptor (GHRH-R) — anterior pituitary somatotrophs</td></tr>
+        <tr><td>Signalling Pathway</td><td>Gs → adenylate cyclase → cAMP → PKA → CREB</td></tr>
+        <tr><td>Key Substitutions vs. native GHRH</td><td>D-Ala², Gln⁸, Ala¹⁵, Leu²⁷</td></tr>
+        <tr><td>GH Response Onset</td><td>Within hours of administration</td></tr>
+        <tr><td>IGF-1 Peak</td><td>2–4 days post-administration</td></tr>
+        <tr><td>IGF-1 Duration</td><td>1–2 weeks in some animal models</td></tr>
+        <tr><td>Appearance</td><td>White to off-white lyophilized powder</td></tr>
+        <tr><td>Solubility</td><td>Water, bacteriostatic water, PBS</td></tr>
+        <tr><td>Purity</td><td>≥99% by RP-HPLC</td></tr>
+        <tr><td>Shelf Life</td><td>24+ months at –20°C sealed</td></tr>
+      </table>
+
+      <h3>Peptide Sequence</h3>
+      <div class="seq-box">
+        <div class="seq-label">29 + DAC Sequence</div>
+        <div class="seq-text">Tyr-<span class="seq-hl">D-Ala</span>-Asp-Ala-Ile-Phe-Thr-<span class="seq-hl">Gln</span>-Ser-Tyr-Arg-Lys-Val-Leu-<span class="seq-hl">Ala</span>-Gln-Leu-Ser-Ala-Arg-Lys-Leu-Leu-Gln-Asp-Ile-Leu-<span class="seq-hl">Ser</span>-Arg-Lys-<span class="seq-hl2">DAC</span></div>
+        <div class="seq-note">Blue highlights: stabilising substitutions vs. native GHRH (D-Ala², Gln⁸, Ala¹⁵, Ser²⁷) · Gold: DAC moiety attached at terminal Lys³⁰ — this extension is absent in the no-DAC version</div>
+      </div>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="tab-research" class="tab-panel">
+      <div class="section-title">Research Applications</div>
+      <p class="section-sub">CJC-1295 with DAC's extended half-life opens research questions that shorter-acting GHRH analogues cannot address.</p>
+
+      <h3>1. Sustained GH Axis Research</h3>
+      <p>The core application is studying what happens to the GH axis under continuous GHRH-R stimulation. Key experimental questions include: how somatotroph GH gene expression adapts to persistent cAMP elevation; whether GHRH-R downregulation occurs and at what timescale; how somatostatin negative feedback adjusts to ongoing stimulation; and what the complete GH and IGF-1 response curve looks like from administration through return to baseline. Ionescu and Frohman (2006) confirmed that pulsatile GH release is maintained even under continuous CJC-1295 stimulation — just at elevated amplitude — which has implications for interpreting pulsatile versus sustained GH effects in other research contexts.</p>
+
+      <h3>2. Body Composition and Metabolic Research</h3>
+      <p>In preclinical animal models, sustained GH elevation drives measurable body composition shifts over weeks: reduced fat mass (via direct lipolytic effects) and increased lean mass (via IGF-1-mediated protein anabolic signalling). Laboratory protocols track these changes using DEXA, MRI, or direct tissue weighing, alongside serial biochemical measurements of GH, IGF-1, insulin, glucose, and lipid parameters. The chronic glucose metabolism effects are particularly important — sustained GH excess exerts insulin-antagonistic effects that are relevant to research on GH-related metabolic disorders and the safety profile of prolonged GH axis activation.</p>
+
+      <h3>3. Anabolic Pathway Studies</h3>
+      <p>The sustained IGF-1 elevation from CJC-1295 with DAC treatment allows investigation of cumulative anabolic signalling over days to weeks. Molecular endpoints include mTOR pathway phosphorylation (S6K1, 4E-BP1), myofibrillar protein synthesis rate measurements, muscle fibre cross-sectional area changes, collagen synthesis in connective tissue, and bone formation markers (osteocalcin, bone-specific alkaline phosphatase). These anabolic adaptations require extended GH/IGF-1 elevation to produce measurable changes in tissue architecture — a requirement that the DAC modification uniquely satisfies among GHRH analogues.</p>
+
+      <h3>4. Reproductive and Growth Model Research</h3>
+      <p>GHRH analogues have been investigated for roles in reproductive physiology, with research from the early 1990s showing that GH and IGF-1 levels rise during ovulation and that GH secretagogues can promote superovulation in animal models. CJC-1295's sustained GH stimulation provides a practical tool for studying GH/IGF-1 contributions to reproductive function over multi-day experimental windows. Work in GHRH knockout mice demonstrated that once-daily CJC-1295 administration normalises growth trajectories in animals with impaired endogenous GHRH physiology — confirming the receptor pathway's role in GH-dependent growth and opening models for studying GH replacement strategies.</p>
+
+      <h3>Preclinical Dosing and Timing Reference</h3>
+      <table class="spec-table">
+        <thead><tr><th>Parameter</th><th>Typical Research Range</th></tr></thead>
+        <tr><td>Rodent in vivo dosing</td><td>0.3–3 nmol/kg s.c. (model and objective dependent)</td></tr>
+        <tr><td>Dosing frequency</td><td>Once or twice weekly (due to 6–8 day half-life)</td></tr>
+        <tr><td>Steady-state achievement</td><td>2–3 weeks of regular dosing</td></tr>
+        <tr><td>Washout period</td><td>2–3 weeks minimum between treatment groups</td></tr>
+        <tr><td>GH response onset</td><td>Within hours of administration</td></tr>
+        <tr><td>IGF-1 peak</td><td>2–4 days post-dose</td></tr>
+        <tr><td>IGF-1 return to baseline</td><td>1–2 weeks (model dependent)</td></tr>
+      </table>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="tab-storage" class="tab-panel">
+      <div class="section-title">Storage & Reconstitution</div>
+      <h3>Lyophilized Powder</h3>
+      <ul class="storage-list">
+        <li>Store at –20°C to –80°C in the original sealed vial</li>
+        <li>Protect from light and moisture; desiccated storage environment recommended</li>
+        <li>Stable for 24+ months at –20°C when correctly stored</li>
+        <li>Do not temperature-cycle sealed vials unnecessarily</li>
+      </ul>
+      <h3>Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Use sterile water, bacteriostatic water (0.9% benzyl alcohol), or PBS</li>
+        <li>Add solvent slowly down the inner vial wall; swirl gently for 3–5 minutes</li>
+        <li>Do not shake or vortex; allow complete dissolution before use</li>
+        <li>Target final pH 6.0–7.0 for optimal stability of the DAC-modified peptide</li>
+        <li>Solution should appear clear and colourless when correctly reconstituted</li>
+      </ul>
+      <h3>After Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Store at 4°C for up to 7–10 days</li>
+        <li>Freeze at –20°C in single-use aliquots for longer storage</li>
+        <li>Maximum 2–3 freeze-thaw cycles; prepare aliquots before first freeze</li>
+        <li>Follow standard PPE protocols (lab coat, gloves, safety glasses) throughout</li>
+        <li>Dispose of waste in accordance with institutional biological/chemical waste guidelines</li>
+      </ul>
+    </div>
+
+    <!-- QA -->
+    <div id="tab-qa" class="tab-panel">
+      <div class="section-title">Quality Assurance & Testing</div>
+      <p class="section-sub">Every CJC-1295 with DAC batch is tested for both the base peptide sequence and the DAC modification — confirming the molecular weight matches the DAC-conjugated form, not just the unmodified backbone.</p>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-label">HPLC Purity</div><div class="qa-value">≥99%</div><div class="qa-detail">RP-HPLC, UV at 214nm per batch</div></div>
+        <div class="qa-item"><div class="qa-label">Mass (with DAC)</div><div class="qa-value">≈3,883 Da</div><div class="qa-detail">ESI-MS confirmed; includes DAC moiety</div></div>
+        <div class="qa-item"><div class="qa-label">DAC Modification</div><div class="qa-value">Confirmed</div><div class="qa-detail">Mass shift vs. base peptide verified</div></div>
+        <div class="qa-item"><div class="qa-label">Amino Acid Composition</div><div class="qa-value">Verified</div><div class="qa-detail">29-residue GHRH(1-29) sequence confirmed</div></div>
+        <div class="qa-item"><div class="qa-label">Endotoxin</div><div class="qa-value">&lt;5 EU/mg</div><div class="qa-detail">LAL method</div></div>
+        <div class="qa-item"><div class="qa-label">Water Content</div><div class="qa-value">&lt;8%</div><div class="qa-detail">Karl Fischer titration</div></div>
+        <div class="qa-item"><div class="qa-label">Residual Solvents</div><div class="qa-value">ICH Compliant</div><div class="qa-detail">TFA and acetonitrile within guidelines</div></div>
+        <div class="qa-item"><div class="qa-label">COA</div><div class="qa-value">Each Batch</div><div class="qa-detail">Available pre-purchase on request</div></div>
+      </div>
+    </div>
+
+    <!-- REFS -->
+    <div id="tab-refs" class="tab-panel">
+      <div class="section-title">Scientific References</div>
+      <p class="section-sub">Key peer-reviewed publications on CJC-1295 and GHRH analogue research.</p>
+      <div class="ref-item"><span class="ref-num">[1]</span>Ionescu, M. & Frohman, L.A. (2006). Pulsatile secretion of growth hormone (GH) persists during continuous stimulation by CJC-1295, a long-acting GH-releasing hormone analog. <em>Journal of Clinical Endocrinology & Metabolism, 91(12), 4792–4797.</em></div>
+      <div class="ref-item"><span class="ref-num">[2]</span>Alba, M. et al. (2006). Once-daily administration of CJC-1295, a long-acting GHRH analog, normalizes growth in the GHRH knockout mouse. <em>American Journal of Physiology – Endocrinology and Metabolism, 291(6), E1290–1294.</em></div>
+      <div class="ref-item"><span class="ref-num">[3]</span>Volpe, A. et al. (1991). Clinical use of growth hormone-releasing factor for induction of superovulation. <em>Human Reproduction, 6(9), 1228–1232.</em></div>
+      <div class="ref-item"><span class="ref-num">[4]</span>Jetté, L. et al. (2005). hGRF1-29-albumin bioconjugates activate the GRF receptor on the anterior pituitary in rats: identification of CJC-1295 as a long lasting GRF analog. <em>ResearchGate / Journal of Endocrinology.</em></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">⚡ Quick Reference</div>
+      <div class="pk-row"><span class="pk-key">Half-life</span><span class="pk-val good">≈6–8 days ★</span></div>
+      <div class="pk-row"><span class="pk-key">MW (with DAC)</span><span class="pk-val">≈3,883 Da</span></div>
+      <div class="pk-row"><span class="pk-key">MW (base)</span><span class="pk-val">≈3,368 Da</span></div>
+      <div class="pk-row"><span class="pk-key">Receptor</span><span class="pk-val">GHRH-R</span></div>
+      <div class="pk-row"><span class="pk-key">Albumin binding</span><span class="pk-val">Yes (reversible)</span></div>
+      <div class="pk-row"><span class="pk-key">GH onset</span><span class="pk-val">Within hours</span></div>
+      <div class="pk-row"><span class="pk-key">IGF-1 peak</span><span class="pk-val">2–4 days</span></div>
+      <div class="pk-row"><span class="pk-key">Dosing (research)</span><span class="pk-val">1–2× weekly</span></div>
+      <div class="pk-row"><span class="pk-key">Lyoph. stability</span><span class="pk-val">24+ mo @ –20°C</span></div>
+    </div>
+
+    <div class="sidebar-card bac-card">
+      <div class="sidebar-title" style="color:var(--accent);">💧 Don't Forget BAC Water</div>
+      <p style="font-size:13px; color:var(--muted2); margin-bottom:14px;">You'll need Bacteriostatic Water (30ml) to safely reconstitute this peptide and maintain solution stability.</p>
+      <button class="btn-secondary" style="font-size:13px; padding:10px 16px; border-color:rgba(27,94,138,0.25); color:var(--accent);">+ Add BAC Water (30ml) — $19.97</button>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">✅ Scientifically Reviewed</div>
+      <div class="reviewer-box">
+        <div class="reviewer-avatar">👨‍⚕️</div>
+        <div><div class="reviewer-name">Dr. Ky H. Le, MD</div><div class="reviewer-title">Board-Certified Family Medicine<br>20+ years clinical experience</div></div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-top:12px; margin-bottom:0;">All technical content and research citations validated for scientific accuracy.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>⚠️ Research Use Only</strong>
+      For in vitro laboratory and approved preclinical research only. Not FDA-approved for human use, therapy, or supplementation. Must be handled by licensed, qualified professionals in an appropriate institutional setting.
+    </div>
+  </div>
+</div>
+
+<div class="page-disclaimer">
+  <strong>Disclaimer:</strong> All content on this page is provided for scientific reference and educational purposes only. It does not constitute medical advice, a clinical recommendation, or legal guidance. CJC-1295 with DAC is a research chemical intended for in vitro laboratory use and approved preclinical animal studies only. It has not been approved by the FDA, EMA, or any other regulatory authority for therapeutic, diagnostic, or supplementation use in humans. Bodily introduction into humans or animals outside of a formally approved institutional research framework is strictly prohibited by law. In vivo animal studies require IACUC approval. This product must be handled only by licensed, qualified professionals with proper institutional oversight. Dispose of all waste in accordance with applicable biological and chemical waste regulations.
+</div>
+
+<footer>
+  <div>© 2025 PeptideLab. All rights reserved.</div>
+  <div><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Shipping Policy</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 90, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

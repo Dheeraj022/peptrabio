@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selank – Synthetic Tuftsin Analog (5mg) | Research Peptide | 99%+ Purity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f4f7f5;
+    --bg2:     #ffffff;
+    --bg3:     #eaf2ee;
+    --border:  #d8eadf;
+    --border2: #b8d8c4;
+    --accent:  #2d6a4f;
+    --accent2: #2563a8;
+    --accent3: #7b4f9e;
+    --text:    #0e1a14;
+    --muted:   #6b8a76;
+    --muted2:  #3d5a49;
+    --red:     #b91c1c;
+    --gold:    #b07828;
+    --teal:    #1b7a6e;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; font-size: 15px; }
+
+  .top-banner { background: linear-gradient(90deg, var(--accent), #40916c); text-align: center; padding: 9px 20px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: #fff; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 60px; border-bottom: 1px solid var(--border); background: rgba(244,247,245,0.97); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); }
+  .nav-links { display: flex; gap: 30px; }
+  .nav-links a { color: var(--muted2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { background: var(--accent); color: #fff; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; }
+
+  .breadcrumb { padding: 14px 60px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .breadcrumb span { color: var(--muted2); margin: 0 6px; }
+
+  /* ── HERO ── */
+  .product-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 60px 60px 50px; max-width: 1280px; margin: 0 auto; }
+
+  .product-image-wrap {
+    background: linear-gradient(145deg, #fff 55%, var(--bg3));
+    border: 1px solid var(--border2); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    padding: 50px 40px; position: relative; overflow: hidden; min-height: 460px;
+  }
+  .product-image-wrap::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 60% 15%, rgba(45,106,79,0.07), transparent 65%); }
+  .vial-svg { width: 120px; margin-bottom: 28px; filter: drop-shadow(0 6px 18px rgba(45,106,79,0.16)); }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+  .badge.green  { background: rgba(45,106,79,0.08);  border-color: rgba(45,106,79,0.25);  color: var(--accent); }
+  .badge.blue   { background: rgba(37,99,168,0.08);  border-color: rgba(37,99,168,0.25);  color: var(--accent2); }
+  .badge.purple { background: rgba(123,79,158,0.08); border-color: rgba(123,79,158,0.25); color: var(--accent3); }
+  .badge.gold   { background: rgba(176,120,40,0.09); border-color: rgba(176,120,40,0.28); color: var(--gold); }
+
+  .product-info { display: flex; flex-direction: column; gap: 20px; }
+  .product-category { font-size: 11.5px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.15; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .product-short-desc { color: var(--muted2); font-size: 14px; line-height: 1.85; border-left: 3px solid var(--border2); padding-left: 16px; }
+
+  .price-row { display: flex; align-items: center; gap: 16px; }
+  .price { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); }
+  .price-note { font-size: 12px; color: var(--muted); }
+
+  .quick-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qs-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .qs-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .qs-value { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 500; }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; font-size: 14.5px; font-weight: 700; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: #255940; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(45,106,79,0.2); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border2); padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .trust-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted2); }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ── LINEAGE BANNER ── */
+  .lineage-strip { max-width: 1280px; margin: 0 auto; padding: 0 60px; }
+  .lin-inner {
+    background: linear-gradient(135deg, rgba(45,106,79,0.04), rgba(27,122,110,0.05));
+    border: 1px solid var(--border2); border-radius: 12px; padding: 18px 28px;
+    display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+  }
+  .lin-step { display: flex; align-items: center; gap: 8px; }
+  .lin-pill { background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 6px 14px; font-size: 12.5px; font-weight: 600; color: var(--muted2); }
+  .lin-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .lin-arrow { font-size: 16px; color: var(--muted); margin: 0 8px; }
+  .lin-note { font-size: 11.5px; color: var(--muted); margin-left: auto; padding-left: 20px; }
+
+  /* ── TRUST STRIP ── */
+  .trust-strip { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: 1280px; margin: 28px auto 0; }
+  .ts-item { padding: 24px 24px; display: flex; align-items: flex-start; gap: 14px; border-right: 1px solid var(--border); }
+  .ts-item:last-child { border-right: none; }
+  .ts-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .ts-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .ts-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CONTENT ── */
+  .content-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 50px; max-width: 1280px; margin: 60px auto; padding: 0 60px; align-items: start; }
+
+  .tab-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 36px; flex-wrap: wrap; }
+  .tab-btn { background: none; border: none; padding: 13px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 10px; }
+  .section-sub { color: var(--muted2); font-size: 14px; margin-bottom: 28px; line-height: 1.8; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 26px 0 10px; }
+  h3:first-child { margin-top: 0; }
+  p { font-size: 13.5px; color: var(--muted2); line-height: 1.9; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── MECHANISM CARDS ── */
+  .mech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  .mc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: border-color .2s, transform .2s; }
+  .mc:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .mc-icon { font-size: 22px; margin-bottom: 8px; }
+  .mc-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .mc-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+  /* ── SEQUENCE BLOCK ── */
+  .seq-container { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 18px 22px; margin: 14px 0 24px; }
+  .seq-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 12px; }
+  .seq-row { display: flex; gap: 0; margin-bottom: 6px; flex-wrap: wrap; }
+  .aa-box { text-align: center; min-width: 52px; }
+  .aa-num { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+  .aa-name { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600; padding: 6px 8px; border-radius: 6px; margin: 0 2px; display: inline-block; }
+  .aa-name.tuftsin { background: rgba(45,106,79,0.1); color: var(--accent); }
+  .aa-name.tail    { background: rgba(176,120,40,0.1); color: var(--gold); }
+  .aa-name.pro     { background: rgba(37,99,168,0.08); color: var(--accent2); }
+  .seq-legend { display: flex; gap: 18px; margin-top: 12px; flex-wrap: wrap; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── COMPARISON TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .spec-table thead tr { background: var(--accent); }
+  .spec-table th { padding: 11px 16px; font-size: 12px; font-weight: 600; color: #fff; text-align: left; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 11px 16px; font-size: 13px; }
+  .spec-table td:first-child { color: var(--muted2); width: 38%; font-weight: 500; }
+  .spec-table td:last-child { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); }
+  .spec-table tr:nth-child(even) td { background: rgba(45,106,79,0.02); }
+  .spec-table tr:hover td { background: rgba(45,106,79,0.05); }
+
+  /* ── STUDY CARDS ── */
+  .study-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 20px 22px; margin-bottom: 16px; }
+  .study-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent); margin-bottom: 6px; }
+  .study-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .study-body { font-size: 13px; color: var(--muted2); line-height: 1.75; }
+
+  /* ── STORAGE ── */
+  .storage-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .storage-list li { display: flex; gap: 12px; font-size: 13.5px; color: var(--muted2); line-height: 1.7; align-items: flex-start; }
+  .storage-list li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* ── QA ── */
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .qa-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .qa-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; }
+  .qa-value { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .qa-detail { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  /* ── REFS ── */
+  .ref-item { border-left: 3px solid var(--border2); padding: 10px 16px; margin-bottom: 12px; font-size: 12.5px; color: var(--muted); line-height: 1.6; transition: border-color .2s; }
+  .ref-item:hover { border-color: var(--accent); }
+  .ref-num { color: var(--text); font-weight: 600; margin-right: 5px; }
+  .ref-item a { color: var(--accent2); text-decoration: none; font-size: 11.5px; }
+  .ref-item a:hover { text-decoration: underline; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 80px; }
+  .sidebar-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .sidebar-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .pk-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .pk-row:last-child { border-bottom: none; }
+  .pk-key { color: var(--muted); }
+  .pk-val { color: var(--text); font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+
+  .bac-card { background: rgba(45,106,79,0.04) !important; border-color: rgba(45,106,79,0.2) !important; }
+  .disclaimer-box { background: rgba(185,28,28,0.04); border: 1px solid rgba(185,28,28,0.18); border-radius: 10px; padding: 16px; font-size: 12px; color: var(--muted2); line-height: 1.65; }
+  .disclaimer-box strong { color: var(--red); display: block; margin-bottom: 6px; font-size: 12.5px; }
+  .reviewer-box { display: flex; gap: 14px; align-items: flex-start; }
+  .reviewer-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .reviewer-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .reviewer-title { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  .page-disclaimer { background: var(--bg3); border-top: 1px solid var(--border); padding: 28px 60px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 60px; }
+  .page-disclaimer strong { color: var(--muted2); }
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 26px 60px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--muted2); text-decoration: none; margin-left: 20px; }
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { font-size: 13px; color: var(--muted2); padding: 5px 0; display: flex; gap: 8px; }
+  ul.plain li::before { content: '·'; color: var(--accent); font-size: 18px; line-height: 1.2; }
+</style>
+</head>
+<body>
+
+<div class="top-banner">🚚 Same-day shipping before 12 PM PT &nbsp;·&nbsp; Free domestic shipping over $400 &nbsp;·&nbsp; COA available pre-purchase</div>
+
+<nav>
+  <div class="nav-logo">PeptideLab</div>
+  <div class="nav-links"><a href="#">Peptides</a><a href="#">Research</a><a href="#">Lab Supplies</a><a href="#">COA Library</a><a href="#">About</a></div>
+  <a href="#" class="nav-cta">View Cart (0)</a>
+</nav>
+
+<div class="breadcrumb">Home <span>›</span> Peptides <span>›</span> Anxiolytic & Immunomodulatory Research <span>›</span> Selank</div>
+
+<!-- HERO -->
+<div class="product-hero">
+  <div class="product-image-wrap">
+    <svg class="vial-svg" viewBox="0 0 100 210" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="capSe" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2d6a4f"/><stop offset="100%" stop-color="#40916c"/>
+        </linearGradient>
+        <linearGradient id="bodySe" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f0f7f3"/><stop offset="100%" stop-color="#e8f5ee"/>
+        </linearGradient>
+        <linearGradient id="liqSe" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#2d6a4f" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#40916c" stop-opacity="0.13"/>
+        </linearGradient>
+      </defs>
+      <rect x="30" y="10" width="40" height="18" rx="5" fill="url(#capSe)" opacity="0.93"/>
+      <rect x="35" y="26" width="30" height="8" rx="2" fill="#b8d8c4"/>
+      <rect x="28" y="34" width="44" height="140" rx="8" fill="url(#bodySe)" stroke="#b8d8c4" stroke-width="1.5"/>
+      <rect x="30" y="115" width="40" height="57" fill="url(#liqSe)"/>
+      <ellipse cx="50" cy="115" rx="20" ry="3" fill="#2d6a4f" opacity="0.12"/>
+      <rect x="33" y="68" width="34" height="64" rx="4" fill="#fff" stroke="#b8d8c4" stroke-width="1"/>
+      <text x="50" y="82" text-anchor="middle" fill="#2d6a4f" font-size="7.5" font-family="monospace" font-weight="bold">SELANK</text>
+      <text x="50" y="91" text-anchor="middle" fill="#40916c" font-size="3.6" font-family="monospace" font-weight="600">TUFTSIN ANALOG</text>
+      <text x="50" y="98" text-anchor="middle" fill="#40916c" font-size="3.4" font-family="monospace">TKPRPGP</text>
+      <text x="50" y="105" text-anchor="middle" fill="#6b8a76" font-size="3.4" font-family="monospace">5mg / vial</text>
+      <line x1="36" y1="109" x2="64" y2="109" stroke="#d8eadf" stroke-width="0.8"/>
+      <text x="50" y="116" text-anchor="middle" fill="#6b8a76" font-size="3.2" font-family="monospace">99%+ PURITY</text>
+      <text x="50" y="122" text-anchor="middle" fill="#6b8a76" font-size="3.2" font-family="monospace">CAS: 129954-34-3</text>
+      <text x="50" y="128" text-anchor="middle" fill="#2d6a4f" font-size="3.2" font-family="monospace">LOT: SLK-2024-11</text>
+      <ellipse cx="50" cy="174" rx="22" ry="5" fill="#b8d8c4" opacity="0.5"/>
+    </svg>
+    <div class="badge-row">
+      <span class="badge green">99%+ Purity</span>
+      <span class="badge blue">Tuftsin Derived</span>
+      <span class="badge purple">GABAergic</span>
+      <span class="badge gold">USA Made</span>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-category">Research Peptide · Anxiolytic & Immunomodulatory Research</div>
+    <h1>Selank <em>(5mg)</em><br><span style="font-family:'DM Sans',sans-serif; font-size:17px; font-weight:400; color:var(--muted2);">Synthetic Tuftsin Analog — Thr-Lys-Pro-Arg-Pro-Gly-Pro</span></h1>
+    <p class="product-short-desc">A synthetic heptapeptide derived from tuftsin — an endogenous immunomodulatory tetrapeptide found in IgG — with a stabilising C-terminal Pro-Gly-Pro tail. In preclinical models, Selank shows anxiolytic-like effects without sedation, cognitive enhancement, BDNF upregulation in hippocampal tissue, and immunomodulatory activity through cytokine and chemokine gene modulation.</p>
+
+    <div class="quick-specs">
+      <div class="qs-item"><div class="qs-label">Molecular Weight</div><div class="qs-value">751.87 Da</div></div>
+      <div class="qs-item"><div class="qs-label">CAS Number</div><div class="qs-value">129954-34-3</div></div>
+      <div class="qs-item"><div class="qs-label">Sequence</div><div class="qs-value">TKPRPGP</div></div>
+      <div class="qs-item"><div class="qs-label">Net Charge (pH 7.4)</div><div class="qs-value">+2</div></div>
+    </div>
+
+    <div class="price-row">
+      <div class="price">$68.00</div>
+      <div class="price-note">Per 5mg vial<br>Free shipping over $400</div>
+    </div>
+    <button class="btn-primary">Add to Cart — $68.00</button>
+    <button class="btn-secondary">📄 Request COA Before Purchase</button>
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-dot"></span> Third-party tested</div>
+      <div class="trust-item"><span class="trust-dot"></span> No fillers</div>
+      <div class="trust-item"><span class="trust-dot"></span> Same-day shipping</div>
+      <div class="trust-item"><span class="trust-dot"></span> GMP facility</div>
+    </div>
+  </div>
+</div>
+
+<!-- LINEAGE BANNER -->
+<div class="lineage-strip">
+  <div class="lin-inner">
+    <div class="lin-step"><span class="lin-pill">IgG Fc Fragment</span></div>
+    <span class="lin-arrow">→</span>
+    <div class="lin-step"><span class="lin-pill">Tuftsin (TKPR)</span></div>
+    <span class="lin-arrow">→</span>
+    <div class="lin-step"><span class="lin-pill active">Selank (TKPRPGP) ★</span></div>
+    <span class="lin-note">+ Pro-Gly-Pro C-terminal tail for metabolic stability · 3 proline residues resist peptidase degradation</span>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="ts-item"><div class="ts-icon">🧪</div><div><div class="ts-title">99%+ Purity, 3rd Party Verified</div><div class="ts-desc">Three independent certified labs. COA available before purchase.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">🏭</div><div><div class="ts-title">GMP Manufacturing</div><div class="ts-desc">USA-registered facility. Full chain of custody documentation.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">⚗️</div><div><div class="ts-title">Zero Fillers or Additives</div><div class="ts-desc">Pure active compound only. No carriers or excipients added.</div></div></div>
+  <div class="ts-item"><div class="ts-icon">📦</div><div><div class="ts-title">Same-Day Fulfillment</div><div class="ts-desc">Orders before 12 PM PT ship same day. Free shipping over $400.</div></div></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+  <div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="showTab('mechanism',this)">Mechanism</button>
+      <button class="tab-btn" onclick="showTab('specs',this)">Specifications</button>
+      <button class="tab-btn" onclick="showTab('research',this)">Research</button>
+      <button class="tab-btn" onclick="showTab('storage',this)">Storage</button>
+      <button class="tab-btn" onclick="showTab('qa',this)">QA</button>
+      <button class="tab-btn" onclick="showTab('refs',this)">References</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="section-title">What Is Selank?</div>
+      <p class="section-sub">An immunomodulatory-derived neuropeptide with a distinctive no-sedation anxiolytic profile in preclinical research.</p>
+      <p>Tuftsin is a short tetrapeptide — Thr-Lys-Pro-Arg — that the immune system produces by cleaving the Fc fragment of IgG antibodies. It was first characterised for its role in activating phagocytic immune cells, particularly macrophages and neutrophils. Selank extends this sequence with a C-terminal Pro-Gly-Pro tail, adding the structural protection needed to survive in plasma long enough to produce measurable biological effects. The result is a molecule that carries tuftsin's immunomodulatory capability into a broader pharmacological space that includes neurological research.</p>
+      <p>Three of Selank's seven amino acids are proline, which gives the peptide an unusually rigid backbone for its size and slows its degradation by common peptidases. The plasma half-life of approximately 20–30 minutes is short by drug standards but represents a meaningful extension over tuftsin, which is cleared within minutes.</p>
+      <p>In preclinical anxiety models, Selank produces anxiolytic-like outcomes without motor impairment, sedation, or the tolerance patterns seen with benzodiazepines. This makes it pharmacologically interesting as a probe for studying non-GABA-A agonist anxiolytic mechanisms. Beyond anxiety research, it is used in studies of stress physiology, cognitive enhancement, BDNF-mediated neuroplasticity, immune-brain axis communication, and cytokine gene modulation.</p>
+
+      <hr class="divider">
+      <div class="section-title">Four Parallel Mechanisms</div>
+      <div class="mech-grid">
+        <div class="mc"><div class="mc-icon">🧘</div><div class="mc-title">GABAergic Modulation (Non-Agonist)</div><div class="mc-desc">Produces anxiolytic-like outcomes through indirect GABAergic pathway modulation — without binding GABA-A receptors directly. No sedation, motor impairment, or tolerance in preclinical models.</div></div>
+        <div class="mc"><div class="mc-icon">🔗</div><div class="mc-title">Enkephalinase Inhibition</div><div class="mc-desc">Slows enkephalin degradation, raising tonic endogenous opioid signalling at mu and delta receptors. Central mechanism for stress resilience and anxiolytic effects.</div></div>
+        <div class="mc"><div class="mc-icon">🌱</div><div class="mc-title">BDNF Upregulation</div><div class="mc-desc">Increases BDNF protein in hippocampus and prefrontal cortex. Linked to protection of learning and memory in ethanol-impairment and chronic stress models.</div></div>
+        <div class="mc"><div class="mc-icon">🛡️</div><div class="mc-title">Immunomodulatory Activity</div><div class="mc-desc">Tuftsin-derived core modulates IL-6/IL-10 cytokine balance and alters chemokine and cytokine receptor gene expression in stress models.</div></div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-title">Sequence Anatomy</div>
+      <div class="seq-container">
+        <div class="seq-label">7-Amino Acid Sequence — Thr-Lys-Pro-Arg-Pro-Gly-Pro</div>
+        <div class="seq-row">
+          <div class="aa-box"><div class="aa-num">1</div><span class="aa-name tuftsin">Thr</span></div>
+          <div class="aa-box"><div class="aa-num">2</div><span class="aa-name tuftsin">Lys</span></div>
+          <div class="aa-box"><div class="aa-num">3</div><span class="aa-name pro">Pro</span></div>
+          <div class="aa-box"><div class="aa-num">4</div><span class="aa-name tuftsin">Arg</span></div>
+          <div class="aa-box"><div class="aa-num">5</div><span class="aa-name tail">Pro</span></div>
+          <div class="aa-box"><div class="aa-num">6</div><span class="aa-name tail">Gly</span></div>
+          <div class="aa-box"><div class="aa-num">7</div><span class="aa-name tail">Pro</span></div>
+        </div>
+        <div class="seq-legend">
+          <div class="leg-item"><div class="leg-dot" style="background:rgba(45,106,79,0.5);"></div>Tuftsin core (immunomodulatory)</div>
+          <div class="leg-item"><div class="leg-dot" style="background:rgba(176,120,40,0.5);"></div>Pro-Gly-Pro stability tail</div>
+          <div class="leg-item"><div class="leg-dot" style="background:rgba(37,99,168,0.5);"></div>Proline — rigid, protease-resistant</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MECHANISM -->
+    <div id="tab-mechanism" class="tab-panel">
+      <div class="section-title">Mechanism of Action</div>
+      <p class="section-sub">Selank engages multiple neurotransmitter systems simultaneously — a multi-pathway profile that distinguishes it from single-target anxiolytics.</p>
+
+      <h3>GABAergic Modulation Without Direct Agonism</h3>
+      <p>Benzodiazepines produce anxiolysis by binding allosteric sites on GABA-A receptors, amplifying chloride channel conductance — which also causes sedation, motor impairment, memory disruption, and tolerance. Selank produces functionally similar anxiolytic-like outcomes in preclinical models without these associated effects. It appears to modulate GABAergic tone indirectly — through effects on GABAergic interneuron activity, GABAergic receptor expression changes, and the opioid-GABAergic interaction — rather than direct receptor binding. This mechanistic separation is precisely what makes it useful for studying alternative anxiolytic pathways.</p>
+
+      <h3>Enkephalinase Inhibition and Augmented Opioid Tone</h3>
+      <p>Selank inhibits enkephalinase (neutral endopeptidase), slowing the synaptic degradation of endogenous enkephalins. Enkephalins are short endogenous opioid peptides that act on mu and delta receptors in limbic and midbrain circuits regulating stress, mood, and pain. By slowing their breakdown, Selank raises their local concentration and prolongs their receptor engagement — augmenting tonic opioid signalling without introducing exogenous opioids. This enkephalinase inhibition is considered one of the primary drivers of Selank's anxiolytic and stress-protective effects.</p>
+
+      <h3>Serotonin System Restoration</h3>
+      <p>In chronic stress models, Selank restores depleted serotonin and serotonin metabolite levels in midbrain structures. The mechanism is likely indirect, operating through enkephalin-serotonin circuit interactions in limbic regions. This restoration of serotonergic tone correlates with normalised anxiety behaviour and is a key neurochemical endpoint in Selank stress research.</p>
+
+      <h3>BDNF Upregulation — The Cognitive Correlate</h3>
+      <p>Selank increases BDNF protein in the hippocampus and prefrontal cortex. BDNF activates TrkB receptors and drives synaptic strengthening, long-term potentiation, and neuronal survival signalling. In Kolik et al.'s (2019) ethanol-impairment study, Selank treatment maintained hippocampal and prefrontal BDNF levels in ethanol-exposed rats, and this correlated directly with protection of spatial memory performance. This neurotrophic mechanism provides the molecular underpinning for Selank's observed cognitive effects in challenge models.</p>
+
+      <h3>Cytokine Gene Modulation — The Immune Connection</h3>
+      <p>Kolomin et al. (2023) demonstrated that Selank and its fragments produce widespread changes in chemokine, cytokine, and cytokine receptor gene expression — suggesting the peptide operates at the transcriptional level in immune regulation, not just as a cytokine blocker. In stress models, this translates to normalisation of the IL-6/IL-10 ratio, restoration of phagocytic neutrophil activity, and protection of immune organ integrity. The tuftsin core's classical macrophage-stimulating activity is likely preserved and integrated into this broader immunomodulatory profile.</p>
+    </div>
+
+    <!-- SPECS -->
+    <div id="tab-specs" class="tab-panel">
+      <div class="section-title">Full Peptide Specifications</div>
+      <table class="spec-table">
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tr><td>Peptide Name</td><td>Selank</td></tr>
+        <tr><td>Synonyms</td><td>Selanc, TP-7, TKPRPGP, 129954-34-3</td></tr>
+        <tr><td>CAS Number</td><td>129954-34-3</td></tr>
+        <tr><td>Molecular Formula</td><td>C₃₃H₅₇N₁₁O₉</td></tr>
+        <tr><td>Molecular Weight</td><td>751.87 Da (751.9 g/mol)</td></tr>
+        <tr><td>Monoisotopic Mass</td><td>751.434 Da</td></tr>
+        <tr><td>PubChem CID</td><td>11765600</td></tr>
+        <tr><td>Peptide Length</td><td>7 amino acids (heptapeptide)</td></tr>
+        <tr><td>Sequence</td><td>Thr-Lys-Pro-Arg-Pro-Gly-Pro</td></tr>
+        <tr><td>Parent Compound</td><td>Tuftsin (Thr-Lys-Pro-Arg) — IgG Fc-derived</td></tr>
+        <tr><td>C-Terminal Extension</td><td>Pro-Gly-Pro (stability enhancement vs. tuftsin)</td></tr>
+        <tr><td>Proline Residues</td><td>3 of 7 (positions 3, 5, 7) — structural rigidity</td></tr>
+        <tr><td>Net Charge (pH 7.4)</td><td>+2 (Lys² + Arg⁴)</td></tr>
+        <tr><td>Plasma Half-Life</td><td>≈20–30 minutes</td></tr>
+        <tr><td>BBB Penetration</td><td>Documented in preclinical models</td></tr>
+        <tr><td>Primary CNS Readouts</td><td>Anxiety behaviour, serotonin/enkephalin, BDNF, cognition</td></tr>
+        <tr><td>Immune Readouts</td><td>IL-6, IL-10, chemokine gene expression, phagocytic activity</td></tr>
+        <tr><td>Appearance</td><td>White to off-white lyophilized powder</td></tr>
+        <tr><td>Solubility</td><td>Water, bacteriostatic water, PBS</td></tr>
+        <tr><td>Purity</td><td>≥99% by RP-HPLC</td></tr>
+        <tr><td>Vial Size</td><td>5mg</td></tr>
+        <tr><td>Shelf Life</td><td>12+ months at –20°C sealed</td></tr>
+      </table>
+
+      <h3>Selank vs. Semax — Key Differences for Research Design</h3>
+      <table class="spec-table">
+        <thead><tr><th>Feature</th><th>Selank</th><th>Semax</th></tr></thead>
+        <tr><td>Parent compound</td><td>Tuftsin (IgG Fc)</td><td>ACTH(4-10) (pituitary)</td></tr>
+        <tr><td>Primary receptor</td><td>GABAergic/enkephalin (indirect)</td><td>MC₄R / MC₅R</td></tr>
+        <tr><td>Primary research profile</td><td>Anxiolytic, stress-protective</td><td>Neurotrophic, neuroprotective</td></tr>
+        <tr><td>BDNF effect</td><td>Hippocampus + PFC</td><td>Hippocampus + basal forebrain</td></tr>
+        <tr><td>Immune activity</td><td>Strong (tuftsin-derived)</td><td>Moderate (neuroinflammation)</td></tr>
+        <tr><td>Anxiety profile</td><td>Anxiolytic without sedation</td><td>Stress-normalising (monoaminergic)</td></tr>
+      </table>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="tab-research" class="tab-panel">
+      <div class="section-title">Published Research Overview</div>
+      <p class="section-sub">Select findings from preclinical literature on Selank's neurological and immunological effects.</p>
+
+      <div class="study-card">
+        <div class="study-label">Anxiety Models</div>
+        <div class="study-title">Anxiolytic-Like Effects Without Sedation (Elevated Plus-Maze, Open-Field)</div>
+        <div class="study-body">At 100–300 µg/kg (i.p.), Selank consistently reduces time in closed arms of the elevated plus-maze and increases open-field exploration in rodents — without reducing locomotor activity, causing ataxia, or producing sedation. This sedation-free profile is maintained even at higher doses where benzodiazepines would produce clear motor impairment, making Selank useful for studying anxiolytic circuits without confounding sedation variables.</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-label">Cognitive Protection</div>
+        <div class="study-title">Ethanol-Induced Memory Impairment and BDNF (Kolik et al., 2019)</div>
+        <div class="study-body">Selank protected spatial memory performance in rats with ethanol-induced cognitive impairment. The protection correlated directly with maintained BDNF protein levels in the hippocampus and prefrontal cortex in treated animals, while vehicle-treated ethanol-exposed animals showed both BDNF depletion and memory deficits. This is one of the clearest demonstrations of Selank's BDNF-cognitive connection in the published literature.</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-label">Stress Physiology</div>
+        <div class="study-title">Organ Protection Under Chronic Restraint Stress (Mukhina et al., 2020)</div>
+        <div class="study-body">Chronic restraint stress in rats produces measurable morphological changes in the colon. Selank treatment reduced these structural changes, indicating systemic stress-protective effects beyond the CNS. Separately, Selank has been shown to reduce adrenal hypertrophy, lower corticosterone, and restore neutrophil phagocytic activity in acute traumatic stress models.</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-label">Immunomodulation</div>
+        <div class="study-title">Chemokine and Cytokine Gene Expression (Kolomin et al., 2023)</div>
+        <div class="study-body">Selank and its metabolic fragments produce significant changes in the expression of genes encoding chemokines, cytokines, and their receptors — suggesting transcription-level immunoregulatory activity. This work expands Selank's known immunological footprint beyond simple cytokine level changes to include gene regulatory networks involved in immune cell trafficking and inflammatory signalling.</div>
+      </div>
+
+      <h3>Dosing Reference (Preclinical)</h3>
+      <table class="spec-table">
+        <thead><tr><th>Application</th><th>Typical Published Range</th></tr></thead>
+        <tr><td>Anxiety models (rodent, i.p.)</td><td>100–300 µg/kg</td></tr>
+        <tr><td>Cognitive/memory models</td><td>100–300 µg/kg</td></tr>
+        <tr><td>Stress-immune models</td><td>50–200 µg/kg</td></tr>
+        <tr><td>In vitro (cell culture)</td><td>1–100 µM (model-dependent)</td></tr>
+        <tr><td>Intranasal (CNS studies)</td><td>Higher relative bioavailability vs. i.p. in some models</td></tr>
+      </table>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="tab-storage" class="tab-panel">
+      <div class="section-title">Storage & Reconstitution</div>
+      <h3>Lyophilized Powder</h3>
+      <ul class="storage-list">
+        <li>Store at –20°C to –80°C in the original sealed vial</li>
+        <li>Protect from light and moisture; desiccated environment required</li>
+        <li>Stable for 12+ months at –20°C under proper conditions</li>
+        <li>Avoid temperature cycling of sealed vials</li>
+      </ul>
+      <h3>Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Use sterile water, bacteriostatic water (0.9% benzyl alcohol), or PBS</li>
+        <li>Target final pH 6.0–7.5 for optimal stability</li>
+        <li>Add solvent slowly down the inner vial wall; swirl gently for 1–2 minutes</li>
+        <li>Do not shake or vortex; solution should appear clear and colourless</li>
+        <li>Wipe the vial stopper with 70% isopropyl alcohol before each use</li>
+      </ul>
+      <h3>After Reconstitution</h3>
+      <ul class="storage-list">
+        <li>Store at 4°C for up to 7 days; prepare single-use aliquots for freeze storage</li>
+        <li>Freeze at –20°C in aliquots for longer storage; maximum 2–3 freeze-thaw cycles</li>
+        <li>Discard if solution becomes cloudy, develops particulates, or changes colour</li>
+        <li>Minimise time outside the refrigerator during active use</li>
+      </ul>
+      <h3>Administration Route Consideration</h3>
+      <ul class="storage-list">
+        <li>Intranasal administration shows higher CNS bioavailability than parenteral routes in some rodent models — consider route selection based on whether central or peripheral effects are the primary research question</li>
+        <li>Intraperitoneal is the most common route in published rodent anxiety and cognitive studies</li>
+      </ul>
+    </div>
+
+    <!-- QA -->
+    <div id="tab-qa" class="tab-panel">
+      <div class="section-title">Quality Assurance & Testing</div>
+      <p class="section-sub">Every Selank batch is independently verified across multiple analytical methods before release.</p>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-label">HPLC Purity</div><div class="qa-value">≥99%</div><div class="qa-detail">RP-HPLC, UV at 214nm per batch</div></div>
+        <div class="qa-item"><div class="qa-label">Mass Verification</div><div class="qa-value">751.87 Da</div><div class="qa-detail">ESI-MS confirmed per batch</div></div>
+        <div class="qa-item"><div class="qa-label">Sequence Composition</div><div class="qa-value">Verified</div><div class="qa-detail">7-residue composition by amino acid analysis</div></div>
+        <div class="qa-item"><div class="qa-label">Endotoxin</div><div class="qa-value">&lt;5 EU/mg</div><div class="qa-detail">LAL method</div></div>
+        <div class="qa-item"><div class="qa-label">Water Content</div><div class="qa-value">&lt;8%</div><div class="qa-detail">Karl Fischer titration</div></div>
+        <div class="qa-item"><div class="qa-label">Residual Solvents</div><div class="qa-value">ICH Compliant</div><div class="qa-detail">TFA and acetonitrile within guidelines</div></div>
+        <div class="qa-item"><div class="qa-label">Heavy Metals</div><div class="qa-value">Below detection</div><div class="qa-detail">Per USP standards</div></div>
+        <div class="qa-item"><div class="qa-label">COA</div><div class="qa-value">Each Batch</div><div class="qa-detail">Available pre-purchase on request</div></div>
+      </div>
+    </div>
+
+    <!-- REFS -->
+    <div id="tab-refs" class="tab-panel">
+      <div class="section-title">Scientific References</div>
+      <p class="section-sub">Peer-reviewed publications from the Selank research literature.</p>
+      <div class="ref-item"><span class="ref-num">[1]</span>Vyunova, T. et al. (2018). Peptide-based anxiolytics: the molecular aspects of heptapeptide Selank biological activity. <em>Protein and Peptide Letters, 25(10), 914–923.</em><br><a href="https://doi.org/10.2174/0929866525666180925144642">doi.org/10.2174/0929866525666180925144642</a></div>
+      <div class="ref-item"><span class="ref-num">[2]</span>Kolik, L. et al. (2019). Selank, peptide analogue of tuftsin, protects against ethanol-induced memory impairment by regulating BDNF content in the hippocampus and prefrontal cortex in rats. <em>Bulletin of Experimental Biology and Medicine, 167, 641–644.</em><br><a href="https://doi.org/10.1007/s10517-019-04588-9">doi.org/10.1007/s10517-019-04588-9</a></div>
+      <div class="ref-item"><span class="ref-num">[3]</span>Kolomin, T. et al. (2023). Changes in expression of chemokines, cytokines and their receptors under the action of Selank and its fragments. <em>Journal of Clinical Physiology and Pathology.</em><br><a href="https://doi.org/10.59315/jiscpp.2023-2-2.16-18">doi.org/10.59315/jiscpp.2023-2-2.16-18</a></div>
+      <div class="ref-item"><span class="ref-num">[4]</span>Mukhina, A. et al. (2020). Morphological changes in the large intestine of rats subjected to chronic restraint stress and treated with Selank. <em>Bulletin of Experimental Biology and Medicine, 169, 281–285.</em><br><a href="https://doi.org/10.1007/s10517-020-04868-9">doi.org/10.1007/s10517-020-04868-9</a></div>
+      <div class="ref-item"><span class="ref-num">[5]</span>Ashmarin, I.P. et al. (2005). Design and study of a novel immunomodulatory peptide, Selank. <em>Russian Journal of Bioorganic Chemistry.</em></div>
+      <div class="ref-item"><span class="ref-num">[6]</span>Kozlovskaya, M.M. et al. (2000). The anxiolytic effect of Selank on experimental models of anxiety. <em>Neuroscience and Behavioral Physiology.</em></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">⚡ Quick Reference</div>
+      <div class="pk-row"><span class="pk-key">Sequence</span><span class="pk-val">TKPRPGP</span></div>
+      <div class="pk-row"><span class="pk-key">Length</span><span class="pk-val">7 amino acids</span></div>
+      <div class="pk-row"><span class="pk-key">MW</span><span class="pk-val">751.87 Da</span></div>
+      <div class="pk-row"><span class="pk-key">Net charge</span><span class="pk-val">+2 at pH 7.4</span></div>
+      <div class="pk-row"><span class="pk-key">Prolines</span><span class="pk-val">3 of 7 residues</span></div>
+      <div class="pk-row"><span class="pk-key">Half-life</span><span class="pk-val">≈20–30 min</span></div>
+      <div class="pk-row"><span class="pk-key">BBB penetration</span><span class="pk-val">Documented</span></div>
+      <div class="pk-row"><span class="pk-key">Lyoph. stability</span><span class="pk-val">12+ mo @ –20°C</span></div>
+    </div>
+
+    <div class="sidebar-card bac-card">
+      <div class="sidebar-title" style="color:var(--accent);">💧 Don't Forget BAC Water</div>
+      <p style="font-size:13px; color:var(--muted2); margin-bottom:14px;">You'll need Bacteriostatic Water (30ml) to reconstitute this peptide safely and extend the usable life of your working solution.</p>
+      <button class="btn-secondary" style="font-size:13px; padding:10px 16px; border-color:rgba(45,106,79,0.25); color:var(--accent);">+ Add BAC Water (30ml) — $19.97</button>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">✅ Scientifically Reviewed</div>
+      <div class="reviewer-box">
+        <div class="reviewer-avatar">👨‍⚕️</div>
+        <div><div class="reviewer-name">Dr. Ky H. Le, MD</div><div class="reviewer-title">Board-Certified Family Medicine<br>20+ years clinical experience</div></div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-top:12px; margin-bottom:0;">All technical content and research citations validated for scientific accuracy per batch.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>⚠️ Research Use Only</strong>
+      For in vitro laboratory and approved preclinical research only. Not FDA-approved for human use, therapy, or supplementation. Must be handled by licensed, qualified professionals in an appropriate institutional setting only.
+    </div>
+  </div>
+</div>
+
+<div class="page-disclaimer">
+  <strong>Disclaimer:</strong> All content on this page is provided for scientific reference and educational purposes only. It does not constitute medical advice, a clinical recommendation, or legal guidance. Selank is a research chemical for in vitro laboratory and approved preclinical use only. It has not been approved by the FDA, EMA, or any regulatory authority for therapeutic, diagnostic, or supplementation use in humans. Bodily introduction into humans or animals outside of a formally approved institutional framework is strictly prohibited. In vivo animal studies require IACUC approval. This product must only be handled by licensed, qualified professionals with proper institutional oversight.
+</div>
+
+<footer>
+  <div>© 2025 PeptideLab. All rights reserved.</div>
+  <div><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Shipping Policy</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 90, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

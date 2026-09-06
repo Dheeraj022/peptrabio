@@ -1,0 +1,716 @@
+# 🎨 PEPTRАБIO WEBSITE - COMPLETE VISUAL WEBPAGE LAYOUTS
+
+This document shows EXACTLY how your webpages will look on screen - visual representation of all content.
+
+---
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ✨ PEPTRАБIO WEBSITE - LIVE WEBPAGE MOCKUP #1
+# BPC-157 (STANDALONE PEPTIDE) - COMPLETE VISUAL LAYOUT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                     │
+│                        🔷 PEPTRАБIO  WEBSITE HEADER                                │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ PeptraBio Logo      Home | Products | Research | Contact                       ││
+│  │                                                                                 ││
+│  │ [Blue Gradient Background: Dark Blue → Medium Blue]                            ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+┏═════════════════════════════════════════════════════════════════════════════════════┓
+┃                                                                                     ┃
+┃                          ★ HERO SECTION (TOP VISIBLE AREA) ★                       ┃
+┃                                                                                     ┃
+┃  ┌──────────────────────────────┐  ┌────────────────────────────────────────────┐┃
+┃  │                              │  │  BPC-157 Research Peptide                 ││
+┃  │    [PRODUCT IMAGE]           │  │  Advanced Tissue Support & Cellular        ││
+┃  │    Placeholder               │  │  Healing Research                          ││
+┃  │                              │  │                                            ││
+┃  │    Gradient Background        │  │  ✓ Tissue repair support                 ││
+┃  │    Light Blue to Gray        │  │  ✓ Vascular growth stimulation            ││
+┃  │    (400px height)            │  │  ✓ Fibroblast recruitment & migration     ││
+┃  │                              │  │  ✓ Blood vessel growth toward injured      ││
+┃  │                              │  │  ✓ Oxidative stress reduction              ││
+┃  │                              │  │  ✓ Dose-dependent effects                  ││
+┃  │                              │  │                                            ││
+┃  └──────────────────────────────┘  └────────────────────────────────────────────┘┃
+┃                                                                                     ┃
+┃  [White Background with subtle shadow]                                             ┃
+┃                                                                                     ┃
+┗═════════════════════════════════════════════════════════════════════════════════════┛
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                     │
+│                        ★ MAIN CONTENT AREA (SCROLLING DOWN) ★                     │
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #1: PRODUCT OVERVIEW                                                   ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │ BPC-157 is a 15-amino acid research peptide derived from naturally             ││
+│  │ occurring protective compounds in human digestive fluids. This                  ││
+│  │ pentadecapeptide maintains the powerful healing properties of its parent       ││
+│  │ molecule, making it an excellent tool for laboratory investigation. For       ││
+│  │ researchers and scientists working in tissue repair, regeneration, and          ││
+│  │ cellular healing, BPC-157 has emerged as a particularly interesting subject   ││
+│  │ of study.                                                                       ││
+│  │                                                                                 ││
+│  │ Unlike many synthetic compounds, BPC-157 works through multiple                ││
+│  │ interconnected pathways simultaneously. This multi-faceted approach makes      ││
+│  │ it particularly valuable for understanding tissue repair at the cellular      ││
+│  │ level and how various healing mechanisms coordinate with one another.         ││
+│  │                                                                                 ││
+│  │ [Text: Gray #555, Justified, 16px Font]                                       ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #2: CHEMICAL SPECIFICATIONS                                            ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │  ┌──────────────────────────┬──────────────────────────────────────────────┐  ││
+│  │  │ Name                     │ Body Protection Compound-157 (BPC-157)      │  ││
+│  │  ├──────────────────────────┼──────────────────────────────────────────────┤  ││
+│  │  │ Type                     │ Pentadecapeptide (15 amino acids)            │  ││
+│  │  ├──────────────────────────┼──────────────────────────────────────────────┤  ││
+│  │  │ Sequence                 │ Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-     │  ││
+│  │  │                          │ Asp-Ala-Gly-Leu-Val                         │  ││
+│  │  ├──────────────────────────┼──────────────────────────────────────────────┤  ││
+│  │  │ Molecular Formula        │ C₆₂H₉₈N₁₅O₂₂                                │  ││
+│  │  ├──────────────────────────┼──────────────────────────────────────────────┤  ││
+│  │  │ Molecular Weight         │ 1419.556 g/mol                               │  ││
+│  │  ├──────────────────────────┼──────────────────────────────────────────────┤  ││
+│  │  │ PubChem CID              │ 108101                                       │  ││
+│  │  └──────────────────────────┴──────────────────────────────────────────────┘  ││
+│  │                                                                                 ││
+│  │ [Table: Blue Header #1e3c72, White Text, Alternating Row Colors]              ││
+│  │ [Rows: White & #f9f9f9, 12px padding]                                         ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #3: RESEARCH APPLICATIONS                                              ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Tissue Healing & Repair                                                      ││
+│  │                                                                                 ││
+│  │   BPC-157 accelerates the body's natural repair process by recruiting           ││
+│  │   specialized repair cells called fibroblasts. These cells produce              ││
+│  │   structural proteins (collagen, elastin, fibrin) essential for tissue          ││
+│  │   recovery. Research shows BPC-157 increases both the speed and                 ││
+│  │   productivity of these repair mechanisms, making it particularly               ││
+│  │   interesting for studying slow-healing injuries like tendon and                ││
+│  │   ligament damage.                                                               ││
+│  │                                                                                 ││
+│  │   [Subsection: 18px header, gray body text, 25px bottom margin]                ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Vascular Growth & Blood Flow                                                 ││
+│  │                                                                                 ││
+│  │   BPC-157 stimulates blood vessel formation (angiogenesis), particularly        ││
+│  │   through activation of VEGFR2 signaling pathways. This promotes what           ││
+│  │   scientists call "vascular running"—the growth of new blood vessels            ││
+│  │   around blockages to restore blood flow. This mechanism makes BPC-157          ││
+│  │   valuable for researching cardiovascular tissue support and ischemic           ││
+│  │   injury recovery.                                                               ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Connective Tissue Strength                                                   ││
+│  │                                                                                 ││
+│  │   Tendons and ligaments heal slowly due to limited blood supply. BPC-157        ││
+│  │   addresses this through three coordinated mechanisms: increasing blood         ││
+│  │   vessel growth to damaged areas, boosting fibroblast activity, and             ││
+│  │   enhancing collagen production. Research shows BPC-157 outperforms             ││
+│  │   established growth factors in promoting connective tissue repair.             ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Antioxidant Effects                                                          ││
+│  │                                                                                 ││
+│  │   BPC-157 neutralizes harmful oxidative compounds that perpetuate tissue        ││
+│  │   damage and delay healing. This protective function creates an environment     ││
+│  │   more conducive to recovery and cellular health.                               ││
+│  │                                                                                 ││
+│  │ [Multiple Subsections: Each with header & body text]                           ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #4: FREQUENTLY ASKED QUESTIONS                                         ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │ [Light Blue Background: #f0f4f8]                                               ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: What is BPC-157?                                           [Expand] │    ││
+│  │ │ A: A synthetic 15-amino acid peptide derived from body protection      │    ││
+│  │ │    compound (BPC) found naturally in digestive fluids. It retains      │    ││
+│  │ │    the protective and healing properties of the larger parent          │    ││
+│  │ │    molecule while being practical for laboratory research.            │    ││
+│  │ │ [Blue left border: 4px] [White card]                                  │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: How does BPC-157 work?                                    [Expand] │    ││
+│  │ │ A: Through multiple coordinated pathways: recruiting repair cells     │    ││
+│  │ │    (fibroblasts), stimulating blood vessel growth, reducing oxidative │    ││
+│  │ │    stress, and activating growth signaling. This multi-target approach│    ││
+│  │ │    addresses several tissue repair limiting factors simultaneously.   │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: What research areas use BPC-157?                         [Expand]  │    ││
+│  │ │ A: Wound healing, tendon/ligament repair, vascular growth, muscle     │    ││
+│  │ │    preservation, gastrointestinal healing, drug side effect mitigation,│    ││
+│  │ │    and neurological tissue protection.                               │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: Is BPC-157 FDA approved?                                 [Expand]  │    ││
+│  │ │ A: No. BPC-157 is not approved as a pharmaceutical. It's available    │    ││
+│  │ │    exclusively for in-vitro laboratory research and scientific study.│    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ [All FAQ items have blue left borders, white backgrounds]                      ││
+│  │ [10+ more FAQ items visible on scroll]                                         ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #5: LEGAL DISCLAIMER (CRITICAL)                                       ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │  ┏────────────────────────────────────────────────────────────────────────┓   ││
+│  │  ┃ ⚠️  RESEARCH USE ONLY - IMPORTANT LEGAL INFORMATION                   ┃   ││
+│  │  ┃                                                                        ┃   ││
+│  │  ┃ This product is designated exclusively for in-vitro laboratory        ┃   ││
+│  │  ┃ research and educational purposes.                                    ┃   ││
+│  │  ┃                                                                        ┃   ││
+│  │  ┃ • Not approved by the FDA as a pharmaceutical drug                    ┃   ││
+│  │  ┃ • Not for human consumption or animal administration                  ┃   ││
+│  │  ┃ • For licensed researchers only with appropriate laboratory facilities┃   ││
+│  │  ┃ • Bodily introduction of any kind is strictly prohibited by law       ┃   ││
+│  │  ┃ • Makes no claims to treat, cure, prevent, or manage any medical      ┃   ││
+│  │  ┃   condition                                                            ┃   ││
+│  │  ┃ • All research must comply with institutional review and animal care  ┃   ││
+│  │  ┃   protocols                                                            ┃   ││
+│  │  ┃                                                                        ┃   ││
+│  │  ┃ [Yellow Background: #fff3cd]                                          ┃   ││
+│  │  ┃ [Orange Border: #ffc107, 2px]                                         ┃   ││
+│  │  ┃ [Text: Brown #856404]                                                 ┃   ││
+│  │  ┗────────────────────────────────────────────────────────────────────────┘   ││
+│  │                                                                                 ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                     │
+│                              ★ FOOTER (BOTTOM) ★                                  │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │                                                                                 ││
+│  │  © 2026 PeptraBio. All Rights Reserved. | For Research Use Only                ││
+│  │                                                                                 ││
+│  │  [Dark Blue Background: #1e3c72] [White Text]                                  ││
+│  │                                                                                 ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+---
+
+# ═══════════════════════════════════════════════════════════════════════════════════════
+# ✨ PEPTRАБIO WEBSITE - LIVE WEBPAGE MOCKUP #2
+# BPC-157 + TB-500 BLEND (SYNERGISTIC) - COMPLETE VISUAL LAYOUT
+# ═══════════════════════════════════════════════════════════════════════════════════════
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                     │
+│                        🔷 PEPTRАБIO  WEBSITE HEADER                                │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ PeptraBio Logo      Home | Products | Research | Contact                       ││
+│  │                                                                                 ││
+│  │ [Blue Gradient Background: Dark Blue → Medium Blue]                            ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+┏═════════════════════════════════════════════════════════════════════════════════════┓
+┃                                                                                     ┃
+┃                          ★ HERO SECTION (TOP VISIBLE AREA) ★                       ┃
+┃                                                                                     ┃
+┃  ┌──────────────────────────────┐  ┌────────────────────────────────────────────┐┃
+┃  │                              │  │  BPC-157 + TB-500 Blend                   ││
+┃  │    [PRODUCT IMAGE]           │  │  Advanced Synergistic Tissue Research      ││
+┃  │    Placeholder               │  │  Peptide                                    ││
+┃  │                              │  │                                            ││
+┃  │    Gradient Background        │  │  ✓ Dual-Peptide 1:1 Molar Formulation    ││
+┃  │    Light Blue to Gray        │  │  ✓ Complementary Healing Pathways          ││
+┃  │    (400px height)            │  │  ✓ Enhanced Fibroblast Activity            ││
+┃  │                              │  │  ✓ Optimal Actin Regulation                ││
+┃  │                              │  │  ✓ Multi-Phase Tissue Repair               ││
+┃  │                              │  │  ✓ Superior Research Efficiency            ││
+┃  │                              │  │                                            ││
+┃  └──────────────────────────────┘  └────────────────────────────────────────────┘┃
+┃                                                                                     ┃
+┃  [White Background with subtle shadow]                                             ┃
+┃                                                                                     ┃
+┗═════════════════════════════════════════════════════════════════════════════════════┛
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                     │
+│                        ★ MAIN CONTENT AREA (SCROLLING DOWN) ★                     │
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #1: PRODUCT OVERVIEW                                                   ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │ The BPC-157 + TB-500 Blend represents a sophisticated advancement in peptide   ││
+│  │ research formulation, combining two extensively characterized tissue repair    ││
+│  │ peptides into a single, synergistic research tool. This combination leverages  ││
+│  │ complementary healing mechanisms to provide unprecedented opportunities for    ││
+│  │ comprehensive tissue protection, repair, and regeneration investigations.      ││
+│  │                                                                                 ││
+│  │ BPC-157 contributes remarkable stability and broad tissue support properties.  ││
+│  │ TB-500 (thymosin beta-4) provides well-documented actin-binding capabilities   ││
+│  │ and cellular migration enhancement. When combined in this 1:1 molar            ││
+│  │ formulation, these peptides demonstrate synergistic research applications      ││
+│  │ exceeding what either peptide alone can accomplish.                             ││
+│  │                                                                                 ││
+│  │ [Text: Gray #555, Justified, 16px Font]                                       ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #2: UNDERSTANDING THE SYNERGY                                          ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │  ╔════════════════════════════════════════════════════════════════════════╗   ││
+│  │  ║ 🔹 Why Both Peptides Together?                                         ║   ││
+│  │  ║                                                                        ║   ││
+│  │  ║ Natural wound healing involves multiple simultaneous processes—       ║   ││
+│  │  ║ blood vessel formation, cell movement, protective protein             ║   ││
+│  │  ║ production, and tissue restructuring. Each process depends on          ║   ││
+│  │  ║ precise actin protein organization within cells. BPC-157 and          ║   ││
+│  │  ║ TB-500 address this complexity through distinct but complementary     ║   ││
+│  │  ║ mechanisms.                                                            ║   ││
+│  │  ║                                                                        ║   ││
+│  │  ║ [Light Blue Background: #e8f4f8] [Blue Left Border: 5px #2a5298]     ║   ││
+│  │  ╚════════════════════════════════════════════════════════════════════════╝   ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▸ BPC-157's Role: Gene-Level Enhancement                                       ││
+│  │                                                                                 ││
+│  │   BPC-157 works at the genetic level, increasing actin production from         ││
+│  │   within cells. Think of it as ramping up the cell's actin "factory." The      ││
+│  │   peptide signals fibroblasts to manufacture more actin molecules,              ││
+│  │   providing abundant raw material for cellular movement.                        ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▸ TB-500's Role: Actin Organization                                            ││
+│  │                                                                                 ││
+│  │   TB-500 functions as an actin-binding protein, sequestering actin in          ││
+│  │   optimal configurations for building the cellular structures needed for       ││
+│  │   movement. Rather than increasing production, TB-500 organizes existing       ││
+│  │   actin into functional filaments.                                              ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▸ The Synergistic Result                                                       ││
+│  │                                                                                 ││
+│  │   Combined, they create abundance (BPC-157) and optimal organization          ││
+│  │   (TB-500) of actin simultaneously. Fibroblasts receive signals to             ││
+│  │   produce more actin while also having mechanisms to organize it               ││
+│  │   efficiently. This coordinated approach accelerates cellular migration        ││
+│  │   far more effectively than either peptide alone.                               ││
+│  │                                                                                 ││
+│  │ [Multiple Subsections with special highlight box]                             ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #3: MOLECULAR COMPOSITION                                              ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │  ┌──────────────┬─────────────────────────┬────────────────┬──────────────┐  ││
+│  │  │ Component    │ Sequence                │ Molecular Wt   │ Amino Acids  │  ││
+│  │  ├──────────────┼─────────────────────────┼────────────────┼──────────────┤  ││
+│  │  │ BPC-157      │ Gly-Glu-Pro-Pro-Pro-   │ 1,419.55 Da    │ 15           │  ││
+│  │  │              │ Gly-Lys-Pro-Ala-Asp-   │                │              │  ││
+│  │  │              │ Asp-Ala-Gly-Leu-Val    │                │              │  ││
+│  │  ├──────────────┼─────────────────────────┼────────────────┼──────────────┤  ││
+│  │  │ TB-500       │ Thymosin beta-4 active │ 4,963.4 Da     │ 43           │  ││
+│  │  │              │ region (actin-binding  │                │              │  ││
+│  │  │              │ domain)                │                │              │  ││
+│  │  ├──────────────┼─────────────────────────┼────────────────┼──────────────┤  ││
+│  │  │ Total Blend  │ 1:1 Molar Mixture      │ Combined       │ 58 total     │  ││
+│  │  └──────────────┴─────────────────────────┴────────────────┴──────────────┘  ││
+│  │                                                                                 ││
+│  │ [Blue Header Table with alternating rows]                                     ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #4: RESEARCH APPLICATIONS                                              ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │ ▪ Tissue Healing & Cellular Migration                                          ││
+│  │                                                                                 ││
+│  │   The blend excels at investigating how cells move to injury sites—             ││
+│  │   fundamental to all healing processes. Fibroblasts, immune cells, and          ││
+│  │   endothelial cells must migrate efficiently to repair damaged tissue.          ││
+│  │   The coordinated actin enhancement provides unparalleled opportunities         ││
+│  │   to study cellular movement mechanisms.                                        ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Vascular Growth & Blood Flow Restoration                                     ││
+│  │                                                                                 ││
+│  │   The blend combines BPC-157's angiogenic properties with TB-500's             ││
+│  │   support for endothelial cell migration, creating comprehensive vascular     ││
+│  │   research capabilities. Investigate blood vessel formation, collateral         ││
+│  │   growth, and tissue perfusion restoration.                                     ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Connective Tissue Strength & Repair                                          ││
+│  │                                                                                 ││
+│  │   Tendons, ligaments, and other connective tissues present unique healing       ││
+│  │   challenges due to limited blood supply. The blend addresses this through      ││
+│  │   three coordinated mechanisms: increasing blood vessel growth to damaged       ││
+│  │   areas, boosting fibroblast activity, and enhancing collagen production.      ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Multi-Phase Wound Healing                                                    ││
+│  │                                                                                 ││
+│  │   Unlike single-peptide approaches, the blend enables investigation of          ││
+│  │   complete healing from initial injury through final remodeling.                ││
+│  │                                                                                 ││
+│  │                                                                                 ││
+│  │ ▪ Growth Hormone Interaction                                                   ││
+│  │                                                                                 ││
+│  │   BPC-157 increases growth hormone receptors while TB-500 ensures cellular     ││
+│  │   resources for sustained activity. This coordinated approach maximizes         ││
+│  │   growth hormone sensitivity and effectiveness in tissue repair.                ││
+│  │                                                                                 ││
+│  │ [Multiple Subsections, each clearly marked]                                    ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #5: PERFORMANCE COMPARISON TABLE                                       ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │ ┌──────────────────────────┬──────────────┬──────────────┬─────────────────┐  ││
+│  │ │ Feature                  │ BPC-157 Only │ TB-500 Only  │ BPC-157+TB-500  │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Actin Production         │ Enhanced     │ N/A          │ ✓ Optimal       │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Actin Organization       │ N/A          │ Enhanced     │ ✓ Optimal       │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Cellular Migration       │ Good         │ Good         │ ✓ Synergistic   │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Growth Hormone Receptors │ Increased    │ N/A          │ ✓ Enhanced +    │  ││
+│  │ │                          │              │              │   Functional    │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Angiogenesis             │ Strong       │ Moderate     │ ✓ Combined      │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Multi-Phase Healing      │ Partial      │ Partial      │ ✓ Comprehensive │  ││
+│  │ ├──────────────────────────┼──────────────┼──────────────┼─────────────────┤  ││
+│  │ │ Natural Healing Modeling │ Single Path  │ Single Path  │ ✓ Multi-Path    │  ││
+│  │ └──────────────────────────┴──────────────┴──────────────┴─────────────────┘  ││
+│  │                                                                                 ││
+│  │ [Table: Blue Header, 3 regular columns + 1 HIGHLIGHTED BLEND COLUMN]          ││
+│  │ [Blend Column Background: Light Blue #e8f4f8 with bold text]                  ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #6: FREQUENTLY ASKED QUESTIONS                                         ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │ [Light Blue Background: #f0f4f8]                                               ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: Why use both peptides instead of one?                    [Expand]  │    ││
+│  │ │ A: Natural healing requires coordinated multi-pathway processes. The   │    ││
+│  │ │    blend models this complexity accurately, delivering enhanced         │    ││
+│  │ │    results that neither peptide alone achieves.                        │    ││
+│  │ │ [Blue left border: 4px] [White card]                                  │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: What does the 1:1 molar ratio mean?                      [Expand]  │    ││
+│  │ │ A: The peptides are formulated in equal molar amounts (number of       │    ││
+│  │ │    molecules, not weight). This ensures balanced contribution of       │    ││
+│  │ │    each mechanism and reflects established synergistic research        │    ││
+│  │ │    ratios.                                                              │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: Can this be used for oral administration research?       [Expand]  │    ││
+│  │ │ A: Yes. BPC-157's exceptional acid stability (pH 1.5-12) enables oral │    ││
+│  │ │    route investigation. This makes the blend particularly valuable     │    ││
+│  │ │    for studying GI-accessible peptide formulation approaches.          │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: How does TB-500 remain active in the blend?              [Expand]  │    ││
+│  │ │ A: TB-500 retains its actin-binding characteristics and cellular       │    ││
+│  │ │    migration-enhancing properties. The BPC-157's stability             │    ││
+│  │ │    characteristics may provide protective effects during handling       │    ││
+│  │ │    and storage while not interfering with TB-500 function.             │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ ┌────────────────────────────────────────────────────────────────────────┐    ││
+│  │ │ Q: Is this approved for therapeutic use?                    [Expand]  │    ││
+│  │ │ A: No. The blend is designated exclusively for in-vitro laboratory    │    ││
+│  │ │    research and educational purposes. It has not undergone FDA         │    ││
+│  │ │    approval or clinical trials for any therapeutic application.        │    ││
+│  │ └────────────────────────────────────────────────────────────────────────┘    ││
+│  │                                                                                 ││
+│  │ [All FAQ items have blue left borders, white backgrounds]                      ││
+│  │ [10+ more FAQ items visible on scroll]                                         ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #7: QUALITY & TESTING STANDARDS                                        ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │ ▸ Individual Component Purity                                                   ││
+│  │   BPC-157: ≥98% purity (HPLC verified)                                         ││
+│  │   TB-500: ≥98% purity (HPLC verified)                                          ││
+│  │   Blend Consistency: ±10% of target 1:1 molar ratio                            ││
+│  │                                                                                 ││
+│  │ ▸ Molecular Verification                                                        ││
+│  │   High-Performance Liquid Chromatography (HPLC) for individual peptide         ││
+│  │   identification, Mass Spectrometry (ESI-MS or MALDI-TOF) confirming           ││
+│  │   molecular weights, Amino Acid Analysis (AAA) for compositional               ││
+│  │   verification                                                                   ││
+│  │                                                                                 ││
+│  │ ▸ Safety Testing                                                                ││
+│  │   Bacterial endotoxin: <5 EU/mg combined blend                                 ││
+│  │   Heavy metals: Below USP limits                                                ││
+│  │   Residual solvents: Within ICH guidelines                                     ││
+│  │   Water content: <8% total moisture                                             ││
+│  │   Microbial contamination: Within established standards                        ││
+│  │                                                                                 ││
+│  │ [Subsections with detailed specifications]                                     ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │ SECTION #8: LEGAL DISCLAIMER (CRITICAL)                                       ││
+│  │ ═════════════════════════════════════════════════════════════════════════════  ││
+│  │                                                                                 ││
+│  │  ┏────────────────────────────────────────────────────────────────────────┓   ││
+│  │  ┃ ⚠️  RESEARCH USE ONLY - IMPORTANT LEGAL INFORMATION                   ┃   ││
+│  │  ┃                                                                        ┃   ││
+│  │  ┃ This dual-peptide formulation is designated exclusively for in-vitro  ┃   ││
+│  │  ┃ laboratory research and educational purposes.                         ┃   ││
+│  │  ┃                                                                        ┃   ││
+│  │  ┃ • Not approved by the FDA as a pharmaceutical drug                    ┃   ││
+│  │  ┃ • Not for human consumption or animal administration                  ┃   ││
+│  │  ┃ • For licensed researchers only with appropriate laboratory facilities┃   ││
+│  │  ┃ • Bodily introduction of any kind is strictly prohibited by law       ┃   ││
+│  │  ┃ • Makes no claims to treat, cure, prevent, or manage any medical      ┃   ││
+│  │  ┃   condition                                                            ┃   ││
+│  │  ┃ • All research must comply with institutional review and animal care  ┃   ││
+│  │  ┃   protocols                                                            ┃   ││
+│  │  ┃ • Each component verified for quality; see individual COAs as needed  ┃   ││
+│  │  ┃                                                                        ┃   ││
+│  │  ┃ [Yellow Background: #fff3cd]                                          ┃   ││
+│  │  ┃ [Orange Border: #ffc107, 2px]                                         ┃   ││
+│  │  ┃ [Text: Brown #856404]                                                 ┃   ││
+│  │  ┗────────────────────────────────────────────────────────────────────────┘   ││
+│  │                                                                                 ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                     │
+│                              ★ FOOTER (BOTTOM) ★                                  │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │                                                                                 ││
+│  │  © 2026 PeptraBio. Advanced Peptide Research Solutions. | For Research Only    ││
+│  │                                                                                 ││
+│  │  [Dark Blue Background: #1e3c72] [White Text]                                  ││
+│  │                                                                                 ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+---
+
+## 📱 MOBILE VIEW - HOW IT LOOKS ON PHONES & TABLETS
+
+```
+┌──────────────────────────────┐
+│  🔷 PEPTRАБIO    ☰ Menu     │  ← Header on mobile (simplified)
+├──────────────────────────────┤
+│                              │
+│    [PRODUCT IMAGE]           │  ← Full width on mobile
+│    Full Width                │
+│    (300px height)            │
+│                              │
+├──────────────────────────────┤
+│ BPC-157 Research Peptide    │
+│ Advanced Tissue Support     │
+│                              │
+│ ✓ Tissue repair support     │
+│ ✓ Vascular growth stim...   │
+│ ✓ Fibroblast recruitment... │
+│ ✓ Blood vessel growth...     │
+│ ✓ Oxidative stress...        │
+│ ✓ Dose-dependent effects     │
+├──────────────────────────────┤
+│ PRODUCT OVERVIEW             │
+│ ─────────────────────────    │
+│ BPC-157 is a 15-amino acid  │
+│ research peptide derived     │
+│ from naturally occurring     │
+│ protective compounds...      │
+│                              │
+│ [Full width, single column]  │
+├──────────────────────────────┤
+│ CHEMICAL SPECIFICATIONS      │
+│ ─────────────────────────    │
+│                              │
+│ Name: Body Protection...    │
+│ Type: Pentadecapeptide...   │
+│ Sequence: Gly-Glu-Pro...    │
+│ Molecular Formula: C₆₂...    │
+│ Molecular Weight: 1419...    │
+│ PubChem CID: 108101         │
+│                              │
+│ [Table scrolls horizontally] │
+├──────────────────────────────┤
+│ RESEARCH APPLICATIONS        │
+│ ─────────────────────────    │
+│                              │
+│ • Tissue Healing & Repair   │
+│   BPC-157 accelerates       │
+│   the body's natural        │
+│   repair process...         │
+│                              │
+│ • Vascular Growth           │
+│   BPC-157 stimulates        │
+│   blood vessel formation... │
+│                              │
+│ [Continues scrolling]        │
+├──────────────────────────────┤
+│ FAQ                          │
+│ ─────────────────────────    │
+│ [Light blue background]      │
+│                              │
+│ Q: What is BPC-157?         │
+│ A: A synthetic 15-amino     │
+│    acid peptide derived     │
+│    from body protection...  │
+│                              │
+│ Q: How does it work?        │
+│ A: Through multiple...      │
+│                              │
+│ [More FAQ items]             │
+├──────────────────────────────┤
+│ ⚠️  RESEARCH USE ONLY        │
+│ [Yellow Warning Box]         │
+│                              │
+│ This product is designated  │
+│ exclusively for in-vitro     │
+│ laboratory research...       │
+│                              │
+│ • Not approved by FDA        │
+│ • For researchers only       │
+│ • Bodily intro prohibited    │
+├──────────────────────────────┤
+│ © 2026 PeptraBio            │
+│ For Research Use Only        │
+└──────────────────────────────┘
+```
+
+---
+
+## 🎯 KEY VISUAL ELEMENTS EXPLAINED
+
+### HEADER (All Pages)
+- Blue gradient bar at top
+- Logo on left
+- Navigation menu on right
+- Fixed position (stays at top while scrolling)
+- White text on blue background
+
+### HERO SECTION (All Pages)
+- Desktop: 2 columns (image + info)
+- Tablet: 2 columns (adjusted sizing)
+- Mobile: Stacks to 1 column
+- Image placeholder with subtle gradient
+- Key properties with checkmark bullets
+
+### CONTENT SECTIONS (All Pages)
+- White background cards
+- Blue section headers with bottom borders
+- Gray body text
+- Proper spacing between sections
+- Consistent typography
+
+### TABLES (Specifications, Comparison)
+- Blue header row (#1e3c72)
+- White text in header
+- Alternating row colors (white & #f9f9f9)
+- Clear cell borders
+- Easy to scan
+
+### SPECIAL HIGHLIGHT BOX (Blend Page)
+- Light blue background (#e8f4f8)
+- Blue left border (5px)
+- Used for "Why Both Peptides" section
+- Draws attention to key concept
+
+### FAQ SECTION (All Pages)
+- Light blue page background (#f0f4f8)
+- Individual white cards
+- Blue left border on each card
+- Question and answer clearly marked
+- Expandable format
+
+### DISCLAIMER BOX (All Pages)
+- Bright yellow background (#fff3cd)
+- Orange border (#ffc107)
+- Warning icon (⚠️)
+- Brown text (#856404)
+- Prominent, impossible to miss
+- Critical legal information
+
+### FOOTER (All Pages)
+- Dark blue background (#1e3c72)
+- White text
+- Company info & copyright
+- "For Research Use Only" always visible
+
+---
+
+## ✅ RESPONSIVE BEHAVIOR
+
+**Desktop (1200px+):**
+- Full 2-column hero
+- 400px product image
+- Full-width content
+- Optimized table display
+- Best reading experience
+
+**Tablet (768-1199px):**
+- 2-column hero maintained
+- Slightly smaller spacing
+- Adjusted padding
+- Tables still readable
+- Good touch experience
+
+**Mobile (<768px):**
+- 1-column layout
+- 300px product image
+- Full-width text
+- Scrollable tables
+- Optimized for fingers
+- Fast loading
+
+---
+
+END OF VISUAL WEBPAGE LAYOUTS

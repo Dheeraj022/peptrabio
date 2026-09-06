@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CJC-1295 (No DAC) – Mod GRF 1-29 | PeptraBio Research</title>
+  <style>
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;color:#1f2933;background:#f5f7fa;line-height:1.6}
+    a{color:#1665d8;text-decoration:none}a:hover{text-decoration:underline}
+    header{background:linear-gradient(120deg,#0ea5e9,#6366f1);color:#fff;padding:14px 0;box-shadow:0 2px 8px rgba(15,23,42,.4);margin-bottom:24px}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+    .header-inner{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-weight:700;letter-spacing:.06em;font-size:1.05rem;text-transform:uppercase}
+    nav a{margin-left:18px;font-size:.9rem;opacity:.92}
+    .hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:24px;margin-bottom:28px}
+    .hero-left,.hero-right,.card,.purchase-card{background:#fff;border-radius:16px;box-shadow:0 10px 22px rgba(15,23,42,.14)}
+    .hero-left{padding:20px 22px 22px}
+    .badge{display:inline-flex;padding:4px 10px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px}
+    .hero-title{font-size:1.8rem;margin:0 0 4px;color:#102a43;font-weight:700}
+    .hero-subtitle{margin:0 0 14px;font-size:.95rem;color:#52606d}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:.8rem;color:#62748a;margin-bottom:14px}
+    .hero-meta span::before{content:"•";margin-right:6px;color:#9fb3c8}
+    .hero-keypoints{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 14px;margin-top:8px;font-size:.87rem}
+    .kp-item{display:flex;align-items:flex-start;gap:8px;color:#1f2933}
+    .kp-icon{width:18px;height:18px;border-radius:999px;background:#e0f2fe;color:#0369a1;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+    .hero-right{padding:18px 18px 20px;background:radial-gradient(circle at 0 0,#e0f2fe,#c7d2fe 40%,#fff 80%);display:flex;flex-direction:column;justify-content:space-between}
+    .vial-box{background:rgba(255,255,255,.96);border-radius:14px;padding:14px 12px;text-align:center;border:1px solid rgba(15,23,42,.06);margin-bottom:14px}
+    .vial-graphic{width:96px;height:144px;margin:0 auto 10px;border-radius:12px;background:linear-gradient(155deg,#0ea5e9 0%,#6366f1 45%,#f5f7fa 100%);position:relative;overflow:hidden;box-shadow:0 10px 20px rgba(15,23,42,.3)}
+    .vial-graphic::after{content:"";position:absolute;inset:56% 0 0;background:rgba(255,255,255,.94);border-radius:14px 14px 0 0}
+    .vial-label{position:absolute;inset:61% 8px 10px;border-radius:10px;border:1px solid rgba(15,23,42,.12);background:#fff;display:flex;flex-direction:column;justify-content:center;padding:6px;font-size:.63rem;color:#102a43}
+    .vial-label strong{font-size:.72rem;margin-bottom:2px}
+    .pill-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px;font-size:.72rem}
+    .pill{padding:4px 9px;border-radius:999px;background:#e0f2fe;color:#0369a1;border:1px solid rgba(59,130,246,.25)}
+    .purchase-card{padding:12px 14px 14px;font-size:.86rem}
+    .price-line{display:flex;align-items:baseline;justify-content:space-between;gap:6px;margin-bottom:6px}
+    .price-main{font-size:1.08rem;font-weight:700;color:#102a43}
+    .price-note{font-size:.75rem;color:#62748a}
+    .stock-line{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:.78rem;color:#0c6b58}
+    .stock-dot{width:7px;height:7px;border-radius:999px;background:#2bbf6a}
+    .qty-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .qty-box{display:inline-flex;align-items:center;border-radius:999px;border:1px solid #cbd2d9;overflow:hidden;background:#f9fafb}
+    .qty-box button{border:none;background:transparent;padding:4px 8px;cursor:pointer;color:#52606d;font-size:.9rem}
+    .qty-box input{width:40px;border:none;background:transparent;text-align:center;font-size:.9rem;color:#102a43;padding:2px 0}
+    .btn-primary{display:inline-flex;align-items:center;justify-content:center;padding:7px 14px;border-radius:999px;border:none;cursor:pointer;font-size:.82rem;font-weight:600;background:linear-gradient(120deg,#6366f1,#0ea5e9);color:#fff;box-shadow:0 8px 16px rgba(59,130,246,.35)}
+    .btn-primary span{margin-left:6px}
+    .helper-line{font-size:.72rem;color:#8293a8;margin-top:4px}
+    .grid-main{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(0,1.2fr);gap:20px}
+    .card{padding:18px 20px;margin-bottom:18px;font-size:.9rem}
+    h2{font-size:1.05rem;margin:0 0 8px;color:#102a43}
+    h3{font-size:.96rem;margin:14px 0 6px;color:#0f766e}
+    p{margin:0 0 8px;color:#384451}
+    ul{padding-left:18px;margin:6px 0 10px}
+    li{margin-bottom:4px;color:#384451}
+    .spec-table{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:4px}
+    .spec-table th,.spec-table td{border:1px solid #d8e2ec;padding:6px 8px;vertical-align:top}
+    .spec-table th{width:34%;background:#f0f4f8;font-weight:600;color:#102a43}
+    .pill-list{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+    .pill-list span{font-size:.72rem;padding:3px 8px;border-radius:999px;background:#f0f4f8;color:#62748a}
+    .warning-box{border-left:4px solid #d89614;background:#fff8e6;padding:10px 12px;border-radius:8px;font-size:.83rem;color:#8d5c0a}
+    .warning-box strong{display:block;margin-bottom:4px}
+    footer{background:#102a43;color:#d8e2ec;padding:14px 0;font-size:.8rem}
+    .footer-inner{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}
+    @media (max-width:900px){.hero,.grid-main{grid-template-columns:minmax(0,1fr)}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap header-inner">
+    <div class="logo">PEPTRABIO RESEARCH</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Peptide Catalog</a>
+      <a href="#">Quality &amp; COAs</a>
+      <a href="#">Support</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <div class="hero-left">
+      <div class="badge">GHRH analog – pulsatile GH research</div>
+      <h1 class="hero-title">CJC-1295 (No DAC) – Mod GRF 1-29</h1>
+      <p class="hero-subtitle">Short‑acting GHRH (1‑29) analog with stability‑enhancing substitutions, used to study physiological pulsatile growth hormone secretion in controlled models.</p>
+      <div class="hero-meta">
+        <span>Length: 29 amino acids</span>
+        <span>Formula: C152H252N44O42</span>
+        <span>MW: ~3367–3368 Da</span>
+        <span>Use: in‑vitro &amp; preclinical research only</span>
+      </div>
+      <div class="hero-keypoints">
+        <div class="kp-item"><div class="kp-icon">✓</div><div>Built on the active N‑terminal GHRH (1‑29) region with four stability‑focused substitutions.[web:143][web:322][web:324]</div></div>
+        <div class="kp-item"><div class="kp-icon">✓</div><div>Designed for short pulses of GH release rather than sustained elevation, unlike DAC‑modified variants.[web:152][web:322][web:324]</div></div>
+        <div class="kp-item"><div class="kp-icon">✓</div><div>Positioned purely as a research peptide for GH/IGF‑1 axis and endocrine signalling studies.[web:317][web:321][web:323]</div></div>
+      </div>
+    </div>
+    <aside class="hero-right">
+      <div>
+        <div class="vial-box">
+          <div class="vial-graphic">
+            <div class="vial-label">
+              <strong>CJC-1295 (No DAC)</strong>
+              <div>2 mg – research grade</div>
+              <div style="margin-top:2px;font-size:.6rem;color:#62748a;">Mod GRF 1‑29</div>
+            </div>
+          </div>
+          <div class="pill-row">
+            <span class="pill">GHRH analog</span>
+            <span class="pill">Short‑acting</span>
+            <span class="pill">Research use only</span>
+          </div>
+        </div>
+      </div>
+      <div class="purchase-card">
+        <div class="price-line">
+          <div class="price-main">CJC-1295 (No DAC) – 2 mg</div>
+          <div class="price-note">Contact sales for research pricing</div>
+        </div>
+        <div class="stock-line"><span class="stock-dot"></span><span>In stock – ships from research facility</span></div>
+        <div class="qty-row">
+          <div class="qty-box"><button type="button">−</button><input type="text" value="1" aria-label="Quantity" /><button type="button">+</button></div>
+          <button class="btn-primary" type="button">Add to research cart<span>→</span></button>
+        </div>
+        <div class="helper-line">Suitable for GH pulse, GHRH receptor, and GHRP combination research designs.</div>
+      </div>
+    </aside>
+  </section>
+  <section class="grid-main">
+    <div>
+      <article class="card">
+        <h2>Scientific overview</h2>
+        <p>CJC‑1295 (No DAC) / Mod GRF 1‑29 is a truncated GHRH analog focused on the active N‑terminal 1‑29 region, engineered to resist rapid enzymatic breakdown in research systems.[web:143][web:319][web:324]</p>
+        <p>By omitting the DAC moiety, this version supports short, controllable GH pulses that more closely resemble natural hypothalamic signalling.[web:152][web:322][web:324]</p>
+      </article>
+      <article class="card">
+        <h2>Peptide specifications</h2>
+        <table class="spec-table">
+          <tr><th>Peptide type</th><td>GHRH (1‑29) analog, no DAC</td></tr>
+          <tr><th>Length</th><td>29 amino acids</td></tr>
+          <tr><th>Molecular formula</th><td>C152H252N44O42</td></tr>
+          <tr><th>Molecular weight</th><td>~3367–3368 Da</td></tr>
+          <tr><th>CAS number</th><td>863288-34-0</td></tr>
+          <tr><th>Appearance</th><td>White to off‑white lyophilised powder</td></tr>
+          <tr><th>Intended use</th><td>In‑vitro and preclinical research only</td></tr>
+        </table>
+      </article>
+      <article class="card">
+        <h2>Mechanistic themes in research</h2>
+        <h3>GHRH receptor activation</h3>
+        <p>In laboratory models, Mod GRF 1‑29 binds GHRH receptors on pituitary somatotrophs, activates Gs‑protein signalling, elevates cAMP, and triggers PKA‑mediated growth hormone release.[web:143][web:322][web:324]</p>
+        <h3>Short half-life, pulsatile profile</h3>
+        <p>The approximate 30‑minute plasma half‑life reported for this analog allows clear GH peaks and returns toward baseline within a few hours, facilitating repeated pulse protocols.[web:152][web:322][web:324]</p>
+      </article>
+      <article class="card">
+        <h2>Key research application areas</h2>
+        <h3>1. GH pulse and GH/IGF‑1 axis studies</h3>
+        <p>Used to characterise pulsatile GH secretion, IGF‑1 responses, and feedback regulation in endocrine models.[web:319][web:323][web:324]</p>
+        <h3>2. Combination studies with GHRPs</h3>
+        <p>Often combined with ghrelin‑mimetic peptides (e.g., GHRP‑2, GHRP‑6, ipamorelin) to investigate synergistic GH release through dual‑pathway activation.[web:143][web:322][web:324]</p>
+        <h3>3. Metabolic and body‑composition research</h3>
+        <p>Applied in cell and animal models to explore GH‑linked effects on lipolysis, protein synthesis, and energy balance, always as an experimental compound.[web:319][web:323]</p>
+      </article>
+      <article class="card">
+        <h2>Handling, reconstitution, and storage</h2>
+        <h3>Unopened vials</h3>
+        <ul>
+          <li>Store at −20 °C or below in a dry, dark environment.[web:319][web:321][web:323]</li>
+          <li>Protect from moisture and avoid frequent temperature changes.</li>
+        </ul>
+        <h3>Reconstitution</h3>
+        <ul>
+          <li>Reconstitute with sterile or bacteriostatic water, or an appropriate buffer, under aseptic conditions.[web:319][web:321]</li>
+          <li>Add solvent slowly along the vial wall and swirl gently until fully dissolved.</li>
+        </ul>
+        <h3>Reconstituted solutions</h3>
+        <ul>
+          <li>Store at 2–8 °C for short‑term use, protected from light.[web:319][web:321]</li>
+          <li>For longer storage, aliquot and freeze at −20 °C or below to limit freeze–thaw cycles.</li>
+          <li>Discard solutions that show turbidity, discolouration, or particulate matter.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Quality and documentation</h2>
+        <p>Research‑grade CJC‑1295 (No DAC) is typically provided with HPLC purity data, mass‑spectrometry identity confirmation, and batch‑specific Certificates of Analysis.[web:317][web:321][web:323]</p>
+        <p>Additional testing may include residual solvent checks, endotoxin levels, and water‑content measurements, depending on supplier and batch.</p>
+      </article>
+    </div>
+    <aside>
+      <div class="card">
+        <h3>Key technical highlights</h3>
+        <div class="pill-list">
+          <span>GHRH (1‑29) analog</span>
+          <span>Short‑acting, no DAC</span>
+          <span>D‑Ala / Gln / Ala / Leu substitutions</span>
+          <span>GH pulse studies</span>
+          <span>Research use only</span>
+        </div>
+        <p>This peptide is positioned as a mechanistic tool for GH axis and endocrine research, not as a clinical or wellness product.[web:317][web:321][web:323]</p>
+      </div>
+      <div class="card">
+        <div class="warning-box">
+          <strong>For laboratory research use only – not for human or veterinary use</strong>
+          <p>CJC‑1295 (No DAC) / Mod GRF 1‑29 is not approved as a medicine, performance aid, dietary supplement, or cosmetic ingredient and must not be used for diagnosis, treatment, or prevention in humans or animals.[web:317][web:321][web:323]</p>
+          <p>Handling is restricted to appropriately trained personnel working under institutional safety and compliance procedures.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Documentation &amp; support</h3>
+        <ul>
+          <li>Batch COAs and analytical data available on request.</li>
+          <li>Technical notes for GH pulse, GHRP combination, and IGF‑1 studies.</li>
+          <li>Comparative information for DAC variants and other GHRH analogs available separately.</li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div>© 2026 PeptraBio Research. All rights reserved.</div>
+    <div>For in‑vitro and preclinical laboratory research use only.</div>
+  </div>
+</footer>
+</body>
+</html>

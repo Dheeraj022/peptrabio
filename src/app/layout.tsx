@@ -5,6 +5,7 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { AgeVerificationModal } from '@/components/layout/AgeVerificationModal';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { AuthProvider } from '@/context/AuthContext';
@@ -62,6 +63,7 @@ export default function RootLayout({
               <main className="flex-1">{children}</main>
               <Footer />
               <CartDrawer />
+              <AgeVerificationModal />
             </CartProvider>
           </CurrencyProvider>
         </AuthProvider>

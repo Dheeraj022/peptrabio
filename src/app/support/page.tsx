@@ -35,7 +35,7 @@ export default function CustomerSupportPage() {
         return;
       }
       setLoading(true);
-      const data = await fetchCustomerTickets();
+      const data = await fetchCustomerTickets(user.email, user.id);
       setTickets(data);
       setLoading(false);
     }
@@ -157,7 +157,7 @@ export default function CustomerSupportPage() {
               <LifeBuoy className="w-3.5 h-3.5 text-purple-300 animate-pulse" />
               <span>PEPTRA BIO HELP & SUPPORT CENTER</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-orbitron font-extrabold text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-orbitron font-extrabold text-white tracking-tight drop-shadow-sm">
               {user ? `SUPPORT TICKETS • ${user.name.toUpperCase()}` : 'MY SUPPORT TICKETS'}
             </h1>
             <p className="text-xs sm:text-sm text-purple-200 font-sans leading-relaxed">

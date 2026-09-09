@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { Product, Order } from '@/types';
+import { useCurrency } from '@/context/CurrencyContext';
+import { Product, Order, AdminAuditLog } from '@/types';
 import { getLocalProducts, getLocalOrders, getLocalAuditLogs } from '@/lib/products-store';
 import {
   Package,
@@ -19,9 +20,10 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([]);
 
   useEffect(() => {
     setProducts(getLocalProducts());
@@ -30,11 +32,11 @@ export default function AdminDashboardPage() {
   }, []);
 
   const totalProducts = products.length;
-  const activeProducts = products.filter((p) => p.is_active && p.stock_quantity > 0).length;
-  const outOfStockProducts = products.filter((p) => p.stock_quantity <= 0).length;
+  const inStockProducts = products.filter((p) => p.stock_quantity > 0).length;
+  const outOfStockProducts = products.filter((p) => p.stock_quantity === 0).length;
   const totalOrders = orders.length;
-  const pendingOrders = orders.filter((o) => o.status === 'pending' || o.status === 'processing').length;
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const pendingOrders = orders.filter((o) => o.status === 'processing' || o.status === 'pending').length;
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.status !== 'cancelled' ? o.total : 0), 0);
 
   return (
     <AdminLayout>
@@ -44,25 +46,25 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-5">
           <div>
             <h1 className="text-2xl sm:text-3xl font-orbitron font-extrabold text-content-primary">
-              ADMIN DASHBOARD
+              ADMIN CONTROL CENTER
             </h1>
             <p className="text-xs text-content-secondary font-sans mt-0.5">
-              Overview of active research catalog sequences, inventory balances, and order statuses.
+              Overview of peptide catalog inventory, active research orders, and audit log history.
             </p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex items-center space-x-3">
             <Link
               href="/admin/products/new"
-              className="px-5 py-2.5 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-1.5 transition-all"
+              className="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-semibold tracking-wider transition-colors shadow-purple-sm flex items-center space-x-1.5"
             >
               <Plus className="w-4 h-4" />
-              <span>ADD PRODUCT</span>
+              <span>+ NEW PRODUCT</span>
             </Link>
           </div>
         </div>
 
-        {/* 5 KPI Metric Cards (Section 57 of spec) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* 4 Stat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-sm space-y-2">
             <div className="flex items-center justify-between text-content-muted">
@@ -72,18 +74,7 @@ export default function AdminDashboardPage() {
             <div className="font-orbitron font-extrabold text-2xl text-content-primary">
               {totalProducts}
             </div>
-            <div className="text-[11px] text-content-muted font-sans">Indexed sequences</div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-sm space-y-2">
-            <div className="flex items-center justify-between text-content-muted">
-              <span className="font-orbitron text-[10px] uppercase font-semibold">Active & In Stock</span>
-              <CheckCircle2 className="w-4 h-4 text-accent-success" />
-            </div>
-            <div className="font-orbitron font-extrabold text-2xl text-accent-success">
-              {activeProducts}
-            </div>
-            <div className="text-[11px] text-content-muted font-sans">Publicly available</div>
+            <div className="text-[11px] text-content-muted font-sans">{inStockProducts} in stock active</div>
           </div>
 
           <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-sm space-y-2">
@@ -105,7 +96,7 @@ export default function AdminDashboardPage() {
             <div className="font-orbitron font-extrabold text-2xl text-content-primary">
               {totalOrders}
             </div>
-            <div className="text-[11px] text-brand font-orbitron font-semibold">${totalRevenue.toFixed(2)} Vol</div>
+            <div className="text-[11px] text-brand font-orbitron font-semibold">{formatPrice(totalRevenue)} Vol</div>
           </div>
 
           <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-sm space-y-2">
@@ -155,7 +146,7 @@ export default function AdminDashboardPage() {
                         <div className="font-medium text-content-primary">{order.customer_name}</div>
                         <div className="text-[11px] text-content-muted">{order.customer_email}</div>
                       </td>
-                      <td className="py-3 px-3 font-mono font-semibold">${order.total.toFixed(2)}</td>
+                      <td className="py-3 px-3 font-mono font-semibold">{formatPrice(order.total)}</td>
                       <td className="py-3 px-3">
                         <span className={`px-2.5 py-0.5 rounded-full font-orbitron text-[10px] font-semibold uppercase ${
                           order.status === 'delivered' || order.status === 'paid'
@@ -203,7 +194,7 @@ export default function AdminDashboardPage() {
                       </span>
                     </div>
                     <div className="text-content-secondary text-[11px]">
-                      {log.metadata?.name || log.metadata?.order_number || log.entity_type}
+                      {String(log.metadata?.name || log.metadata?.order_number || log.entity_type || '')}
                     </div>
                   </div>
                 ))

@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { useCurrency, SupportedCurrency, CURRENCIES } from '@/context/CurrencyContext';
 import {
   Settings,
   Database,
@@ -12,20 +13,70 @@ import {
   Sliders
 } from 'lucide-react';
 
+const SETTINGS_STORAGE_KEY = 'peptrabio_admin_settings_v1';
+
 export default function AdminSettingsPage() {
+  const { currency: globalCurrency, setCurrency: setGlobalCurrency } = useCurrency();
+
   const [storeName, setStoreName] = useState('PEPTRA BIO');
   const [supportEmail, setSupportEmail] = useState('support@peptrabio.com');
-  const [currency, setCurrency] = useState('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState<SupportedCurrency>(globalCurrency || 'INR');
   const [shippingRate, setShippingRate] = useState('15.00');
   const [complianceNotice, setComplianceNotice] = useState(
     'RESEARCH USE ONLY • ALL PEPTIDES ARE SOLD STRICTLY FOR IN VITRO LABORATORY RESEARCH'
   );
   const [toast, setToast] = useState(false);
 
-  const isSupabaseConfigured = typeof process !== 'undefined' && Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  // Load persistent settings on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.storeName) setStoreName(parsed.storeName);
+          if (parsed.supportEmail) setSupportEmail(parsed.supportEmail);
+          if (parsed.shippingRate) setShippingRate(parsed.shippingRate);
+          if (parsed.complianceNotice) setComplianceNotice(parsed.complianceNotice);
+        }
+      } catch (err) {
+        console.error('Error loading settings', err);
+      }
+    }
+  }, []);
+
+  // Sync selected currency with global currency
+  useEffect(() => {
+    if (globalCurrency) {
+      setSelectedCurrency(globalCurrency);
+    }
+  }, [globalCurrency]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 1. Update Global Currency
+    if (selectedCurrency && CURRENCIES[selectedCurrency]) {
+      setGlobalCurrency(selectedCurrency);
+    }
+
+    // 2. Persist Store Settings in LocalStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const settingsPayload = {
+          storeName,
+          supportEmail,
+          currency: selectedCurrency,
+          shippingRate,
+          complianceNotice,
+          updated_at: new Date().toISOString()
+        };
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsPayload));
+      } catch (err) {
+        console.error('Error saving admin settings', err);
+      }
+    }
+
     setToast(true);
     setTimeout(() => setToast(false), 3000);
   };
@@ -38,7 +89,7 @@ export default function AdminSettingsPage() {
         {toast && (
           <div className="fixed top-5 right-5 z-50 bg-brand text-white px-5 py-3 rounded-2xl shadow-purple-glow font-orbitron text-xs flex items-center space-x-2">
             <CheckCircle2 className="w-4 h-4 text-purple-300" />
-            <span>Settings saved successfully!</span>
+            <span>Settings saved and currency updated successfully!</span>
           </div>
         )}
 
@@ -97,7 +148,7 @@ export default function AdminSettingsPage() {
                 type="text"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans"
+                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans focus:outline-none focus:border-brand"
               />
             </div>
 
@@ -109,7 +160,7 @@ export default function AdminSettingsPage() {
                 type="email"
                 value={supportEmail}
                 onChange={(e) => setSupportEmail(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans"
+                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans focus:outline-none focus:border-brand"
               />
             </div>
 
@@ -118,12 +169,12 @@ export default function AdminSettingsPage() {
                 BASE CURRENCY
               </label>
               <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans bg-white focus:outline-none focus:border-brand"
+                value={selectedCurrency}
+                onChange={(e) => setSelectedCurrency(e.target.value as SupportedCurrency)}
+                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans bg-white focus:outline-none focus:border-brand font-medium"
               >
-                <option value="USD">USD ($)</option>
                 <option value="INR">INR (₹)</option>
+                <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option>
                 <option value="CAD">CAD ($)</option>
@@ -138,7 +189,7 @@ export default function AdminSettingsPage() {
                 type="text"
                 value={shippingRate}
                 onChange={(e) => setShippingRate(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans font-mono"
+                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans font-mono focus:outline-none focus:border-brand"
               />
             </div>
 
@@ -150,7 +201,7 @@ export default function AdminSettingsPage() {
                 type="text"
                 value={complianceNotice}
                 onChange={(e) => setComplianceNotice(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans"
+                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans focus:outline-none focus:border-brand"
               />
             </div>
           </div>
@@ -158,7 +209,7 @@ export default function AdminSettingsPage() {
           <div className="pt-4 border-t border-brand-border flex justify-end">
             <button
               type="submit"
-              className="px-6 py-3 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-2 transition-all"
+              className="px-6 py-3 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-2 transition-all hover:scale-[1.02]"
             >
               <Save className="w-4 h-4" />
               <span>SAVE SETTINGS</span>

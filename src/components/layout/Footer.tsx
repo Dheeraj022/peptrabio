@@ -1,9 +1,19 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShieldAlert, Mail, MapPin, Clock, FileCheck } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Hide footer completely inside admin panel
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#120B1D] text-gray-300 border-t border-purple-900/50">
       {/* Upper Footer: Main Links & Information */}

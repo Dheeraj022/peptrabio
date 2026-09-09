@@ -7,6 +7,7 @@ import {
   fetchAllTickets,
   updateTicketStatus,
   updateTicketPriority,
+  deleteTicket,
   computeTicketStats
 } from '@/lib/support-store';
 import {
@@ -21,6 +22,7 @@ import {
   Search,
   Filter,
   Eye,
+  Trash2,
   AlertCircle,
   Clock,
   CheckCircle2,
@@ -38,6 +40,7 @@ import {
 export default function AdminTicketsPage() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState<SupportTicket | null>(null);
   const [stats, setStats] = useState<TicketStats>({
     total: 0,
     open: 0,
@@ -65,6 +68,16 @@ export default function AdminTicketsPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const handleDeleteTicket = async (ticketId: string) => {
+    try {
+      await deleteTicket(ticketId);
+      setDeleteConfirm(null);
+      await loadData();
+    } catch {
+      alert('Failed to delete ticket');
+    }
+  };
 
   const handleStatusQuickChange = async (ticketId: string, newStatus: TicketStatus) => {
     try {
@@ -395,13 +408,22 @@ export default function AdminTicketsPage() {
 
                       {/* Actions */}
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                        <Link
-                          href={`/admin/tickets/${t.id}`}
-                          className="inline-flex items-center px-3 py-1.5 rounded-lg border border-brand-border bg-white hover:bg-brand-light text-brand font-orbitron text-xs font-semibold shadow-xs transition-colors"
-                        >
-                          <Eye className="w-3.5 h-3.5 mr-1" />
-                          <span>VIEW</span>
-                        </Link>
+                        <div className="flex items-center justify-end space-x-1.5">
+                          <Link
+                            href={`/admin/tickets/${t.id}`}
+                            className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-brand-border bg-white hover:bg-brand-light text-brand font-orbitron text-xs font-semibold shadow-xs transition-colors"
+                          >
+                            <Eye className="w-3.5 h-3.5 mr-1" />
+                            <span>VIEW</span>
+                          </Link>
+                          <button
+                            onClick={() => setDeleteConfirm(t)}
+                            className="p-1.5 rounded-lg text-content-muted hover:text-accent-danger hover:bg-red-50 transition-colors"
+                            title="Delete Ticket"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
 
                     </tr>
@@ -411,6 +433,41 @@ export default function AdminTicketsPage() {
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white border-2 border-red-200 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+              <div className="w-12 h-12 rounded-2xl bg-red-100 text-accent-danger flex items-center justify-center mx-auto">
+                <Trash2 className="w-6 h-6" />
+              </div>
+
+              <div className="text-center space-y-1">
+                <h3 className="font-orbitron font-bold text-lg text-content-primary">
+                  DELETE SUPPORT TICKET
+                </h3>
+                <p className="text-xs text-content-secondary font-sans">
+                  Are you sure you want to delete ticket <strong className="font-mono text-brand">{deleteConfirm.ticket_number}</strong> from <span className="font-medium text-content-primary">{deleteConfirm.customer_name}</span>? This will remove all messages and audit events for this ticket.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className="py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-content-primary font-orbitron text-xs font-semibold rounded-full transition-all"
+                >
+                  CANCEL
+                </button>
+                <button
+                  onClick={() => handleDeleteTicket(deleteConfirm.id)}
+                  className="py-2.5 px-4 bg-accent-danger hover:bg-red-700 text-white font-orbitron text-xs font-semibold rounded-full transition-all shadow-sm"
+                >
+                  DELETE
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </AdminLayout>

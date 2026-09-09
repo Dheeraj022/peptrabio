@@ -17,8 +17,8 @@ export function AgeVerificationModal() {
   const [denied, setDenied] = useState(false);
   const [errorHighlight, setErrorHighlight] = useState(false);
 
-  // Exempt Terms & Conditions and all policy pages so visitors can review terms and policies freely
-  const isExemptPage = pathname?.startsWith('/policies');
+  // Exempt admin panel and policy pages
+  const isExemptPage = pathname?.startsWith('/policies') || pathname?.startsWith('/admin');
 
   useEffect(() => {
     try {

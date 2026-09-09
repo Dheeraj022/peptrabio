@@ -1,60 +1,77 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
+import { Order, OrderStatus } from '@/types';
+import { fetchCustomerOrders } from '@/lib/products-store';
 import {
   User,
-  Building,
   Mail,
   Phone,
-  MapPin,
-  Calendar,
   LogOut,
   LifeBuoy,
   ShoppingBag,
-  ShieldCheck,
   CheckCircle2,
   ExternalLink,
   PlusCircle,
   FileText,
-  Clock
+  Clock,
+  Truck,
+  Package,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Check,
+  ArrowRight,
+  ShieldCheck,
+  AlertCircle
 } from 'lucide-react';
 
 export default function AccountPage() {
   const router = useRouter();
   const { user, logout, updateProfile, isLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'tickets' | 'settings'>('overview');
+  const { formatPrice } = useCurrency();
+  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'tickets'>('overview');
   const [editMode, setEditMode] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
 
   // Form states
   const [name, setName] = useState(user?.name || '');
-  const [institution, setInstitution] = useState(user?.institution || '');
   const [phone, setPhone] = useState(user?.phone || '');
-  const [street, setStreet] = useState(user?.address?.street || '');
-  const [city, setCity] = useState(user?.address?.city || '');
-  const [state, setState] = useState(user?.address?.state || '');
-  const [zip, setZip] = useState(user?.address?.zip || '');
 
-  React.useEffect(() => {
+  // Orders State
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [orderSearch, setOrderSearch] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [copiedOrderId, setCopiedOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login?redirect=/account');
     }
   }, [user, isLoading, router]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       setName(user.name);
-      setInstitution(user.institution || '');
       setPhone(user.phone || '');
-      setStreet(user.address?.street || '');
-      setCity(user.address?.city || '');
-      setState(user.address?.state || '');
-      setZip(user.address?.zip || '');
+      loadUserOrders();
     }
   }, [user]);
+
+  const loadUserOrders = () => {
+    if (!user) return;
+    setOrdersLoading(true);
+    const userOrders = fetchCustomerOrders(user.email, user.id);
+    setOrders(userOrders);
+    setOrdersLoading(false);
+  };
 
   if (isLoading || !user) {
     return (
@@ -70,15 +87,7 @@ export default function AccountPage() {
     e.preventDefault();
     await updateProfile({
       name,
-      institution,
       phone,
-      address: {
-        ...user.address,
-        street,
-        city,
-        state,
-        zip,
-      }
     });
     setEditMode(false);
     setSavedMsg(true);
@@ -88,6 +97,95 @@ export default function AccountPage() {
   const handleLogout = async () => {
     await logout();
     router.push('/');
+  };
+
+  const copyOrderNumber = (orderNum: string) => {
+    navigator.clipboard.writeText(orderNum);
+    setCopiedOrderId(orderNum);
+    setTimeout(() => setCopiedOrderId(null), 2000);
+  };
+
+  const filteredOrders = orders.filter((o) => {
+    if (orderStatusFilter !== 'all' && o.status !== orderStatusFilter) return false;
+    if (orderSearch.trim()) {
+      const q = orderSearch.toLowerCase().trim();
+      const matchNum = o.order_number.toLowerCase().includes(q);
+      const matchItem = o.items?.some(i => i.product_name.toLowerCase().includes(q) || (i.product_code && i.product_code.toLowerCase().includes(q)));
+      if (!matchNum && !matchItem) return false;
+    }
+    return true;
+  });
+
+  const getOrderStatusBadge = (status: OrderStatus) => {
+    switch (status) {
+      case 'pending':
+        return {
+          label: 'Payment Pending',
+          bg: 'bg-amber-50 text-amber-700 border-amber-200',
+          dot: 'bg-amber-500',
+        };
+      case 'paid':
+        return {
+          label: 'Order Confirmed',
+          bg: 'bg-blue-50 text-blue-700 border-blue-200',
+          dot: 'bg-blue-500',
+        };
+      case 'processing':
+        return {
+          label: 'Processing & QC',
+          bg: 'bg-purple-50 text-brand border-brand-border',
+          dot: 'bg-brand animate-pulse',
+        };
+      case 'shipped':
+        return {
+          label: 'Shipped (Cold Chain)',
+          bg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+          dot: 'bg-indigo-500 animate-pulse',
+        };
+      case 'delivered':
+        return {
+          label: 'Delivered & Verified',
+          bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          dot: 'bg-emerald-500',
+        };
+      case 'cancelled':
+        return {
+          label: 'Cancelled',
+          bg: 'bg-red-50 text-red-700 border-red-200',
+          dot: 'bg-red-500',
+        };
+      case 'refunded':
+        return {
+          label: 'Refunded',
+          bg: 'bg-gray-100 text-gray-700 border-gray-200',
+          dot: 'bg-gray-400',
+        };
+      default:
+        return {
+          label: status,
+          bg: 'bg-gray-50 text-gray-700 border-gray-200',
+          dot: 'bg-gray-400',
+        };
+    }
+  };
+
+  const getOrderTimelineSteps = (status: OrderStatus) => {
+    const steps = [
+      { id: 'placed', label: 'Order Placed', desc: 'Payment verified & order queued' },
+      { id: 'qc', label: 'QC & Cold Packing', desc: 'Lyophilized vials boxed with cold monitoring' },
+      { id: 'shipped', label: 'Cold-Chain Dispatch', desc: 'In-transit with temperature tags' },
+      { id: 'delivered', label: 'Delivered', desc: 'Package signed & received' },
+    ];
+
+    let currentStepIndex = 1;
+    if (status === 'pending') currentStepIndex = 0;
+    else if (status === 'paid') currentStepIndex = 1;
+    else if (status === 'processing') currentStepIndex = 2;
+    else if (status === 'shipped') currentStepIndex = 3;
+    else if (status === 'delivered') currentStepIndex = 4;
+    else if (status === 'cancelled' || status === 'refunded') currentStepIndex = -1;
+
+    return { steps, currentStepIndex };
   };
 
   return (
@@ -118,11 +216,11 @@ export default function AccountPage() {
 
         <div className="flex items-center space-x-3">
           <Link
-            href="/support/new"
+            href="/shop"
             className="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-semibold tracking-wider transition-colors shadow-purple-sm flex items-center space-x-1.5"
           >
-            <PlusCircle className="w-4 h-4" />
-            <span>NEW TICKET</span>
+            <ShoppingBag className="w-4 h-4" />
+            <span>NEW ORDER</span>
           </Link>
           <button
             onClick={handleLogout}
@@ -138,9 +236,8 @@ export default function AccountPage() {
       <div className="flex border-b border-brand-border mb-8 overflow-x-auto space-x-2 sm:space-x-4">
         {[
           { id: 'overview', label: 'Overview & Profile', icon: User },
+          { id: 'orders', label: 'My Orders', icon: ShoppingBag, count: orders.length },
           { id: 'tickets', label: 'Support Tickets', icon: LifeBuoy },
-          { id: 'orders', label: 'Requisitions & Orders', icon: ShoppingBag },
-          { id: 'settings', label: 'Lab Settings', icon: Building },
         ].map((tab) => {
           const Icon = tab.icon;
           const active = activeTab === tab.id;
@@ -156,6 +253,11 @@ export default function AccountPage() {
             >
               <Icon className="w-4 h-4" />
               <span>{tab.label}</span>
+              {typeof tab.count === 'number' && tab.count > 0 && (
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${active ? 'bg-brand text-white' : 'bg-gray-100 text-gray-600'}`}>
+                  {tab.count}
+                </span>
+              )}
             </button>
           );
         })}
@@ -200,33 +302,11 @@ export default function AccountPage() {
                     />
                   </div>
                   <div>
-                    <label className="block font-orbitron text-[10px] font-bold text-content-muted uppercase mb-1">Laboratory / Institution</label>
-                    <input
-                      type="text"
-                      value={institution}
-                      onChange={(e) => setInstitution(e.target.value)}
-                      className="w-full px-3.5 py-2 rounded-xl border border-brand-border bg-surface-soft text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
                     <label className="block font-orbitron text-[10px] font-bold text-content-muted uppercase mb-1">Phone Number</label>
                     <input
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full px-3.5 py-2 rounded-xl border border-brand-border bg-surface-soft text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-orbitron text-[10px] font-bold text-content-muted uppercase mb-1">Shipping Lab Address</label>
-                    <input
-                      type="text"
-                      value={street}
-                      onChange={(e) => setStreet(e.target.value)}
-                      placeholder="Street address"
                       className="w-full px-3.5 py-2 rounded-xl border border-brand-border bg-surface-soft text-xs"
                     />
                   </div>
@@ -240,7 +320,7 @@ export default function AccountPage() {
                 </button>
               </form>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
                 <div className="space-y-1">
                   <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Full Name</span>
                   <div className="font-semibold text-content-primary flex items-center space-x-2">
@@ -258,32 +338,83 @@ export default function AccountPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Laboratory / Affiliation</span>
-                  <div className="font-semibold text-content-primary flex items-center space-x-2">
-                    <Building className="w-3.5 h-3.5 text-brand" />
-                    <span>{user.institution || 'MIT Molecular Biology Dept'}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
                   <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Phone Contact</span>
                   <div className="font-semibold text-content-primary flex items-center space-x-2">
                     <Phone className="w-3.5 h-3.5 text-brand" />
                     <span>{user.phone || '+1 (617) 555-0199'}</span>
                   </div>
                 </div>
-
-                <div className="sm:col-span-2 space-y-1 pt-2 border-t border-brand-border">
-                  <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Laboratory Shipping Address</span>
-                  <div className="font-semibold text-content-primary flex items-start space-x-2">
-                    <MapPin className="w-3.5 h-3.5 text-brand mt-0.5" />
-                    <span>
-                      {user.address?.street || '77 Massachusetts Ave, Bldg 16'}, {user.address?.city || 'Cambridge'}, {user.address?.state || 'MA'} {user.address?.zip || '02139'}, United States
-                    </span>
-                  </div>
-                </div>
               </div>
             )}
+
+            {/* Quick Orders Overview Section */}
+            <div className="pt-6 border-t border-brand-border space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Package className="w-4 h-4 text-brand" />
+                  <h3 className="font-orbitron font-bold text-xs uppercase tracking-wider text-content-primary">
+                    Recent Orders & Shipments
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className="text-xs font-orbitron font-bold text-brand hover:underline flex items-center space-x-1"
+                >
+                  <span>View All ({orders.length})</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {orders.length === 0 ? (
+                <div className="p-4 rounded-2xl bg-surface-soft border border-brand-border text-center py-6">
+                  <p className="text-xs text-content-secondary font-sans mb-2">No orders placed yet.</p>
+                  <Link
+                    href="/shop"
+                    className="inline-flex items-center text-xs font-orbitron font-bold text-brand hover:underline"
+                  >
+                    Browse Peptide Catalog →
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {orders.slice(0, 2).map((order) => {
+                    const statusBadge = getOrderStatusBadge(order.status);
+                    return (
+                      <div
+                        key={order.id}
+                        onClick={() => {
+                          setActiveTab('orders');
+                          setExpandedOrderId(order.id);
+                        }}
+                        className="p-3.5 rounded-2xl bg-surface-soft border border-brand-border hover:border-brand transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-mono text-xs font-bold text-brand group-hover:underline">
+                              {order.order_number}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-orbitron font-bold uppercase border ${statusBadge.bg}`}>
+                              {statusBadge.label}
+                            </span>
+                          </div>
+                          <p className="text-xs text-content-secondary line-clamp-1 font-sans">
+                            {order.items?.map(i => `${i.product_name} (×${i.quantity})`).join(', ') || 'Peptide materials'}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between sm:justify-end space-x-3 text-xs">
+                          <span className="font-mono font-bold text-content-primary">
+                            {formatPrice(order.total)}
+                          </span>
+                          <span className="text-brand font-orbitron text-[10px] font-bold group-hover:translate-x-0.5 transition-transform">
+                            Details →
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Quick Shortcuts */}
@@ -299,13 +430,13 @@ export default function AccountPage() {
               <div className="pt-2 flex flex-col gap-2">
                 <Link
                   href="/support"
-                  className="w-full py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-bold text-center tracking-wider transition-colors"
+                  className="w-full text-center px-4 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-bold transition-all shadow-purple-sm"
                 >
                   VIEW MY TICKETS →
                 </Link>
                 <Link
                   href="/support/new"
-                  className="w-full py-2 bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-700/60 rounded-xl font-orbitron text-[11px] font-medium text-center tracking-wider transition-colors"
+                  className="w-full text-center px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-orbitron text-xs font-semibold transition-all"
                 >
                   SUBMIT NEW TICKET
                 </Link>
@@ -314,21 +445,361 @@ export default function AccountPage() {
 
             <div className="bg-white rounded-3xl p-6 border border-brand-border shadow-sm space-y-3">
               <div className="flex items-center space-x-2 text-brand">
-                <ShieldCheck className="w-4 h-4" />
-                <h4 className="font-orbitron font-bold text-xs text-content-primary">Product Authenticity Check</h4>
+                <ShieldCheck className="w-5 h-5" />
+                <h3 className="font-orbitron font-bold text-xs text-content-primary">
+                  Product Authenticity Check
+                </h3>
               </div>
-              <p className="text-xs text-content-muted font-sans leading-relaxed">
+              <p className="text-xs text-content-secondary leading-relaxed font-sans">
                 Scan or enter the verification code on your physical product packaging to verify batch authenticity.
               </p>
               <Link
                 href="/verify"
-                className="inline-flex items-center space-x-1.5 text-xs font-orbitron font-bold text-brand hover:underline pt-1"
+                className="inline-flex items-center text-xs font-orbitron font-bold text-brand hover:underline"
               >
-                <span>Go to Public Verification</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                Go to Public Verification <ExternalLink className="w-3 h-3 ml-1" />
               </Link>
             </div>
           </div>
+
+        </div>
+      )}
+
+      {/* Tab: My Orders (Order tracking, history & live updates) */}
+      {activeTab === 'orders' && (
+        <div className="space-y-6">
+          
+          {/* Orders Header & Search */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-5">
+              <div>
+                <h2 className="font-orbitron font-bold text-lg text-content-primary">
+                  My Orders & Requisition History
+                </h2>
+                <p className="text-xs text-content-muted font-sans mt-0.5">
+                  Track batch fulfillments, cold-chain logistics, and live delivery milestones.
+                </p>
+              </div>
+              <Link
+                href="/shop"
+                className="px-5 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-semibold tracking-wider transition-colors shadow-purple-sm flex items-center space-x-1.5 self-start sm:self-auto"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>+ NEW REQUISITION</span>
+              </Link>
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+              {/* Status Filters */}
+              <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                {[
+                  { id: 'all', label: 'All Orders' },
+                  { id: 'processing', label: 'Processing' },
+                  { id: 'shipped', label: 'Shipped (Cold Chain)' },
+                  { id: 'delivered', label: 'Delivered' },
+                  { id: 'paid', label: 'Confirmed' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setOrderStatusFilter(tab.id)}
+                    className={`px-3.5 py-1.5 rounded-full font-orbitron text-xs font-semibold whitespace-nowrap transition-all ${
+                      orderStatusFilter === tab.id
+                        ? 'bg-brand text-white shadow-purple-sm'
+                        : 'bg-surface-soft text-content-secondary hover:text-brand hover:bg-brand-light'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search */}
+              <div className="relative w-full md:w-64">
+                <Search className="w-4 h-4 text-content-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search order # or product..."
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-brand-border bg-surface-soft text-xs font-sans focus:outline-none focus:border-brand"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Orders List */}
+          {ordersLoading ? (
+            <div className="text-center py-16 space-y-3">
+              <div className="w-10 h-10 border-3 border-brand border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="font-orbitron text-xs text-content-muted">LOADING YOUR ORDERS...</p>
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="text-center py-16 bg-white border border-brand-border rounded-3xl p-8 space-y-4 shadow-sm">
+              <div className="w-16 h-16 rounded-full bg-brand-light text-brand flex items-center justify-center mx-auto">
+                <Package className="w-8 h-8" />
+              </div>
+              <h3 className="font-orbitron font-bold text-lg text-content-primary">
+                NO ORDERS FOUND
+              </h3>
+              <p className="text-xs text-content-secondary max-w-md mx-auto font-sans">
+                {orderSearch || orderStatusFilter !== 'all'
+                  ? 'No orders match your filter criteria. Try searching with another keyword or resetting filters.'
+                  : "You haven't placed any research peptide orders yet. Explore our verified analytical catalog to submit your first requisition."}
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/shop"
+                  className="inline-flex items-center px-6 py-3 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm transition-all"
+                >
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  BROWSE RESEARCH PEPTIDES
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredOrders.map((order) => {
+                const statusBadge = getOrderStatusBadge(order.status);
+                const isExpanded = expandedOrderId === order.id;
+                const { steps, currentStepIndex } = getOrderTimelineSteps(order.status);
+                const trackingNumber = `FEDEX-COLD-${order.order_number.replace(/\D/g, '') || '8829104'}`;
+
+                return (
+                  <div
+                    key={order.id}
+                    className="bg-white border-2 border-brand-border rounded-3xl overflow-hidden shadow-sm hover:shadow-card-hover transition-all duration-200"
+                  >
+                    {/* Main Order Card Row */}
+                    <div className="p-6 sm:p-7 space-y-5">
+                      
+                      {/* Top Meta Bar */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border/60 pb-4">
+                        <div className="flex items-center space-x-3 flex-wrap gap-y-2">
+                          <div className="flex items-center space-x-1.5">
+                            <span className="font-mono text-sm font-bold text-brand">
+                              {order.order_number}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => copyOrderNumber(order.order_number)}
+                              className="p-1 text-content-muted hover:text-brand transition-colors"
+                              title="Copy Order Number"
+                            >
+                              {copiedOrderId === order.order_number ? (
+                                <Check className="w-3.5 h-3.5 text-green-600" />
+                              ) : (
+                                <Copy className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+                          </div>
+
+                          <span className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-orbitron font-bold uppercase tracking-wider border ${statusBadge.bg}`}>
+                            <span className={`w-2 h-2 rounded-full ${statusBadge.dot}`} />
+                            <span>{statusBadge.label}</span>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-end space-x-4 text-xs">
+                          <span className="text-content-muted font-sans">
+                            Placed on {new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                          <span className="font-mono font-bold text-base text-content-primary">
+                            {formatPrice(order.total)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Live Multi-step Progress Tracker */}
+                      {currentStepIndex >= 0 && (
+                        <div className="py-2">
+                          <div className="hidden md:grid grid-cols-4 gap-2 relative">
+                            {/* Connecting Line */}
+                            <div className="absolute top-4 left-6 right-6 h-0.5 bg-gray-200 -z-0" />
+                            <div
+                              className="absolute top-4 left-6 h-0.5 bg-brand transition-all duration-500 -z-0"
+                              style={{ width: `${Math.max(0, (Math.min(currentStepIndex, 3) / 3) * 100)}%` }}
+                            />
+
+                            {steps.map((step, idx) => {
+                              const isCompleted = idx < currentStepIndex;
+                              const isCurrent = idx === currentStepIndex;
+                              return (
+                                <div key={step.id} className="relative z-10 flex flex-col items-center text-center px-1">
+                                  <div
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center font-orbitron text-xs font-bold transition-all ${
+                                      isCompleted
+                                        ? 'bg-brand text-white shadow-purple-sm'
+                                        : isCurrent
+                                        ? 'bg-white border-2 border-brand text-brand ring-4 ring-purple-100'
+                                        : 'bg-gray-100 text-gray-400 border border-gray-200'
+                                    }`}
+                                  >
+                                    {isCompleted ? <Check className="w-4 h-4" /> : idx + 1}
+                                  </div>
+                                  <span className={`font-orbitron text-[11px] font-bold mt-2 ${isCurrent ? 'text-brand' : isCompleted ? 'text-content-primary' : 'text-gray-400'}`}>
+                                    {step.label}
+                                  </span>
+                                  <span className="text-[10px] text-content-muted font-sans leading-tight mt-0.5">
+                                    {step.desc}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Mobile compact tracker */}
+                          <div className="md:hidden flex items-center justify-between p-3 rounded-2xl bg-surface-soft border border-brand-border text-xs">
+                            <div className="flex items-center space-x-2">
+                              <Truck className="w-4 h-4 text-brand animate-pulse" />
+                              <span className="font-orbitron font-semibold text-content-primary">
+                                Current Status: <span className="text-brand">{statusBadge.label}</span>
+                              </span>
+                            </div>
+                            <span className="font-mono text-[10px] text-content-muted">
+                              Step {Math.min(currentStepIndex + 1, 4)} of 4
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Items Summary Preview */}
+                      <div className="space-y-2">
+                        <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase tracking-wider block">
+                          Ordered Peptide Items ({order.items?.reduce((acc, i) => acc + i.quantity, 0) || 1} units)
+                        </span>
+
+                        <div className="divide-y divide-brand-border/40 border border-brand-border rounded-2xl overflow-hidden bg-surface-soft">
+                          {order.items && order.items.length > 0 ? (
+                            order.items.map((item) => (
+                              <div key={item.id} className="p-3.5 flex items-center justify-between text-xs gap-4">
+                                <div className="space-y-0.5 flex-1 min-w-0">
+                                  <div className="font-bold text-content-primary truncate font-orbitron">
+                                    {item.product_name}
+                                  </div>
+                                  {item.product_code && (
+                                    <div className="font-mono text-[10px] text-content-muted">
+                                      SKU: {item.product_code}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <div className="font-mono font-bold text-content-primary">
+                                    {formatPrice(item.total_price)}
+                                  </div>
+                                  <div className="text-[10px] text-content-muted font-sans">
+                                    Qty: {item.quantity} × {formatPrice(item.unit_price)}
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="p-3.5 text-xs text-content-secondary">
+                              Analytical Research Grade Peptide Materials (Lyophilized)
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Bottom Action Controls */}
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
+                            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-surface-soft hover:bg-brand-light text-brand font-orbitron text-xs font-semibold border border-brand-border transition-colors"
+                          >
+                            <span>{isExpanded ? 'Hide Logistics & Details' : 'View Full Logistics & Details'}</span>
+                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          </button>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Link
+                            href={`/support/new?category=Order%20Status&order=${encodeURIComponent(order.order_number)}`}
+                            className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand text-white hover:bg-brand-dark font-orbitron text-xs font-semibold shadow-purple-sm transition-colors"
+                          >
+                            <LifeBuoy className="w-3.5 h-3.5 mr-1.5" />
+                            <span>Inquire on Order</span>
+                          </Link>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Expandable Full Logistics & In-Depth Details */}
+                    {isExpanded && (
+                      <div className="p-6 bg-surface-soft border-t-2 border-brand-border space-y-6 animate-in fade-in duration-200">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                          
+                          {/* Cold-Chain Shipping Logistics */}
+                          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-border space-y-3">
+                            <div className="flex items-center space-x-2 text-brand font-orbitron font-bold">
+                              <Truck className="w-4 h-4" />
+                              <span>Cold-Chain Fulfillment Logistics</span>
+                            </div>
+
+                            <div className="space-y-2 font-sans text-content-secondary">
+                              <div className="flex justify-between py-1 border-b border-gray-100">
+                                <span className="text-content-muted">Shipping Method:</span>
+                                <span className="font-medium text-content-primary">FedEx Priority Cold-Chain (Dry Ice)</span>
+                              </div>
+                              <div className="flex justify-between py-1 border-b border-gray-100">
+                                <span className="text-content-muted">Tracking Reference:</span>
+                                <span className="font-mono font-bold text-brand">{trackingNumber}</span>
+                              </div>
+                              <div className="flex justify-between py-1 border-b border-gray-100">
+                                <span className="text-content-muted">Temperature Monitored:</span>
+                                <span className="font-medium text-emerald-700">Certified (-20°C Thermal Tag)</span>
+                              </div>
+                              <div className="flex justify-between py-1">
+                                <span className="text-content-muted">Laboratory Attestation:</span>
+                                <span className="font-medium text-content-primary">In-Vitro Analytical Use Only</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Destination & Order Financials */}
+                          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-border space-y-3">
+                            <div className="flex items-center space-x-2 text-brand font-orbitron font-bold">
+                              <FileText className="w-4 h-4" />
+                              <span>Destination & Payment Breakdown</span>
+                            </div>
+
+                            <div className="space-y-2 font-sans text-content-secondary">
+                              <div className="flex justify-between py-1 border-b border-gray-100">
+                                <span className="text-content-muted">Subtotal:</span>
+                                <span className="font-mono font-medium text-content-primary">{formatPrice(order.subtotal)}</span>
+                              </div>
+                              <div className="flex justify-between py-1 border-b border-gray-100">
+                                <span className="text-content-muted">Insulated Cold-Chain Freight:</span>
+                                <span className="font-mono font-medium text-content-primary">{formatPrice(order.shipping)}</span>
+                              </div>
+                              <div className="flex justify-between py-1 border-b border-gray-100">
+                                <span className="text-content-muted">Total Paid:</span>
+                                <span className="font-mono font-bold text-brand">{formatPrice(order.total)}</span>
+                              </div>
+                              {order.shipping_address && (
+                                <div className="pt-1">
+                                  <span className="text-content-muted block text-[11px] mb-0.5">Shipping Destination:</span>
+                                  <p className="font-medium text-content-primary leading-tight text-[11px]">
+                                    {order.shipping_address.street}, {order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.postal_code}, {order.shipping_address.country}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    )}
+
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
         </div>
       )}
 
@@ -362,75 +833,6 @@ export default function AccountPage() {
             >
               OPEN SUPPORT PORTAL →
             </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Orders */}
-      {activeTab === 'orders' && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm space-y-6">
-          <div className="border-b border-brand-border pb-4">
-            <h2 className="font-orbitron font-bold text-base text-content-primary">
-              Laboratory Requisition History
-            </h2>
-            <p className="text-xs text-content-muted font-sans">
-              Orders placed for research materials and analytical peptide standards.
-            </p>
-          </div>
-
-          {/* Sample Requisition Item */}
-          <div className="p-4 rounded-2xl bg-surface-soft border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2">
-                <span className="font-mono text-xs font-bold text-brand">#ORD-90241</span>
-                <span className="px-2 py-0.5 rounded-md bg-green-100 text-green-700 text-[10px] font-orbitron font-semibold uppercase">
-                  Shipped (Cold Chain)
-                </span>
-              </div>
-              <div className="text-xs text-content-primary font-medium">
-                Selank (5mg Vial) × 2, BPC-157 (10mg Vial) × 1
-              </div>
-              <div className="text-[11px] text-content-muted">
-                Placed on 04 Sep 2026 • Tracking: FEDEX-COLD-8829104
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Link
-                href="/support/new?category=Order%20Status&order=ORD-90241"
-                className="px-3 py-1.5 rounded-xl border border-brand-border text-xs font-orbitron font-medium hover:border-brand text-brand hover:bg-brand-light transition-colors"
-              >
-                Inquire
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Settings */}
-      {activeTab === 'settings' && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm space-y-6">
-          <div className="border-b border-brand-border pb-4">
-            <h2 className="font-orbitron font-bold text-base text-content-primary">
-              Laboratory Compliance & Security
-            </h2>
-            <p className="text-xs text-content-muted font-sans">
-              Manage your compliance certificates and laboratory credentials.
-            </p>
-          </div>
-
-          <div className="space-y-4 max-w-xl text-xs">
-            <div className="p-4 rounded-2xl bg-brand-light/50 border border-brand/20 flex items-start space-x-3">
-              <ShieldCheck className="w-5 h-5 text-brand shrink-0 mt-0.5" />
-              <div>
-                <span className="font-orbitron font-bold text-brand block mb-1">
-                  Active In-Vitro Research Acknowledgment
-                </span>
-                <p className="text-content-secondary leading-relaxed">
-                  Your account is registered as an authorized laboratory researcher. All synthetic peptide sequences purchased through this account are certified solely for analytical and in-vitro research purposes.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       )}

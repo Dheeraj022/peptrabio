@@ -13,11 +13,6 @@
   h1 {
     font-family: 'Orbitron', var(--font-orbitron), system-ui, sans-serif;
     letter-spacing: 0.02em;
-    background: linear-gradient(135deg, #0C0317 0%, #290848 35%, #672CAE 75%, #8B34EA 100%);
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    color: transparent !important;
   }
 
   h2, h3, h4, h5, h6 {

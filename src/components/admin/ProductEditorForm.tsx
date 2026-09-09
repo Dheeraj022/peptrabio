@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Product, ProductImage, ProductDocument, ProductReference } from '@/types';
 import { saveOrUpdateProduct, getLocalCategories } from '@/lib/products-store';
 import {
@@ -21,6 +22,7 @@ import {
 
 export function ProductEditorForm({ initialProduct }: { initialProduct?: Product }) {
   const router = useRouter();
+  const { formatPrice, currencyConfig } = useCurrency();
 
   const [formData, setFormData] = useState<Partial<Product>>(
     initialProduct || {
@@ -561,9 +563,14 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
 
             <div className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block font-orbitron text-[10px] text-content-muted mb-1">
-                  UNIT PRICE (USD) *
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block font-orbitron text-[10px] text-content-muted">
+                    UNIT PRICE *
+                  </label>
+                  <span className="font-mono text-[10px] text-brand font-semibold">
+                    {formatPrice(formData.price || 0)}
+                  </span>
+                </div>
                 <input
                   type="number"
                   step="0.01"
@@ -576,9 +583,16 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
               </div>
 
               <div>
-                <label className="block font-orbitron text-[10px] text-content-muted mb-1">
-                  COMPARE-AT PRICE (USD)
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block font-orbitron text-[10px] text-content-muted">
+                    COMPARE-AT ORIGINAL PRICE
+                  </label>
+                  {formData.compare_at_price && (
+                    <span className="font-mono text-[10px] text-content-muted">
+                      {formatPrice(formData.compare_at_price)}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="number"
                   step="0.01"

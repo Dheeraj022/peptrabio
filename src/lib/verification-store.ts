@@ -490,6 +490,29 @@ export async function updateCodeStatus(
 }
 
 /**
+ * Deletes a verification code permanently
+ */
+export async function deleteVerificationCode(codeId: string): Promise<boolean> {
+  const codes = getLocalVerificationCodes();
+  const updated = codes.filter((c) => c.id !== codeId && c.code !== codeId);
+  saveLocalVerificationCodes(updated);
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      await supabase
+        .from('product_verification_codes')
+        .delete()
+        .eq('id', codeId);
+    } catch (e) {
+      console.warn('Supabase code deletion fallback', e);
+    }
+  }
+
+  return true;
+}
+
+/**
  * Returns scan history for a specific code (Admin Only)
  */
 export async function getCodeScanHistory(codeId: string): Promise<ProductVerificationScan[]> {

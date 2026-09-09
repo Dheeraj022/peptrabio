@@ -190,6 +190,7 @@ function CreateTicketForm() {
     setSubmitting(true);
     try {
       const ticket = await createTicket({
+        customer_id: user?.id,
         customer_name: customerName,
         customer_email: customerEmail,
         subject,

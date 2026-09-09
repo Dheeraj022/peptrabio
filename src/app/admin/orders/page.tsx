@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Order, OrderStatus } from '@/types';
 import { getLocalOrders, updateOrderStatus } from '@/lib/products-store';
 import {
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminOrdersPage() {
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -158,7 +160,7 @@ export default function AdminOrdersPage() {
                       </td>
 
                       <td className="py-3.5 px-4 font-mono font-bold text-content-primary">
-                        ${order.total.toFixed(2)}
+                        {formatPrice(order.total)}
                       </td>
 
                       <td className="py-3.5 px-4">
@@ -285,9 +287,9 @@ export default function AdminOrdersPage() {
                     <div key={item.id} className="p-3 flex justify-between items-center bg-white">
                       <div>
                         <div className="font-orbitron font-semibold text-content-primary">{item.product_name}</div>
-                        <div className="text-content-muted">Qty: {item.quantity} × ${item.unit_price.toFixed(2)}</div>
+                        <div className="text-content-muted">Qty: {item.quantity} × {formatPrice(item.unit_price)}</div>
                       </div>
-                      <div className="font-mono font-bold text-content-primary">${item.total_price.toFixed(2)}</div>
+                      <div className="font-mono font-bold text-content-primary">{formatPrice(item.total_price)}</div>
                     </div>
                   ))}
                 </div>
@@ -295,9 +297,9 @@ export default function AdminOrdersPage() {
 
               {/* Totals */}
               <div className="border-t border-brand-border pt-3 space-y-1.5 text-xs font-sans text-right">
-                <div className="text-content-secondary">Subtotal: ${selectedOrder.subtotal.toFixed(2)}</div>
-                <div className="text-content-secondary">Shipping: ${selectedOrder.shipping.toFixed(2)}</div>
-                <div className="font-orbitron font-bold text-base text-brand">Total: ${selectedOrder.total.toFixed(2)}</div>
+                <div className="text-content-secondary">Subtotal: {formatPrice(selectedOrder.subtotal)}</div>
+                <div className="text-content-secondary">Shipping: {formatPrice(selectedOrder.shipping)}</div>
+                <div className="font-orbitron font-bold text-base text-brand">Total: {formatPrice(selectedOrder.total)}</div>
               </div>
 
             </div>

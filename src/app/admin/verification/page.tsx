@@ -6,7 +6,8 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ProductVerificationCode, VerificationCodeStatus } from '@/types/verification';
 import {
   getLocalVerificationCodes,
-  updateCodeStatus
+  updateCodeStatus,
+  deleteVerificationCode
 } from '@/lib/verification-store';
 import { VerificationQRCodeModal } from '@/components/admin/VerificationQRCodeModal';
 import { VerificationScanHistoryModal } from '@/components/admin/VerificationScanHistoryModal';
@@ -19,6 +20,7 @@ import {
   Download,
   Power,
   Ban,
+  Trash2,
   AlertTriangle,
   CheckCircle2,
   Lock,
@@ -40,6 +42,7 @@ export default function AdminVerificationPage() {
     code: ProductVerificationCode;
     action: VerificationCodeStatus;
   } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<ProductVerificationCode | null>(null);
   const [toastMessage, setToastMessage] = useState('');
 
   const loadData = () => {
@@ -60,6 +63,13 @@ export default function AdminVerificationPage() {
     setActionConfirm(null);
     loadData();
     showToast(`Code status set to ${status}.`);
+  };
+
+  const handleDeleteCode = async (codeId: string) => {
+    await deleteVerificationCode(codeId);
+    setDeleteConfirm(null);
+    loadData();
+    showToast('Verification code permanently deleted.');
   };
 
   // CSV Export for packaging / printing team (Section 14 of spec)
@@ -400,6 +410,15 @@ export default function AdminVerificationPage() {
                             <Ban className="w-4 h-4" />
                           </button>
 
+                          {/* Delete */}
+                          <button
+                            onClick={() => setDeleteConfirm(code)}
+                            className="p-1.5 rounded-lg text-content-muted hover:text-accent-danger hover:bg-red-50 transition-colors"
+                            title="Delete Code"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+
                         </div>
                       </td>
 
@@ -456,6 +475,41 @@ export default function AdminVerificationPage() {
                   className="py-2.5 px-4 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full transition-all shadow-sm"
                 >
                   CONFIRM
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white border-2 border-red-200 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+              <div className="w-12 h-12 rounded-2xl bg-red-100 text-accent-danger flex items-center justify-center mx-auto">
+                <Trash2 className="w-6 h-6" />
+              </div>
+
+              <div className="text-center space-y-1">
+                <h3 className="font-orbitron font-bold text-lg text-content-primary">
+                  DELETE VERIFICATION CODE
+                </h3>
+                <p className="text-xs text-content-secondary font-sans">
+                  Are you sure you want to permanently delete code <strong className="font-mono text-brand">{deleteConfirm.code}</strong> for <span className="font-medium text-content-primary">{deleteConfirm.product_name}</span>? This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className="py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-content-primary font-orbitron text-xs font-semibold rounded-full transition-all"
+                >
+                  CANCEL
+                </button>
+                <button
+                  onClick={() => handleDeleteCode(deleteConfirm.id)}
+                  className="py-2.5 px-4 bg-accent-danger hover:bg-red-700 text-white font-orbitron text-xs font-semibold rounded-full transition-all shadow-sm"
+                >
+                  DELETE
                 </button>
               </div>
             </div>

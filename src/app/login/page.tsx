@@ -79,7 +79,7 @@ function LoginFormContent() {
               priority
             />
           </div>
-          <h2 className="font-orbitron font-extrabold text-2xl sm:text-3xl text-content-primary tracking-wide">
+          <h2 className="font-orbitron font-extrabold text-xl sm:text-2xl md:text-[26px] text-content-primary tracking-tight sm:tracking-wide whitespace-nowrap">
             RESEARCHER <span className="text-brand">SIGN IN</span>
           </h2>
           <p className="mt-2 text-xs text-content-muted font-sans max-w-xs mx-auto">

@@ -76,6 +76,7 @@ export interface TicketEvent {
 }
 
 export interface CreateTicketInput {
+  customer_id?: string;
   customer_name: string;
   customer_email: string;
   subject: string;

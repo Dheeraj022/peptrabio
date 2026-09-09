@@ -1,9 +1,19 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShieldCheck, FileText, FlaskConical } from 'lucide-react';
 import { CurrencySelector } from './CurrencySelector';
 
 export function AnnouncementBar() {
+  const pathname = usePathname();
+
+  // Hide announcement bar completely inside admin panel
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <div className="bg-[#1C122C] text-white text-xs py-2 px-3 sm:px-4 border-b border-purple-900/40 font-orbitron tracking-wider overflow-x-auto scrollbar-none whitespace-nowrap">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 md:gap-6 min-w-max md:min-w-0">

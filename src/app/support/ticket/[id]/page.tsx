@@ -53,10 +53,16 @@ export default function CustomerTicketDetailPage() {
     if (!idOrNumber || !user) return;
     const t = await fetchTicketById(idOrNumber);
     if (t) {
-      setTicket(t);
-      // Pass isStaff = false to strictly filter out internal notes!
-      const msgs = await fetchTicketMessages(t.id, false);
-      setMessages(msgs);
+      const isOwner =
+        (user.email && t.customer_email && t.customer_email.trim().toLowerCase() === user.email.trim().toLowerCase()) ||
+        (user.id && t.customer_id && t.customer_id === user.id);
+
+      if (isOwner) {
+        setTicket(t);
+        // Pass isStaff = false to strictly filter out internal notes!
+        const msgs = await fetchTicketMessages(t.id, false);
+        setMessages(msgs);
+      }
     }
     setLoading(false);
   };

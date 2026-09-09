@@ -14,150 +14,21 @@ const SUPPORT_TICKETS_KEY = 'peptrabio_support_tickets_v1';
 const SUPPORT_MESSAGES_KEY = 'peptrabio_support_messages_v1';
 const SUPPORT_EVENTS_KEY = 'peptrabio_support_events_v1';
 
-// Initial Seeds for demo & initial testing
-const INITIAL_TICKETS: SupportTicket[] = [
-  {
-    id: 'tkt-10245',
-    ticket_number: 'TKT-10245',
-    customer_id: 'user-researcher-1',
-    customer_name: 'Dr. Sarah Mitchell',
-    customer_email: 'lab.researcher@biotech-institute.edu',
-    subject: 'Product Verification Limit Reached on Selank 5mg',
-    category: 'Product Verification',
-    priority: 'high',
-    status: 'in_progress',
-    assigned_to: 'staff-agent-1',
-    assigned_name: 'Support Agent Alex',
-    product_id: 'prod-selank-5mg',
-    product_name: 'Selank (5mg)',
-    verification_code: '7K9X2M',
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 3).toISOString(),
-  },
-  {
-    id: 'tkt-10246',
-    ticket_number: 'TKT-10246',
-    customer_id: 'user-researcher-2',
-    customer_name: 'Dr. Julian Vance',
-    customer_email: 'j.vance@neuro-genomics.org',
-    subject: 'Cold-Chain Delivery Timing Inquiry for BPC-157 / TB-500',
-    category: 'Shipping',
-    priority: 'normal',
-    status: 'waiting_for_customer',
-    assigned_to: 'staff-agent-2',
-    assigned_name: 'Support Specialist Elena',
-    order_id: 'ord-1002',
-    order_number: 'PB-ORD-9822',
-    product_name: 'BPC-157 + TB-500 Blend',
-    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-    updated_at: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: 'tkt-10247',
-    ticket_number: 'TKT-10247',
-    customer_id: 'user-researcher-3',
-    customer_name: 'Marcus Brody, MSc',
-    customer_email: 'm.brody@cellular-dynamics.ac.uk',
-    subject: 'Request for Extended HPLC Chromatogram Report',
-    category: 'Technical Issue',
-    priority: 'low',
-    status: 'resolved',
-    assigned_to: 'staff-agent-1',
-    assigned_name: 'Support Agent Alex',
-    product_name: 'CJC-1295 DAC',
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 4).toISOString(),
-    resolved_at: new Date(Date.now() - 86400000 * 4).toISOString(),
-  }
-];
+// Dummy Ticket IDs to filter out legacy seeds
+const LEGACY_DUMMY_IDS = new Set(['tkt-10245', 'tkt-10246', 'tkt-10247']);
+const LEGACY_CUSTOMER_IDS = new Set(['user-researcher-1', 'user-researcher-2', 'user-researcher-3']);
+const LEGACY_MSG_IDS = new Set(['msg-101', 'msg-102', 'msg-103', 'msg-104', 'msg-105']);
+const LEGACY_EVT_IDS = new Set(['evt-1', 'evt-2', 'evt-3']);
 
-const INITIAL_MESSAGES: TicketMessage[] = [
-  {
-    id: 'msg-101',
-    ticket_id: 'tkt-10245',
-    sender_id: 'user-researcher-1',
-    sender_name: 'Dr. Sarah Mitchell',
-    sender_role: 'customer',
-    message: 'Hello Peptra Bio Support, I attempted to verify my physical box of Selank (5mg) with code 7K9X2M, but the page states that the verification scan limit of 3 has been reached. Could you please check the scan history and confirm this batch?',
-    is_internal_note: false,
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: 'msg-102',
-    ticket_id: 'tkt-10245',
-    sender_id: 'staff-agent-1',
-    sender_name: 'Support Agent Alex',
-    sender_role: 'support',
-    message: 'Internal review: Checked backend audit logs for code 7K9X2M. Code is valid, generated in batch SLK-2025-04. 3 scans originated from IP subnet in Cambridge, MA.',
-    is_internal_note: true,
-    created_at: new Date(Date.now() - 86400000 * 1.8).toISOString(),
-  },
-  {
-    id: 'msg-103',
-    ticket_id: 'tkt-10245',
-    sender_id: 'staff-agent-1',
-    sender_name: 'Support Agent Alex',
-    sender_role: 'support',
-    message: 'Dear Dr. Mitchell, Thank you for reaching out. We have audited the verification history for your code 7K9X2M. The unit is 100% genuine and verified from Batch SLK-2025-04. Please upload a photo of the box QR code for final authentication verification so we can reset your scan allowance if needed.',
-    is_internal_note: false,
-    created_at: new Date(Date.now() - 86400000 * 1.7).toISOString(),
-  },
-  {
-    id: 'msg-104',
-    ticket_id: 'tkt-10246',
-    sender_id: 'user-researcher-2',
-    sender_name: 'Dr. Julian Vance',
-    sender_role: 'customer',
-    message: 'Hi team, We placed order PB-ORD-9822 containing BPC-157 and TB-500. Could you confirm if dry ice / insulated cold packs are included for Saturday delivery?',
-    is_internal_note: false,
-    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-  },
-  {
-    id: 'msg-105',
-    ticket_id: 'tkt-10246',
-    sender_id: 'staff-agent-2',
-    sender_name: 'Support Specialist Elena',
-    sender_role: 'support',
-    message: 'Hello Dr. Vance, Yes, all peptide lyophilized vials are dispatched in insulated foam cold-chain containers with certified temperature monitoring tags. We have dispatched tracking via FedEx Priority.',
-    is_internal_note: false,
-    created_at: new Date(Date.now() - 86400000).toISOString(),
-  }
-];
-
-const INITIAL_EVENTS: TicketEvent[] = [
-  {
-    id: 'evt-1',
-    ticket_id: 'tkt-10245',
-    event_type: 'Ticket Created',
-    actor_name: 'Dr. Sarah Mitchell',
-    actor_role: 'customer',
-    details: 'Ticket created with category Product Verification',
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: 'evt-2',
-    ticket_id: 'tkt-10245',
-    event_type: 'Assigned',
-    actor_name: 'System',
-    actor_role: 'system',
-    details: 'Assigned to Support Agent Alex',
-    created_at: new Date(Date.now() - 86400000 * 1.9).toISOString(),
-  },
-  {
-    id: 'evt-3',
-    ticket_id: 'tkt-10245',
-    event_type: 'Status Changed',
-    actor_name: 'Support Agent Alex',
-    actor_role: 'support',
-    details: 'Status changed from Open to In Progress',
-    created_at: new Date(Date.now() - 86400000 * 1.7).toISOString(),
-  }
-];
+// Initial Seeds (Clean - no dummy support tickets)
+const INITIAL_TICKETS: SupportTicket[] = [];
+const INITIAL_MESSAGES: TicketMessage[] = [];
+const INITIAL_EVENTS: TicketEvent[] = [];
 
 // Server-side in-memory cache
-let serverTickets: SupportTicket[] = [...INITIAL_TICKETS];
-let serverMessages: TicketMessage[] = [...INITIAL_MESSAGES];
-let serverEvents: TicketEvent[] = [...INITIAL_EVENTS];
+let serverTickets: SupportTicket[] = [];
+let serverMessages: TicketMessage[] = [];
+let serverEvents: TicketEvent[] = [];
 
 function isBrowser(): boolean {
   return typeof window !== 'undefined';
@@ -168,10 +39,17 @@ export function getLocalTickets(): SupportTicket[] {
   try {
     const raw = localStorage.getItem(SUPPORT_TICKETS_KEY);
     if (!raw) {
-      localStorage.setItem(SUPPORT_TICKETS_KEY, JSON.stringify(INITIAL_TICKETS));
-      return INITIAL_TICKETS;
+      localStorage.setItem(SUPPORT_TICKETS_KEY, JSON.stringify([]));
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed: SupportTicket[] = JSON.parse(raw);
+    const cleaned = parsed.filter(
+      (t) => !LEGACY_DUMMY_IDS.has(t.id) && !(t.customer_id && LEGACY_CUSTOMER_IDS.has(t.customer_id))
+    );
+    if (cleaned.length !== parsed.length) {
+      localStorage.setItem(SUPPORT_TICKETS_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return serverTickets;
   }
@@ -194,10 +72,17 @@ export function getLocalMessages(): TicketMessage[] {
   try {
     const raw = localStorage.getItem(SUPPORT_MESSAGES_KEY);
     if (!raw) {
-      localStorage.setItem(SUPPORT_MESSAGES_KEY, JSON.stringify(INITIAL_MESSAGES));
-      return INITIAL_MESSAGES;
+      localStorage.setItem(SUPPORT_MESSAGES_KEY, JSON.stringify([]));
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed: TicketMessage[] = JSON.parse(raw);
+    const cleaned = parsed.filter(
+      (m) => !LEGACY_DUMMY_IDS.has(m.ticket_id) && !LEGACY_MSG_IDS.has(m.id)
+    );
+    if (cleaned.length !== parsed.length) {
+      localStorage.setItem(SUPPORT_MESSAGES_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return serverMessages;
   }
@@ -220,10 +105,17 @@ export function getLocalEvents(): TicketEvent[] {
   try {
     const raw = localStorage.getItem(SUPPORT_EVENTS_KEY);
     if (!raw) {
-      localStorage.setItem(SUPPORT_EVENTS_KEY, JSON.stringify(INITIAL_EVENTS));
-      return INITIAL_EVENTS;
+      localStorage.setItem(SUPPORT_EVENTS_KEY, JSON.stringify([]));
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed: TicketEvent[] = JSON.parse(raw);
+    const cleaned = parsed.filter(
+      (e) => !LEGACY_DUMMY_IDS.has(e.ticket_id) && !LEGACY_EVT_IDS.has(e.id)
+    );
+    if (cleaned.length !== parsed.length) {
+      localStorage.setItem(SUPPORT_EVENTS_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return serverEvents;
   }
@@ -276,11 +168,18 @@ export async function fetchAllTickets(): Promise<SupportTicket[]> {
 
 /**
  * Fetch tickets for a specific customer
+ * Strictly isolates tickets to only the authenticated user's email / user ID
  */
-export async function fetchCustomerTickets(customerEmail?: string): Promise<SupportTicket[]> {
+export async function fetchCustomerTickets(customerEmail?: string, customerId?: string): Promise<SupportTicket[]> {
+  if (!customerEmail && !customerId) return [];
   const all = await fetchAllTickets();
-  if (!customerEmail) return all;
-  return all.filter((t) => t.customer_email.toLowerCase() === customerEmail.toLowerCase());
+  const normalizedEmail = customerEmail ? customerEmail.trim().toLowerCase() : '';
+  
+  return all.filter((t) => {
+    const matchesEmail = normalizedEmail && t.customer_email && t.customer_email.trim().toLowerCase() === normalizedEmail;
+    const matchesId = customerId && t.customer_id && t.customer_id === customerId;
+    return Boolean(matchesEmail || matchesId);
+  });
 }
 
 /**
@@ -335,6 +234,7 @@ export async function createTicket(input: CreateTicketInput): Promise<SupportTic
   const newTicket: SupportTicket = {
     id: newTicketId,
     ticket_number: ticketNumber,
+    customer_id: input.customer_id,
     customer_name: input.customer_name.trim(),
     customer_email: input.customer_email.trim(),
     subject: input.subject.trim(),
@@ -584,6 +484,34 @@ export async function assignTicket(
 }
 
 /**
+ * Delete a support ticket and its related messages and events
+ */
+export async function deleteTicket(ticketId: string): Promise<boolean> {
+  const tickets = getLocalTickets();
+  const updatedTickets = tickets.filter((t) => t.id !== ticketId && t.ticket_number !== ticketId);
+  saveLocalTickets(updatedTickets);
+
+  const messages = getLocalMessages();
+  const updatedMessages = messages.filter((m) => m.ticket_id !== ticketId);
+  saveLocalMessages(updatedMessages);
+
+  const events = getLocalEvents();
+  const updatedEvents = events.filter((e) => e.ticket_id !== ticketId);
+  saveLocalEvents(updatedEvents);
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      await supabase.from('support_tickets').delete().eq('id', ticketId);
+    } catch (e) {
+      console.warn('Supabase delete ticket fallback', e);
+    }
+  }
+
+  return true;
+}
+
+/**
  * Compute Helpdesk KPI Stats
  */
 export function computeTicketStats(tickets: SupportTicket[]): TicketStats {
@@ -597,3 +525,4 @@ export function computeTicketStats(tickets: SupportTicket[]): TicketStats {
     urgent: tickets.filter((t) => t.priority === 'urgent' && t.status !== 'closed' && t.status !== 'resolved').length,
   };
 }
+

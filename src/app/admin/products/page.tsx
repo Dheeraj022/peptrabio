@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Product } from '@/types';
 import {
   getLocalProducts,
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminProductsPage() {
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -232,7 +234,7 @@ export default function AdminProductsPage() {
 
                         {/* Price */}
                         <td className="py-3 px-4 font-mono font-bold text-content-primary">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price)}
                         </td>
 
                         {/* Stock */}

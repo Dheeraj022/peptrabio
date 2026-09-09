@@ -473,3 +473,14 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
 
   return orders[index];
 }
+
+export function fetchCustomerOrders(customerEmail?: string, userId?: string): Order[] {
+  const all = getLocalOrders();
+  if (!customerEmail && !userId) return [];
+  const normalizedEmail = customerEmail ? customerEmail.trim().toLowerCase() : '';
+  return all.filter((o) => {
+    const matchesEmail = normalizedEmail && o.customer_email && o.customer_email.trim().toLowerCase() === normalizedEmail;
+    const matchesUser = userId && o.user_id && o.user_id === userId;
+    return Boolean(matchesEmail || matchesUser);
+  }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}

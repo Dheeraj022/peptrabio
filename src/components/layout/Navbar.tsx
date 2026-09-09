@@ -22,6 +22,12 @@ import {
 
 export function Navbar() {
   const pathname = usePathname();
+
+  // Hide public navigation bar completely inside admin panel
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const { totalItems, setIsCartOpen } = useCart();
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

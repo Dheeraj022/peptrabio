@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Product } from '@/types';
 import { fetchProductById } from '@/lib/products-store';
 import {
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function ProductPreviewPage() {
+  const { formatPrice } = useCurrency();
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
@@ -104,7 +106,7 @@ export default function ProductPreviewPage() {
             <h1 className="text-3xl font-orbitron font-extrabold text-content-primary">{product.name}</h1>
             
             <div className="p-4 rounded-2xl bg-brand-subtle border border-brand-border flex items-baseline justify-between">
-              <span className="font-orbitron font-extrabold text-3xl text-brand">${product.price.toFixed(2)}</span>
+              <span className="font-orbitron font-extrabold text-3xl text-brand">{formatPrice(product.price)}</span>
               <span className="text-xs text-content-muted font-sans">Per {product.size} Vial</span>
             </div>
 

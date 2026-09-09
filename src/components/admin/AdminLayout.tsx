@@ -78,9 +78,17 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </button>
       </div>
 
+      {/* Mobile Drawer Backdrop */}
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden"
+        />
+      )}
+
       {/* Sidebar (Desktop & Mobile Drawer) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#120B1D] text-gray-300 flex flex-col justify-between border-r border-purple-900/50 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#120B1D] text-gray-300 flex flex-col justify-between border-r border-purple-900/50 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 md:h-screen md:shrink-0 overflow-y-auto ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -124,7 +132,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-6 border-t border-purple-900/40 space-y-3">
+        <div className="p-6 border-t border-purple-900/40 space-y-3 shrink-0">
           <Link
             href="/shop"
             target="_blank"
@@ -148,7 +156,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 sm:p-8 lg:p-10 max-w-7xl">
+      <main className="flex-1 min-w-0 p-4 sm:p-8 lg:p-10 max-w-7xl">
         {children}
       </main>
 

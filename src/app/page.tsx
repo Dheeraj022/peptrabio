@@ -36,19 +36,19 @@ export default function HomePage() {
   const featuredProducts = products.filter((p) => p.is_featured && p.is_active).slice(0, 4);
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-16 pb-20">
       
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-brand-border/60">
+      <section className="relative overflow-hidden pt-6 pb-10 lg:pt-8 lg:pb-12 border-b border-brand-border/60">
         {/* Subtle decorative purple glow circles */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-10 right-10 w-96 h-96 bg-purple-400/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-brand/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-6 right-6 w-80 h-80 bg-purple-400/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
             {/* Left Hero Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5 text-center lg:text-left">
               
               {/* Badge */}
               <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-light border border-brand/20 text-brand text-xs font-orbitron font-semibold tracking-wider shadow-sm">
@@ -57,14 +57,14 @@ export default function HomePage() {
               </div>
 
               {/* Main Headline in Orbitron */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-orbitron font-extrabold tracking-tight leading-[1.15]">
+              <h1 className="text-3xl sm:text-5xl lg:text-5xl font-orbitron font-extrabold tracking-tight leading-[1.12]">
                 ADVANCED <br />
                 RESEARCH MATERIALS
               </h1>
 
               {/* Sub-headline */}
-              <p className="font-orbitron text-base sm:text-lg text-content-secondary font-medium tracking-wide">
-                Precision. Documentation. Research.
+              <p className="font-orbitron text-sm sm:text-base text-brand font-semibold tracking-wide">
+                Precision • Mass Spectrometry (MS) • Batch Traceability
               </p>
 
               {/* Description */}
@@ -73,10 +73,10 @@ export default function HomePage() {
               </p>
 
               {/* CTAs */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
                 <Link
                   href="/shop"
-                  className="w-full sm:w-auto px-8 py-4 bg-brand hover:bg-brand-dark text-white font-orbitron text-sm font-semibold rounded-full shadow-purple-glow hover:scale-[1.02] transition-all flex items-center justify-center group"
+                  className="w-full sm:w-auto px-7 py-3 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs sm:text-sm font-semibold rounded-full shadow-purple-glow hover:scale-[1.02] transition-all flex items-center justify-center group"
                 >
                   <span>SHOP PRODUCTS</span>
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -84,14 +84,14 @@ export default function HomePage() {
 
                 <Link
                   href="/about"
-                  className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-brand-subtle text-content-primary hover:text-brand border border-brand-border hover:border-brand font-orbitron text-sm font-semibold rounded-full transition-all flex items-center justify-center"
+                  className="w-full sm:w-auto px-7 py-3 bg-white hover:bg-brand-subtle text-content-primary hover:text-brand border border-brand-border hover:border-brand font-orbitron text-xs sm:text-sm font-semibold rounded-full transition-all flex items-center justify-center"
                 >
                   LEARN MORE
                 </Link>
               </div>
 
               {/* Fast Spec Stats */}
-              <div className="pt-6 grid grid-cols-3 gap-4 border-t border-brand-border/60 max-w-md mx-auto lg:mx-0 text-center">
+              <div className="pt-4 grid grid-cols-3 gap-4 border-t border-brand-border/60 max-w-md mx-auto lg:mx-0 text-center">
                 <div>
                   <div className="font-orbitron font-bold text-xl text-brand">99%+</div>
                   <div className="text-[11px] text-content-muted font-sans uppercase">HPLC Purity</div>
@@ -107,75 +107,75 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Hero Visual: Futuristic Vial Presentation */}
+            {/* Right Hero Visual: Prominent Autoplay Video Demonstration */}
             <div className="lg:col-span-5 relative">
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 
                 {/* Glow ring */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand/20 to-purple-300/10 rounded-3xl filter blur-2xl -z-10" />
 
-                {/* Hero Showcase Card */}
-                <div className="bg-white border-2 border-brand-border rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                {/* Hero Showcase Video Card */}
+                <div className="bg-white border-2 border-brand-border rounded-3xl p-4 sm:p-5 shadow-2xl relative overflow-hidden">
                   
                   {/* Top card header */}
-                  <div className="flex items-center justify-between border-b border-brand-border pb-4 mb-4">
+                  <div className="flex items-center justify-between border-b border-brand-border pb-3 mb-3">
                     <div className="flex items-center space-x-2">
-                      <Atom className="w-5 h-5 text-brand" />
+                      <Atom className="w-4 h-4 text-brand animate-spin" style={{ animationDuration: '10s' }} />
                       <span className="font-orbitron font-bold text-xs text-content-primary tracking-wider">
-                        BATCH ANALYTICAL SPECIMEN
+                        LAB SYNTHESIS & PURIFICATION
                       </span>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success text-[10px] font-orbitron font-semibold">
-                      PASSED QC
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[10px] font-orbitron font-semibold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      LIVE rDNA
                     </span>
                   </div>
 
-                  {/* High Quality Vial Image */}
-                  <div className="relative aspect-video sm:aspect-square w-full rounded-2xl overflow-hidden bg-[#FAF8FD] border border-brand-border mb-4">
-                    <Image
-                      src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1000&q=80"
-                      alt="Peptra Bio Lyophilized Research Vial"
-                      fill
-                      priority
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 40vw"
+                  {/* Autoplay Video Player (Zero Black Bars Edge-to-Edge) */}
+                  <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] max-h-[300px] rounded-2xl overflow-hidden bg-black border-2 border-brand-border mb-3 shadow-inner">
+                    <iframe
+                      src="https://www.youtube-nocookie.com/embed/A2MrOGbsc1o?autoplay=1&mute=1&loop=1&playlist=A2MrOGbsc1o&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
+                      title="Peptra Bio Synthetic Peptide rDNA Technology Demonstration"
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440%] h-[280%] min-w-[750px] min-h-[480px] max-w-none pointer-events-none border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      tabIndex={-1}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-3 right-3 text-white flex justify-between items-end">
-                      <div>
-                        <div className="font-orbitron font-bold text-sm tracking-wider">SELANK (5 MG)</div>
-                        <div className="text-[10px] text-gray-200 font-sans">Sequence: Thr-Lys-Pro-Arg-Pro-Gly-Pro</div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/25 pointer-events-none" />
+                    <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white pointer-events-none text-center">
+                      <div className="font-orbitron font-bold text-[11px] sm:text-xs tracking-wider flex items-center justify-center gap-1">
+                        <Sparkles className="w-3 h-3 text-purple-300" />
+                        SYNTHETIC rDNA PROCESS
                       </div>
-                      <div className="font-orbitron text-xs font-semibold px-2.5 py-1 bg-brand/90 backdrop-blur-md rounded-full">
-                        $68.00
+                      <div className="text-[9px] text-gray-200 font-sans mt-0.5">
+                        Korean GMP • Mass Spectrometry Verified
                       </div>
                     </div>
                   </div>
 
                   {/* Micro Specs List */}
-                  <div className="space-y-2 text-xs font-sans">
+                  <div className="space-y-1.5 text-xs font-sans">
                     <div className="flex justify-between py-1 border-b border-brand-border/40 text-content-secondary">
-                      <span className="font-orbitron text-[11px]">Formula</span>
-                      <span className="font-mono text-content-primary font-medium">C33H57N11O9</span>
+                      <span className="font-orbitron text-[11px]">Technology</span>
+                      <span className="font-mono text-content-primary font-medium">Recombinant rDNA & SPPS</span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-brand-border/40 text-content-secondary">
-                      <span className="font-orbitron text-[11px]">Molecular Weight</span>
-                      <span className="font-mono text-content-primary font-medium">751.87 g/mol</span>
+                      <span className="font-orbitron text-[11px]">Quality Control</span>
+                      <span className="font-mono text-brand font-bold">≥99.0% Purity (HPLC / MS)</span>
                     </div>
                     <div className="flex justify-between py-1 text-content-secondary">
-                      <span className="font-orbitron text-[11px]">Storage</span>
-                      <span className="text-content-primary">-20°C Desiccated</span>
+                      <span className="font-orbitron text-[11px]">Standard</span>
+                      <span className="text-content-primary">Korean Manufactured GMP</span>
                     </div>
                   </div>
 
                   {/* Card footer CTA */}
-                  <div className="mt-4 pt-4 border-t border-brand-border">
+                  <div className="mt-3 pt-3 border-t border-brand-border">
                     <Link
-                      href="/shop/selank"
-                      className="w-full py-2.5 bg-brand-light hover:bg-brand text-brand hover:text-white font-orbitron text-xs font-semibold rounded-full flex items-center justify-center transition-all"
+                      href="/shop"
+                      className="w-full py-2.5 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full flex items-center justify-center transition-all shadow-purple-sm hover:shadow-purple-md"
                     >
-                      <span>INSPECT SPECIFICATION SHEET</span>
-                      <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
+                      <span>EXPLORE RESEARCH PEPTIDES</span>
+                      <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                     </Link>
                   </div>
                 </div>

@@ -69,7 +69,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-24 sm:h-28 md:h-32 py-2">
+        <div className="flex items-center justify-between min-h-[72px] sm:min-h-[84px] py-1.5">
           
           {/* Brand Logo */}
           <Logo size="header" />

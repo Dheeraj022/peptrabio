@@ -15,21 +15,23 @@ import {
   X,
   ExternalLink,
   ShieldCheck,
-  FileCheck,
   LifeBuoy
 } from 'lucide-react';
+import { getCurrentAdmin, setCurrentAdmin, AdminUser } from '@/lib/admin-store';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [currentAdmin, setCurrentAdminState] = useState<AdminUser | null>(null);
 
   useEffect(() => {
     // Check local admin session or demo access
     const auth = localStorage.getItem('peptrabio_admin_auth');
     if (auth === 'true' || pathname === '/admin/login') {
       setIsAuthenticated(true);
+      setCurrentAdminState(getCurrentAdmin());
     } else {
       setIsAuthenticated(false);
       router.push('/admin/login');
@@ -37,7 +39,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }, [pathname, router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('peptrabio_admin_auth');
+    setCurrentAdmin(null);
     router.push('/admin/login');
   };
 
@@ -46,7 +48,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthenticated === null) {
-    return <div className="p-12 text-center font-orbitron">Checking credentials...</div>;
+    return <div className="p-12 text-center font-orbitron text-xs text-purple-300">Checking credentials...</div>;
   }
 
   const navItems = [
@@ -92,7 +94,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-6">
           
           {/* Brand */}
           <div className="flex items-center space-x-3">
@@ -106,6 +108,23 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               <div className="text-[10px] font-orbitron text-purple-300">Catalog & Orders</div>
             </div>
           </div>
+
+          {/* Logged in Admin Profile Badge */}
+          {currentAdmin && (
+            <div className="p-2.5 rounded-xl bg-purple-950/70 border border-purple-800/80 flex items-center space-x-2.5 shadow-inner">
+              <div className="w-7 h-7 rounded-lg bg-brand text-white flex items-center justify-center font-orbitron font-bold text-xs shrink-0">
+                {currentAdmin.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold text-white truncate">
+                  {currentAdmin.name}
+                </div>
+                <div className="text-[10px] text-purple-300 font-orbitron truncate">
+                  {currentAdmin.role}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Navigation Links */}
           <nav className="space-y-1.5">

@@ -168,6 +168,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const institution = credentials.institution?.trim() || '';
       const password = credentials.password || '';
 
+      // Prevent using an administrative email for customer registration
+      try {
+        const rawAdmins = localStorage.getItem('peptrabio_admin_users_v1');
+        if (rawAdmins) {
+          const adminList: Array<{ email?: string }> = JSON.parse(rawAdmins);
+          if (adminList.some((a) => a.email?.toLowerCase() === email)) {
+            return {
+              success: false,
+              error: 'This email address is registered as an Administrator account. Please sign in via the Admin Portal or use a different email.'
+            };
+          }
+        }
+      } catch {}
+
       // Save user profile state
       const newUser: StoredUserRecord = {
         id: `usr_${Date.now()}`,

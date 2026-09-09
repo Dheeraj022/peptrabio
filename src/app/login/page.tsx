@@ -121,9 +121,12 @@ function LoginFormContent() {
               <label className="font-orbitron text-[11px] font-bold tracking-wider text-content-primary uppercase">
                 Password
               </label>
-              <span className="text-[11px] text-brand hover:underline cursor-pointer">
+              <Link
+                href="/forgot-password"
+                className="text-[11px] font-orbitron font-semibold text-brand hover:underline transition-colors"
+              >
                 Forgot password?
-              </span>
+              </Link>
             </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-muted">

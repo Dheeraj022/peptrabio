@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Product } from '@/types';
 import { fetchAllProducts } from '@/lib/products-store';
 import { ProductCard } from '@/components/product/ProductCard';
+import { HeroVideoPlayer } from '@/components/home/HeroVideoPlayer';
 import {
   ShieldCheck,
   FlaskConical,
@@ -131,26 +132,8 @@ export default function HomePage() {
                     </span>
                   </div>
 
-                  {/* Autoplay Video Player (Zero Black Bars Edge-to-Edge) */}
-                  <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] max-h-[300px] rounded-2xl overflow-hidden bg-black border-2 border-brand-border mb-3 shadow-inner">
-                    <iframe
-                      src="https://www.youtube-nocookie.com/embed/A2MrOGbsc1o?autoplay=1&mute=1&loop=1&playlist=A2MrOGbsc1o&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0"
-                      title="Peptra Bio Synthetic Peptide rDNA Technology Demonstration"
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440%] h-[280%] min-w-[750px] min-h-[480px] max-w-none pointer-events-none border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      tabIndex={-1}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/25 pointer-events-none" />
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white pointer-events-none text-center">
-                      <div className="font-orbitron font-bold text-[11px] sm:text-xs tracking-wider flex items-center justify-center gap-1">
-                        <Sparkles className="w-3 h-3 text-purple-300" />
-                        SYNTHETIC rDNA PROCESS
-                      </div>
-                      <div className="text-[9px] text-gray-200 font-sans mt-0.5">
-                        Korean GMP • Mass Spectrometry Verified
-                      </div>
-                    </div>
-                  </div>
+                  {/* Autoplay Video Player (Seamless Looping, Zero Pause Icons) */}
+                  <HeroVideoPlayer />
 
                   {/* Micro Specs List */}
                   <div className="space-y-1.5 text-xs font-sans">

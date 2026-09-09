@@ -350,12 +350,11 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
                   MOLECULAR WEIGHT (G/MOL)
                 </label>
                 <input
-                  type="number"
-                  step="0.01"
+                  type="text"
                   name="molecular_weight"
                   value={formData.molecular_weight || ''}
                   onChange={handleTextChange}
-                  placeholder="751.87"
+                  placeholder="e.g. 751.87 or 1419.6, 889"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-mono"
                 />
               </div>

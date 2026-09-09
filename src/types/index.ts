@@ -49,7 +49,7 @@ export type Product = {
   cas_number?: string;
   sequence?: string;
   molecular_formula?: string;
-  molecular_weight?: number;
+  molecular_weight?: number | string;
   purity?: string;
   size?: string;
   format?: string;

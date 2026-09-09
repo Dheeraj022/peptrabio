@@ -33,7 +33,8 @@ export function cleanProductDescription(rawDesc?: string): string[] {
   const paragraphs = text
     .split(/\n\s*\n/)
     .map((p) => p.trim())
-    .filter((p) => p.length > 20 && !p.startsWith('|') && !p.startsWith('##'));
+    .map((p) => p.replace(/^>\s*/, '').replace(/^\*\*Research Grade[^*]*\*\*/i, '').replace(/^#+\s*[^\n]+\n*/g, '').trim())
+    .filter((p) => p.length > 20 && !p.startsWith('|') && !p.startsWith('#') && !p.startsWith('*') && !p.startsWith('-'));
 
   if (paragraphs.length === 0) {
     return [
@@ -161,6 +162,32 @@ export function getProductResearchAreas(product: Product): ResearchAreaItem[] {
         title: 'Cognitive & Memory Consolidation',
         description: 'Enhances synaptic plasticity, long-term potentiation (LTP), and attention performance in experimental cognitive models.',
         iconType: 'zap'
+      }
+    ];
+  }
+
+  // 4.1 AOD-9604 / HGH Fragment
+  if (slug.includes('aod') || slug.includes('fragment') || name.includes('aod') || name.includes('fragment')) {
+    return [
+      {
+        title: 'Adipocyte Lipolysis Signaling',
+        description: 'Stimulates beta-3 adrenergic receptor pathways and intracellular hormone-sensitive lipase (HSL) for lipid mobilization.',
+        iconType: 'flame'
+      },
+      {
+        title: 'Non-Glycemic Profile',
+        description: 'Exerts lipolytic actions without inducing insulin resistance, hyperglycemia, or elevating circulating IGF-1 in research assays.',
+        iconType: 'scale'
+      },
+      {
+        title: 'Anti-Lipogenic Inhibition',
+        description: 'Inhibits acetyl-CoA carboxylase (ACC) and fatty acid synthase (FAS) to suppress new fatty acid synthesis in adipocytes.',
+        iconType: 'shield'
+      },
+      {
+        title: 'Chondrogenesis & Extracellular Matrix',
+        description: 'Investigated in joint tissue models for promoting hyaline cartilage proteoglycan deposition and chondrocyte viability.',
+        iconType: 'dna'
       }
     ];
   }

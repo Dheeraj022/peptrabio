@@ -2,7 +2,7 @@ import { Product, ProductCategory, Order, OrderStatus, AdminAuditLog } from '@/t
 import { SEED_PRODUCTS, SEED_CATEGORIES } from './seed-data';
 import { createClient } from './supabase/client';
 
-const PRODUCTS_STORAGE_KEY = 'peptrabio_products_v6';
+const PRODUCTS_STORAGE_KEY = 'peptrabio_products_v9';
 const CATEGORIES_STORAGE_KEY = 'peptrabio_categories_v6';
 const ORDERS_STORAGE_KEY = 'peptrabio_orders_v6';
 const AUDIT_LOGS_STORAGE_KEY = 'peptrabio_audit_logs_v6';
@@ -48,7 +48,7 @@ const INITIAL_ORDERS: Order[] = [
       {
         id: 'item-1',
         order_id: 'ord-1001',
-        product_id: 'prod-selank',
+        product_id: 'prod-selank-5mg',
         product_name: 'Selank (5mg)',
         product_code: 'PB-SLK-005',
         quantity: 2,

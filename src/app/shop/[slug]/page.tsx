@@ -164,8 +164,9 @@ export default function ProductDetailPage() {
   // Derive specialized scientific parameters for the 4-card hero grid
   const getTargetReceptor = (category: string, name: string): string => {
     const lowerName = name.toLowerCase();
-    if (lowerName.includes('selank')) return 'GABA / Dopamine (CNS Modulator)';
+    if (lowerName.includes('selank')) return 'GABA-A / BDNF (Allosteric CNS)';
     if (lowerName.includes('semax')) return 'BDNF / TrkB & Melanocortin';
+    if (lowerName.includes('aod') || lowerName.includes('fragment')) return 'β3-Adrenergic / Lipolytic Axis';
     if (lowerName.includes('bpc-157') || lowerName.includes('bpc 157')) return 'VEGF / FAK / Growth Factor Axis';
     if (lowerName.includes('tb-500') || lowerName.includes('tb 500')) return 'Actin G / Thymosin β4 Pathway';
     if (lowerName.includes('cjc') || lowerName.includes('tesamorelin') || lowerName.includes('ipamorelin') || lowerName.includes('ghrp'))
@@ -187,6 +188,7 @@ export default function ProductDetailPage() {
     if (lower.includes('retatrutide') || lower.includes('tirzepatide') || lower.includes('semaglutide')) return '~5–7 Days';
     if (lower.includes('bpc-157') || lower.includes('bpc 157')) return '~4–6 Hours';
     if (lower.includes('selank') || lower.includes('semax')) return '~2–4 Hours (Metabolite Stable)';
+    if (lower.includes('aod') || lower.includes('fragment')) return '~30–60 Minutes';
     if (lower.includes('ipamorelin') || lower.includes('cjc-1295 no dac') || lower.includes('ghrp')) return '~2–3 Hours';
     if (lower.includes('tb-500')) return '~24–48 Hours';
     if (lower.includes('epithalon')) return '~6–8 Hours';
@@ -340,8 +342,8 @@ export default function ProductDetailPage() {
               <div className="text-[10px] font-orbitron text-content-muted uppercase tracking-wider">
                 MOLECULAR WEIGHT
               </div>
-              <div className="font-mono text-xs sm:text-sm font-bold text-brand mt-1 truncate">
-                {product.molecular_weight ? `~${product.molecular_weight} Da` : '~3,885 Da'}
+              <div className="font-mono text-xs sm:text-sm font-bold text-brand mt-1 truncate" title={product.molecular_weight ? `${product.molecular_weight} Da` : undefined}>
+                {product.molecular_weight ? (String(product.molecular_weight).includes(',') ? `${product.molecular_weight} Da` : `~${product.molecular_weight} Da`) : '~3,885 Da'}
               </div>
             </div>
 
@@ -996,7 +998,7 @@ export default function ProductDetailPage() {
               <div className="flex justify-between py-1 border-b border-brand-border/50">
                 <span className="text-content-muted font-orbitron text-[10px]">MW (Target)</span>
                 <span className="font-mono font-bold text-content-primary">
-                  {product.molecular_weight ? `~${product.molecular_weight} Da` : '~3,885 Da'}
+                  {product.molecular_weight ? (String(product.molecular_weight).includes(',') ? `${product.molecular_weight} Da` : `~${product.molecular_weight} Da`) : '~3,885 Da'}
                 </span>
               </div>
               <div className="flex justify-between py-1 border-b border-brand-border/50">

@@ -53,7 +53,7 @@ export default function HomePage() {
               {/* Badge */}
               <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-light border border-brand/20 text-brand text-xs font-orbitron font-semibold tracking-wider shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-brand" />
-                <span>CERTIFIED ANALYTICAL RESEARCH CATALOG</span>
+                <span>SYNTHETIC PEPTIDE rDNA TECHNOLOGY</span>
               </div>
 
               {/* Main Headline in Orbitron */}
@@ -69,7 +69,7 @@ export default function HomePage() {
 
               {/* Description */}
               <p className="text-sm sm:text-base text-content-secondary max-w-xl mx-auto lg:mx-0 font-sans leading-relaxed">
-                Explore a curated catalog of research-use peptides with certified HPLC purity verification, mass spectrometry documentation, and batch traceability for scientific laboratories.
+                Explore a curated catalog of research-use peptides synthesized with advanced rDNA technology, complete with certified HPLC purity verification, mass spectrometry documentation, and batch traceability.
               </p>
 
               {/* CTAs */}

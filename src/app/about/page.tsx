@@ -19,13 +19,13 @@ export default function AboutPage() {
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-light text-brand text-xs font-orbitron font-semibold tracking-wider">
           <Atom className="w-3.5 h-3.5" />
-          <span>SCIENTIFIC INTEGRITY & STANDARDS</span>
+          <span>SYNTHETIC PEPTIDE rDNA TECHNOLOGY</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-orbitron font-extrabold text-content-primary tracking-tight">
           ADVANCED PEPTIDE RESEARCH INFRASTRUCTURE
         </h1>
         <p className="text-xs sm:text-base text-content-secondary font-sans leading-relaxed">
-          Peptra Bio supplies certified, high-performance research peptides and synthetic biological sequences to academic institutions, biotechnology enterprises, and accredited analytical laboratories.
+          Peptra Bio supplies certified, high-performance research peptides and synthetic peptide rDNA technology sequences to academic institutions, biotechnology enterprises, and accredited analytical laboratories.
         </p>
       </div>
 

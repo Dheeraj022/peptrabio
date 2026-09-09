@@ -14,11 +14,11 @@ export function AnnouncementBar() {
           </span>
           <span className="hidden sm:inline text-purple-400/60">•</span>
           <span className="hidden sm:inline text-gray-300 text-[11px] md:text-xs font-sans">
-            HPLC & MS Verified Batch Documentation
+            Synthetic Peptide rDNA Technology
           </span>
           <span className="hidden md:inline text-purple-400/60">•</span>
           <span className="hidden md:inline text-gray-300 text-[11px] md:text-xs font-sans">
-            Lyophilized Solid Formulation
+            HPLC & MS Verified Batch Documentation
           </span>
         </div>
 

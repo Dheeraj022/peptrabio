@@ -435,14 +435,6 @@ export default function ProductDetailPage() {
               </span>
             </button>
 
-            {/* Secondary Action: Request COA Before Purchase */}
-            <button
-              onClick={() => setCoaModalOpen(true)}
-              className="w-full py-3 px-6 rounded-full font-orbitron text-xs font-semibold text-brand border-2 border-brand/30 hover:border-brand hover:bg-brand-light/60 flex items-center justify-center space-x-2 transition-all bg-white"
-            >
-              <FileCheck className="w-4 h-4 text-brand" />
-              <span>Request COA Before Purchase</span>
-            </button>
           </div>
 
           {/* Value Trust Bullets Row */}
@@ -502,7 +494,7 @@ export default function ProductDetailPage() {
               {product.name} (≥99.0% Purity)
             </div>
             <p className="text-xs text-content-secondary font-sans leading-relaxed pt-1">
-              Certified analytical standard • USA-synthesized batch • Cryo-lyophilized for maximum solution stability.
+              Synthetic Peptide rDNA Technology • Korean-synthesized batch • Cryo-lyophilized for maximum solution stability.
             </p>
           </div>
 
@@ -534,7 +526,7 @@ export default function ProductDetailPage() {
               GMP Manufacturing
             </h4>
             <p className="text-[11px] text-content-secondary font-sans mt-0.5 leading-relaxed">
-              USA-registered facility. Full chain of custody and lot traceability.
+              Korean-registered facility. Full chain of custody and lot traceability.
             </p>
           </div>
         </div>
@@ -859,16 +851,19 @@ export default function ProductDetailPage() {
               <h2 className="text-2xl font-orbitron font-extrabold text-content-primary">
                 Storage Parameters & Stability Protocol
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="p-5 rounded-2xl bg-[#FAF8FD] border border-brand-border space-y-2">
                   <div className="font-orbitron font-bold text-xs text-brand uppercase">
                     Lyophilized Powder (Unopened)
                   </div>
                   <div className="font-orbitron text-xl font-extrabold text-content-primary">
-                    -20°C to -80°C
+                    24+ Months to 5 Years
+                  </div>
+                  <div className="font-orbitron font-semibold text-xs text-brand-dark">
+                    Long-Term Storage
                   </div>
                   <p className="text-xs text-content-secondary font-sans leading-relaxed">
-                    Store in dark, desiccated conditions. Stable for 24+ months from manufacturing date.
+                    Store under recommended controlled conditions for long-term stability.
                   </p>
                 </div>
 
@@ -879,8 +874,26 @@ export default function ProductDetailPage() {
                   <div className="font-orbitron text-xl font-extrabold text-content-primary">
                     2°C to 8°C
                   </div>
+                  <div className="font-orbitron font-semibold text-xs text-brand-dark">
+                    Stable for up to 2 Years
+                  </div>
                   <p className="text-xs text-content-secondary font-sans leading-relaxed">
-                    When reconstituted with Bacteriostatic Water, solution maintains stability for up to 30 days. Avoid freeze-thaw cycles.
+                    When reconstituted, the solution remains stable at 2°C–8°C for up to 2 years.
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-[#FAF8FD] border border-brand-border space-y-2">
+                  <div className="font-orbitron font-bold text-xs text-brand uppercase">
+                    Post-Reconstitution
+                  </div>
+                  <div className="font-orbitron text-xl font-extrabold text-content-primary">
+                    24–48 Hours
+                  </div>
+                  <div className="font-orbitron font-semibold text-xs text-brand-dark">
+                    Room Temperature Stability
+                  </div>
+                  <p className="text-xs text-content-secondary font-sans leading-relaxed">
+                    After reconstitution, the solution remains stable for 24–48 hours at room temperature.
                   </p>
                 </div>
               </div>
@@ -894,7 +907,7 @@ export default function ProductDetailPage() {
                 Quality Assurance & Analytical Documentation
               </h2>
               <p className="text-xs sm:text-sm text-content-secondary font-sans leading-relaxed">
-                Every batch of {product.name} is independently verified by third-party laboratories utilizing High-Performance Liquid Chromatography (HPLC) and Liquid Chromatography-Mass Spectrometry (LC-MS).
+                Every batch of {product.name} is synthesized utilizing advanced synthetic peptide rDNA technology and independently verified by third-party laboratories with High-Performance Liquid Chromatography (HPLC) and Mass Spectrometry (MS).
               </p>
               
               <div className="p-6 rounded-2xl bg-white border-2 border-brand-border flex flex-col sm:flex-row items-center justify-between gap-4">

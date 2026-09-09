@@ -142,13 +142,13 @@ function ShopContent() {
       <div className="border-b border-brand-border pb-4 sm:pb-6 space-y-1.5 sm:space-y-2">
         <div className="flex items-center space-x-2 text-xs font-orbitron text-brand font-semibold uppercase tracking-wider">
           <FlaskConical className="w-4 h-4" />
-          <span>Research Catalog</span>
+          <span>Synthetic Peptide rDNA Technology Catalog</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-orbitron font-extrabold">
           RESEARCH PEPTIDE PRODUCTS
         </h1>
         <p className="text-xs sm:text-sm text-content-secondary max-w-2xl font-sans hidden sm:block">
-          All catalog formulations are synthesized for in vitro scientific research, biochemical analysis, and analytical laboratory calibration.
+          All catalog formulations utilize advanced synthetic peptide rDNA technology for in vitro scientific research, biochemical analysis, and analytical laboratory calibration.
         </p>
       </div>
 

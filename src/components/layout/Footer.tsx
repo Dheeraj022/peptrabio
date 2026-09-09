@@ -14,11 +14,11 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Logo size="lg" variant="footer" />
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-sm">
-              Peptra Bio provides ultra-pure, HPLC and MS-verified synthetic peptide sequences formulated exclusively for in vitro scientific research, biochemical analysis, and laboratory calibration.
+              Peptra Bio utilizes synthetic peptide rDNA technology to provide ultra-pure, HPLC and MS-verified peptide sequences formulated exclusively for in vitro scientific research, biochemical analysis, and laboratory calibration.
             </p>
             <div className="flex items-center space-x-2 text-xs text-purple-300 font-orbitron">
               <FileCheck className="w-4 h-4 text-purple-400" />
-              <span>Full Batch Traceability & Public COAs</span>
+              <span>Synthetic Peptide rDNA Technology • Public COAs</span>
             </div>
           </div>
 

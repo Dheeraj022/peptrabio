@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { createClient } from '@/lib/supabase/client';
 import {
   Atom,
   Lock,
@@ -43,7 +44,6 @@ function RegisterFormContent() {
   const [loading, setLoading] = useState(false);
 
   // OTP states
-  const [generatedOtp, setGeneratedOtp] = useState<string>('');
   const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [resendTimer, setResendTimer] = useState<number>(30);
@@ -70,7 +70,7 @@ function RegisterFormContent() {
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  // Step 1: Submit Form & Generate OTP
+  // Step 1: Submit Form & Trigger Real Supabase SignUp OTP
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -102,19 +102,51 @@ function RegisterFormContent() {
 
     setLoading(true);
 
-    // Send email verification OTP
-    setTimeout(() => {
-      const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(randomCode);
-      setStep('otp');
-      setResendTimer(30);
-      setCanResend(false);
+    try {
+      const supabase = createClient();
+      if (supabase) {
+        const { data, error: sbError } = await supabase.auth.signUp({
+          email: email.trim(),
+          password: password,
+          options: {
+            data: {
+              full_name: name.trim(),
+              phone: phone.trim(),
+              role: 'researcher',
+            },
+            emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/account` : undefined,
+          },
+        });
+
+        if (sbError) {
+          if (sbError.message.toLowerCase().includes('already registered') || sbError.message.toLowerCase().includes('already exists')) {
+            setError('An account with this email is already registered. Please sign in instead.');
+            setLoading(false);
+            return;
+          }
+          if (sbError.message.toLowerCase().includes('rate limit')) {
+            setError('Email rate limit exceeded. Please wait a few minutes or connect custom SMTP in Supabase settings.');
+            setLoading(false);
+            return;
+          }
+          setError(sbError.message);
+          setLoading(false);
+          return;
+        }
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Failed to dispatch verification email. Please try again.');
       setLoading(false);
-      // Focus first OTP input
-      setTimeout(() => {
-        otpInputsRef.current[0]?.focus();
-      }, 150);
-    }, 500);
+      return;
+    }
+
+    setStep('otp');
+    setResendTimer(30);
+    setCanResend(false);
+    setLoading(false);
+    setTimeout(() => {
+      otpInputsRef.current[0]?.focus();
+    }, 150);
   };
 
   // Handle individual OTP input changes
@@ -150,19 +182,35 @@ function RegisterFormContent() {
     }
   };
 
-  // Resend OTP
-  const handleResendOtp = () => {
+  // Resend OTP via Supabase Auth
+  const handleResendOtp = async () => {
     if (!canResend) return;
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(newCode);
+    setOtpError(null);
+
+    try {
+      const supabase = createClient();
+      if (supabase) {
+        const { error: rError } = await supabase.auth.resend({
+          type: 'signup',
+          email: email.trim(),
+        });
+        if (rError) {
+          setOtpError(rError.message);
+          return;
+        }
+      }
+    } catch (e: any) {
+      setOtpError(e?.message || 'Error resending verification code.');
+      return;
+    }
+
     setOtpDigits(['', '', '', '', '', '']);
     setResendTimer(30);
     setCanResend(false);
-    setOtpError(null);
     otpInputsRef.current[0]?.focus();
   };
 
-  // Step 2: Verify OTP
+  // Step 2: Verify Real Supabase OTP
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const enteredCode = otpDigits.join('');
@@ -172,35 +220,81 @@ function RegisterFormContent() {
       return;
     }
 
-    if (enteredCode !== generatedOtp) {
-      setOtpError('Invalid verification code. Please check your email and try again.');
-      return;
-    }
-
     setLoading(true);
     setOtpError(null);
 
     try {
-      const res = await register({
-        name,
-        email,
-        phone,
-        password
-      });
+      const supabase = createClient();
+      if (supabase) {
+        // 1. Verify signup OTP
+        const { data: vData, error: vError } = await supabase.auth.verifyOtp({
+          email: email.trim(),
+          token: enteredCode,
+          type: 'signup',
+        });
 
-      if (res.success) {
+        if (!vError && (vData?.session || vData?.user)) {
+          await register({
+            name,
+            email,
+            phone,
+            password
+          });
+          setStep('verified');
+          setTimeout(() => {
+            router.push(redirectPath);
+          }, 1800);
+          return;
+        }
+
+        // 2. Fallback verify type 'email'
+        const { data: vData2, error: vError2 } = await supabase.auth.verifyOtp({
+          email: email.trim(),
+          token: enteredCode,
+          type: 'email',
+        });
+
+        if (!vError2 && (vData2?.session || vData2?.user)) {
+          await register({
+            name,
+            email,
+            phone,
+            password
+          });
+          setStep('verified');
+          setTimeout(() => {
+            router.push(redirectPath);
+          }, 1800);
+          return;
+        }
+
+        if (vError || vError2) {
+          setOtpError(vError?.message || vError2?.message || 'Invalid verification code. Please check the code sent to your email.');
+          setLoading(false);
+          return;
+        }
+      } else {
+        // Local fallback only if no Supabase configured
+        await register({
+          name,
+          email,
+          phone,
+          password
+        });
         setStep('verified');
         setTimeout(() => {
           router.push(redirectPath);
         }, 1800);
-      } else {
-        setOtpError(res.error || 'Failed to complete registration.');
-        setLoading(false);
+        return;
       }
     } catch (err: any) {
-      setOtpError(err?.message || 'Verification error occurred.');
+      setOtpError(err?.message || 'Verification error occurred. Please try again.');
       setLoading(false);
+      return;
     }
+
+    setOtpError('Invalid verification code. Please check your email and enter the 6-digit code.');
+    setLoading(false);
   };
 
   return (
@@ -419,7 +513,7 @@ function RegisterFormContent() {
 
             {/* OTP Error */}
             {otpError && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 flex items-center space-x-2 text-xs text-red-600 animate-in fade-in">
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 flex items-center space-x-2 text-xs text-red-600 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{otpError}</span>
               </div>

@@ -13,18 +13,18 @@ export interface CurrencyConfig {
 }
 
 export const CURRENCIES: Record<SupportedCurrency, CurrencyConfig> = {
-  USD: {
-    code: 'USD',
-    symbol: '$',
-    name: 'USD ($)',
-    rate: 1.0,
-    decimals: 2,
-  },
   INR: {
     code: 'INR',
     symbol: '₹',
     name: 'INR (₹)',
     rate: 86.5, // 1 USD ≈ 86.50 INR
+    decimals: 2,
+  },
+  USD: {
+    code: 'USD',
+    symbol: '$',
+    name: 'USD ($)',
+    rate: 1.0,
     decimals: 2,
   },
   EUR: {
@@ -61,10 +61,10 @@ type CurrencyContextType = {
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
-const CURRENCY_STORAGE_KEY = 'peptrabio_currency_v1';
+const CURRENCY_STORAGE_KEY = 'peptrabio_currency_v2';
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrencyState] = useState<SupportedCurrency>('USD');
+  const [currency, setCurrencyState] = useState<SupportedCurrency>('INR');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const currentConfig = CURRENCIES[currency] || CURRENCIES.USD;
+  const currentConfig = CURRENCIES[currency] || CURRENCIES.INR;
 
   const convertPrice = (amountInUSD: number): number => {
     const rate = currentConfig.rate;
@@ -136,11 +136,11 @@ export function useCurrency() {
   if (!context) {
     // Fallback if rendered outside provider
     return {
-      currency: 'USD' as SupportedCurrency,
+      currency: 'INR' as SupportedCurrency,
       setCurrency: () => {},
-      formatPrice: (amount: number) => `$${(amount || 0).toFixed(2)}`,
-      convertPrice: (amount: number) => amount || 0,
-      currencyConfig: CURRENCIES.USD,
+      formatPrice: (amount: number) => `₹${((amount || 0) * 86.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      convertPrice: (amount: number) => (amount || 0) * 86.5,
+      currencyConfig: CURRENCIES.INR,
       availableCurrencies: Object.values(CURRENCIES),
     };
   }

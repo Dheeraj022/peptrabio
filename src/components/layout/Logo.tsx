@@ -21,9 +21,9 @@ export function Logo({
   const heightMap = {
     sm: 'h-10 sm:h-12 w-auto',
     md: 'h-14 sm:h-16 w-auto',
-    header: 'h-14 sm:h-20 w-auto',
-    lg: 'h-18 sm:h-22 w-auto',
-    xl: 'h-24 sm:h-32 w-auto',
+    header: 'h-20 sm:h-26 md:h-28 w-auto',
+    lg: 'h-20 sm:h-26 w-auto',
+    xl: 'h-28 sm:h-36 w-auto',
     footer: 'h-16 sm:h-20 w-auto',
   };
 
@@ -41,9 +41,9 @@ export function Logo({
         <Image
           src="/images/logo.png"
           alt="PEPTRA BIO — Where Purity Meets Efficacy"
-          width={280}
-          height={240}
-          className={`${heightMap[size]} object-contain max-h-[85px]`}
+          width={360}
+          height={300}
+          className={`${heightMap[size]} object-contain max-h-[115px]`}
           priority
         />
       </div>

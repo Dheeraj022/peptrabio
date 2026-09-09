@@ -83,7 +83,7 @@ function VerifyContent() {
           VERIFY PRODUCT AUTHENTICITY
         </h1>
         <p className="text-xs sm:text-sm text-content-secondary font-sans leading-relaxed">
-          Scan the QR code printed on your physical Peptra Bio product box or enter the unique 16-character authenticity code below.
+          Scan the QR code printed on your physical Peptra Bio product box or enter the unique 6-character authenticity code below.
         </p>
       </div>
 
@@ -98,7 +98,7 @@ function VerifyContent() {
                 ENTER BOX AUTHENTICITY CODE
               </span>
             </div>
-            <span className="text-[10px] font-mono text-content-muted">FORMAT: PV-XXXX-XXXX-XXXX</span>
+            <span className="text-[10px] font-mono text-content-muted">FORMAT: 6-CHAR (e.g. 7K9X2M)</span>
           </div>
 
           <form
@@ -112,14 +112,15 @@ function VerifyContent() {
               <div className="relative">
                 <input
                   type="text"
+                  maxLength={6}
                   value={code}
                   onChange={(e) => {
-                    setCode(e.target.value.toUpperCase());
+                    setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
                     setError('');
                   }}
-                  placeholder="e.g. PV-7K9X-2M4Q-8Z6P"
+                  placeholder="e.g. 7K9X2M"
                   disabled={loading}
-                  className="w-full px-5 py-4 bg-[#FAF8FD] border-2 border-brand-border focus:border-brand rounded-2xl font-mono text-base sm:text-lg font-bold tracking-widest text-content-primary placeholder:text-content-muted placeholder:font-normal placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all text-center uppercase"
+                  className="w-full px-5 py-4 bg-[#FAF8FD] border-2 border-brand-border focus:border-brand rounded-2xl font-mono text-xl sm:text-2xl font-bold tracking-[0.35em] text-content-primary placeholder:text-content-muted placeholder:font-normal placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all text-center uppercase"
                   autoFocus
                 />
               </div>

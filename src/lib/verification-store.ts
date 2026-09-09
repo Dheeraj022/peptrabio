@@ -9,27 +9,23 @@ import { getLocalProducts } from './products-store';
 import { createClient } from './supabase/client';
 import crypto from 'crypto';
 
-const VERIFICATION_CODES_KEY = 'peptrabio_verification_codes_v1';
-const VERIFICATION_BATCHES_KEY = 'peptrabio_verification_batches_v1';
-const VERIFICATION_SCANS_KEY = 'peptrabio_verification_scans_v1';
+const VERIFICATION_CODES_KEY = 'peptrabio_verification_codes_v2';
+const VERIFICATION_BATCHES_KEY = 'peptrabio_verification_batches_v2';
+const VERIFICATION_SCANS_KEY = 'peptrabio_verification_scans_v2';
 
-// Unambiguous character set (excludes 0, O, 1, I, L)
-const CODE_CHARSET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+// 6-character alphanumeric character set (Numbers & Alphabets)
+const CODE_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 
 /**
- * Generates a single cryptographically secure code in format: PV-XXXX-XXXX-XXXX
+ * Generates a single cryptographically secure 6-character alphanumeric code (e.g. 7K9X2M)
  */
 export function generateSecureCode(): string {
-  const parts: string[] = [];
-  for (let p = 0; p < 3; p++) {
-    let segment = '';
-    const randomBytes = crypto.randomBytes(4);
-    for (let i = 0; i < 4; i++) {
-      segment += CODE_CHARSET[randomBytes[i] % CODE_CHARSET.length];
-    }
-    parts.push(segment);
+  let code = '';
+  const randomBytes = crypto.randomBytes(6);
+  for (let i = 0; i < 6; i++) {
+    code += CODE_CHARSET[randomBytes[i] % CODE_CHARSET.length];
   }
-  return `PV-${parts.join('-')}`;
+  return code;
 }
 
 /**
@@ -47,12 +43,12 @@ export function generateUniqueCodes(quantity: number, existingCodes: Set<string>
   return generated;
 }
 
-// Initial demo seeds for immediate testing
+// Initial demo seeds for immediate testing (6-character alphanumeric codes)
 const INITIAL_CODES: ProductVerificationCode[] = [
   {
     id: 'vc-1001',
     product_id: 'prod-selank-5mg',
-    code: 'PV-7K9X-2M4Q-8Z6P',
+    code: '7K9X2M',
     batch_number: 'SLK-2025-04',
     serial_number: 'SN-001',
     max_scans: 3,
@@ -66,7 +62,7 @@ const INITIAL_CODES: ProductVerificationCode[] = [
   {
     id: 'vc-1002',
     product_id: 'prod-bpc-157',
-    code: 'PV-3H8Q-9X7M-4W2L',
+    code: '3H8Q9X',
     batch_number: 'BPC-2025-09',
     serial_number: 'SN-002',
     max_scans: 3,
@@ -80,7 +76,7 @@ const INITIAL_CODES: ProductVerificationCode[] = [
   {
     id: 'vc-1003',
     product_id: 'prod-tb-500-5mg',
-    code: 'PV-8D2M-5N6K-1P9R',
+    code: '8D2M5N',
     batch_number: 'TB-2025-01',
     serial_number: 'SN-003',
     max_scans: 3,

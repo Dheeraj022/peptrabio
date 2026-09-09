@@ -256,7 +256,7 @@ export default function NewVerificationBatchPage() {
                 <span>CRYPTOGRAPHIC RANDOM GENERATION</span>
               </div>
               <p className="text-[11px] leading-relaxed">
-                Codes are generated using high-entropy random byte streams in format <strong>PV-XXXX-XXXX-XXXX</strong> with ambiguous characters (0/O, 1/I) removed.
+                Codes are generated using high-entropy random byte streams as <strong>6-character alphanumeric codes (e.g. 7K9X2M)</strong> with ambiguous characters (0/O, 1/I) removed.
               </p>
             </div>
 

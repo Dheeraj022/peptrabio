@@ -395,9 +395,10 @@ function CreateTicketForm() {
                 </label>
                 <input
                   type="text"
-                  placeholder="PV-XXXX-XXXX-XXXX"
+                  maxLength={6}
+                  placeholder="e.g. 7K9X2M"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
+                  onChange={(e) => setVerificationCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
                   className="w-full px-3 py-2 rounded-lg border border-brand-border bg-white text-xs font-mono uppercase focus:outline-none focus:border-brand"
                 />
               </div>

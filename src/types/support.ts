@@ -81,7 +81,7 @@ export interface CreateTicketInput {
   customer_email: string;
   subject: string;
   category: TicketCategory;
-  priority: 'low' | 'normal' | 'high'; // Customer cannot choose 'urgent'
+  priority?: 'low' | 'normal' | 'high'; // Customer cannot choose 'urgent'
   message: string;
   order_number?: string;
   product_name?: string;

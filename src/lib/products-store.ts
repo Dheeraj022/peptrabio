@@ -423,12 +423,33 @@ export async function toggleProductActive(id: string): Promise<Product | null> {
   return products[index];
 }
 
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number' | 'created_at' | 'updated_at'>): Promise<Order> {
   const orders = getLocalOrders();
+  const orderId = generateUUID();
+
+  // Ensure all items have valid UUIDs
+  const itemsWithUuid = orderData.items ? orderData.items.map(item => ({
+    ...item,
+    id: generateUUID(),
+    order_id: orderId,
+  })) : [];
+
   const newOrder: Order = {
     ...orderData,
-    id: 'ord-' + Date.now(),
+    id: orderId,
     order_number: 'PB-ORD-' + Math.floor(10000 + Math.random() * 90000),
+    items: itemsWithUuid,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -454,6 +475,27 @@ export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number
     customer: newOrder.customer_email
   });
 
+  // Push order to Supabase database via server endpoint
+  try {
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.warn('Failed to insert order into Supabase API:', errData);
+    } else {
+      const resJson = await res.json();
+      if (resJson.order) {
+        return resJson.order as Order;
+      }
+    }
+  } catch (err) {
+    console.warn('Order Supabase API sync failed, relying on local store fallback:', err);
+  }
+
   return newOrder;
 }
 
@@ -471,6 +513,15 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
     status
   });
 
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      await supabase.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('id', orderId);
+    } catch (e) {
+      console.warn('Failed to update order status in Supabase', e);
+    }
+  }
+
   return orders[index];
 }
 
@@ -484,3 +535,23 @@ export function fetchCustomerOrders(customerEmail?: string, userId?: string): Or
     return Boolean(matchesEmail || matchesUser);
   }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
+
+export async function fetchCustomerOrdersAsync(customerEmail?: string, userId?: string): Promise<Order[]> {
+  try {
+    let url = '/api/orders?';
+    if (customerEmail) url += `email=${encodeURIComponent(customerEmail)}&`;
+    if (userId) url += `userId=${encodeURIComponent(userId)}&`;
+
+    const res = await fetch(url);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.orders && Array.isArray(json.orders) && json.orders.length > 0) {
+        return json.orders as Order[];
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to fetch orders from API:', err);
+  }
+  return fetchCustomerOrders(customerEmail, userId);
+}
+

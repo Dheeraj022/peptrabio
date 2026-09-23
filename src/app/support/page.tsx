@@ -40,6 +40,24 @@ export default function CustomerSupportPage() {
       setLoading(false);
     }
     load();
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'peptrabio_support_tickets_v1') {
+        load();
+      }
+    };
+
+    const handleCustom = () => {
+      load();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('peptrabio_tickets_updated', handleCustom);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('peptrabio_tickets_updated', handleCustom);
+    };
   }, [user]);
 
   if (isLoading) {

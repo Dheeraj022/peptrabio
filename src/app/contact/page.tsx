@@ -15,6 +15,8 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
+import { createTicket } from '@/lib/support-store';
+
 function ContactFormContent() {
   const searchParams = useSearchParams();
   const querySubject = searchParams.get('subject');
@@ -29,7 +31,9 @@ function ContactFormContent() {
     message: queryCode ? `Inquiry regarding verification scan for code: ${queryCode}` : '',
   });
 
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [ticketNumber, setTicketNumber] = useState<string | null>(null);
 
   useEffect(() => {
     if (querySubject) {
@@ -42,9 +46,29 @@ function ContactFormContent() {
     }
   }, [querySubject, queryCode]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    setSubmitting(true);
+    try {
+      const ticket = await createTicket({
+        customer_name: formData.name,
+        customer_email: formData.email,
+        subject: `${formData.subject}${formData.institution ? ` (${formData.institution})` : ''}`,
+        category: 'General Support',
+        priority: 'normal',
+        message: formData.message,
+        verification_code: formData.verificationCode || undefined,
+      });
+
+      setTicketNumber(ticket.ticket_number);
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Failed to submit contact inquiry:', err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -95,10 +119,15 @@ function ContactFormContent() {
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <h3 className="font-orbitron font-bold text-xl text-content-primary">
-                INQUIRY DISPATCHED
+                INQUIRY DISPATCHED & LOGGED
               </h3>
+              {ticketNumber && (
+                <div className="inline-block px-4 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-brand font-orbitron text-xs font-bold">
+                  REFERENCE #: {ticketNumber}
+                </div>
+              )}
               <p className="text-xs text-content-secondary max-w-sm mx-auto font-sans leading-relaxed">
-                Thank you. Your inquiry has been routed to our scientific desk. A technical representative will respond to <strong className="text-content-primary">{formData.email}</strong> within 1 business day.
+                Thank you. Your inquiry has been stored and routed to our scientific desk. A technical representative will respond to <strong className="text-content-primary">{formData.email}</strong> within 1 business day.
               </p>
               <button
                 onClick={() => setSubmitted(false)}
@@ -197,10 +226,11 @@ function ContactFormContent() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3.5 px-6 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center justify-center space-x-2 transition-all hover:scale-[1.01]"
+                  disabled={submitting}
+                  className="w-full py-3.5 px-6 bg-brand hover:bg-brand-dark disabled:opacity-50 text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center justify-center space-x-2 transition-all hover:scale-[1.01]"
                 >
                   <Send className="w-4 h-4" />
-                  <span>TRANSMIT INQUIRY</span>
+                  <span>{submitting ? 'TRANSMITTING INQUIRY...' : 'TRANSMIT INQUIRY'}</span>
                 </button>
               </div>
             </form>

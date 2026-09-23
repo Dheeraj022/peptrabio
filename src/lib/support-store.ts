@@ -152,8 +152,27 @@ export function generateTicketNumber(existingTickets: SupportTicket[]): string {
  * Fetch all tickets (with message counts)
  */
 export async function fetchAllTickets(): Promise<SupportTicket[]> {
-  const tickets = getLocalTickets();
+  let tickets = getLocalTickets();
   const messages = getLocalMessages();
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const dbTicketIds = new Set(data.map((t) => t.id));
+        const localOnly = tickets.filter((t) => !dbTicketIds.has(t.id));
+        tickets = [...data, ...localOnly];
+        saveLocalTickets(tickets);
+      }
+    } catch (e) {
+      console.warn('Supabase fetchAllTickets fallback:', e);
+    }
+  }
 
   return tickets.map((t) => {
     const msgs = messages.filter((m) => m.ticket_id === t.id && !m.is_internal_note);
@@ -186,13 +205,29 @@ export async function fetchCustomerTickets(customerEmail?: string, customerId?: 
  * Fetch a single ticket by ID or Ticket Number
  */
 export async function fetchTicketById(idOrNumber: string): Promise<SupportTicket | null> {
-  const tickets = getLocalTickets();
-  const found = tickets.find(
+  const local = getLocalTickets().find(
     (t) =>
       t.id.toLowerCase() === idOrNumber.toLowerCase() ||
       t.ticket_number.toLowerCase() === idOrNumber.toLowerCase()
   );
-  return found || null;
+  if (local) return local;
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .select('*')
+        .or(`id.eq.${idOrNumber},ticket_number.eq.${idOrNumber}`)
+        .maybeSingle();
+
+      if (!error && data) {
+        return data as SupportTicket;
+      }
+    } catch {}
+  }
+
+  return null;
 }
 
 /**
@@ -200,8 +235,29 @@ export async function fetchTicketById(idOrNumber: string): Promise<SupportTicket
  * Filters out internal notes if isStaff is false!
  */
 export async function fetchTicketMessages(ticketId: string, isStaff = false): Promise<TicketMessage[]> {
-  const messages = getLocalMessages();
-  const ticketMessages = messages.filter((m) => m.ticket_id === ticketId);
+  let ticketMessages = getLocalMessages().filter((m) => m.ticket_id === ticketId);
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      const query = supabase
+        .from('support_ticket_messages')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true });
+
+      if (!isStaff) {
+        query.eq('is_internal_note', false);
+      }
+
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        const msgIds = new Set(data.map((m) => m.id));
+        const localOnly = ticketMessages.filter((m) => !msgIds.has(m.id));
+        ticketMessages = [...data, ...localOnly];
+      }
+    } catch {}
+  }
 
   if (!isStaff) {
     return ticketMessages.filter((m) => !m.is_internal_note);
@@ -213,10 +269,37 @@ export async function fetchTicketMessages(ticketId: string, isStaff = false): Pr
  * Fetch audit events for a ticket
  */
 export async function fetchTicketEvents(ticketId: string): Promise<TicketEvent[]> {
-  const events = getLocalEvents();
-  return events
-    .filter((e) => e.ticket_id === ticketId)
-    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  let events = getLocalEvents().filter((e) => e.ticket_id === ticketId);
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('support_ticket_events')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        const evtIds = new Set(data.map((e) => e.id));
+        const localOnly = events.filter((e) => !evtIds.has(e.id));
+        events = [...data, ...localOnly];
+      }
+    } catch {}
+  }
+
+  return events.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+}
+
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 /**
@@ -229,12 +312,14 @@ export async function createTicket(input: CreateTicketInput): Promise<SupportTic
 
   const ticketNumber = generateTicketNumber(tickets);
   const now = new Date().toISOString();
-  const newTicketId = `tkt-${Date.now()}`;
+  const newTicketId = generateUUID();
+  const initialMessageId = generateUUID();
+  const eventId = generateUUID();
 
   const newTicket: SupportTicket = {
     id: newTicketId,
     ticket_number: ticketNumber,
-    customer_id: input.customer_id,
+    customer_id: input.customer_id && input.customer_id.length === 36 ? input.customer_id : undefined,
     customer_name: input.customer_name.trim(),
     customer_email: input.customer_email.trim(),
     subject: input.subject.trim(),
@@ -250,7 +335,7 @@ export async function createTicket(input: CreateTicketInput): Promise<SupportTic
 
   // Initial message
   const initialMessage: TicketMessage = {
-    id: `msg-${Date.now()}`,
+    id: initialMessageId,
     ticket_id: newTicketId,
     sender_name: input.customer_name.trim(),
     sender_role: 'customer',
@@ -262,7 +347,7 @@ export async function createTicket(input: CreateTicketInput): Promise<SupportTic
 
   // Event
   const event: TicketEvent = {
-    id: `evt-${Date.now()}`,
+    id: eventId,
     ticket_id: newTicketId,
     event_type: 'Ticket Created',
     actor_name: input.customer_name.trim(),
@@ -278,6 +363,36 @@ export async function createTicket(input: CreateTicketInput): Promise<SupportTic
   saveLocalTickets(tickets);
   saveLocalMessages(messages);
   saveLocalEvents(events);
+
+  // Sync with Supabase via API route
+  try {
+    const res = await fetch('/api/support/ticket', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...input,
+        id: newTicketId,
+        ticket_number: ticketNumber,
+      }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.warn('Failed to insert support ticket into Supabase via API:', errData);
+    } else {
+      const resJson = await res.json();
+      if (resJson.ticket) {
+        return resJson.ticket as SupportTicket;
+      }
+    }
+  } catch (err) {
+    console.warn('Support ticket API sync failed, relying on local store fallback:', err);
+  }
+
+  // Notify active listeners across windows/tabs
+  if (isBrowser()) {
+    window.dispatchEvent(new Event('peptrabio_tickets_updated'));
+  }
 
   return newTicket;
 }

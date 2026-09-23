@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { Order, OrderStatus } from '@/types';
-import { fetchCustomerOrders } from '@/lib/products-store';
+import { fetchCustomerOrders, fetchCustomerOrdersAsync } from '@/lib/products-store';
 import {
   User,
   Mail,
@@ -65,12 +65,17 @@ export default function AccountPage() {
     }
   }, [user]);
 
-  const loadUserOrders = () => {
+  const loadUserOrders = async () => {
     if (!user) return;
     setOrdersLoading(true);
-    const userOrders = fetchCustomerOrders(user.email, user.id);
-    setOrders(userOrders);
-    setOrdersLoading(false);
+    try {
+      const userOrders = await fetchCustomerOrdersAsync(user.email, user.id);
+      setOrders(userOrders);
+    } catch {
+      setOrders(fetchCustomerOrders(user.email, user.id));
+    } finally {
+      setOrdersLoading(false);
+    }
   };
 
   if (isLoading || !user) {

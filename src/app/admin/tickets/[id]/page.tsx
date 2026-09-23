@@ -96,6 +96,28 @@ export default function AdminTicketDetailPage() {
 
   useEffect(() => {
     loadData();
+
+    const handleStorage = (e: StorageEvent) => {
+      if (
+        e.key === 'peptrabio_support_tickets_v1' ||
+        e.key === 'peptrabio_support_messages_v1' ||
+        e.key === 'peptrabio_support_events_v1'
+      ) {
+        loadData();
+      }
+    };
+
+    const handleCustom = () => {
+      loadData();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('peptrabio_tickets_updated', handleCustom);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('peptrabio_tickets_updated', handleCustom);
+    };
   }, [ticketId]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

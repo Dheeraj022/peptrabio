@@ -104,7 +104,7 @@ export default function CustomerSupportPage() {
               href="/register?redirect=/support"
               className="w-full sm:w-auto px-8 py-3.5 border border-brand-border bg-surface-soft hover:bg-brand-light text-content-primary hover:text-brand rounded-xl font-orbitron text-xs font-semibold tracking-wider transition-all"
             >
-              CREATE RESEARCHER ACCOUNT
+              CREATE ACCOUNT
             </Link>
           </div>
         </div>
@@ -164,11 +164,11 @@ export default function CustomerSupportPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      
+
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-[#24123A] to-[#3B1B5E] rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-radial-purple opacity-30 pointer-events-none" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-orbitron font-semibold text-purple-200">
@@ -195,7 +195,7 @@ export default function CustomerSupportPage() {
 
       {/* Filter & Search Bar */}
       <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
-        
+
         {/* Status Tabs */}
         <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
@@ -209,11 +209,10 @@ export default function CustomerSupportPage() {
             <button
               key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-3.5 py-1.5 rounded-full font-orbitron text-xs font-semibold whitespace-nowrap transition-all ${
-                statusFilter === tab.id
+              className={`px-3.5 py-1.5 rounded-full font-orbitron text-xs font-semibold whitespace-nowrap transition-all ${statusFilter === tab.id
                   ? 'bg-brand text-white shadow-purple-sm'
                   : 'bg-surface-soft text-content-secondary hover:text-brand hover:bg-brand-light'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -272,7 +271,7 @@ export default function CustomerSupportPage() {
               className="block bg-white border border-brand-border hover:border-brand rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-card-hover transition-all duration-200 group"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                
+
                 {/* Left Side: Ticket Number, Subject, Category, Metadata */}
                 <div className="space-y-2 flex-1 min-w-0">
                   <div className="flex items-center space-x-2.5 flex-wrap gap-y-1">

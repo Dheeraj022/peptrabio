@@ -83,7 +83,7 @@ export default function AccountPage() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="font-orbitron text-xs text-content-secondary animate-pulse">
-          Loading researcher profile...
+          Loading profile...
         </div>
       </div>
     );
@@ -196,7 +196,7 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
+
       {/* Page Header */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
@@ -211,7 +211,7 @@ export default function AccountPage() {
                 {user.name}
               </h1>
               <span className="px-2.5 py-0.5 rounded-full bg-brand-light text-brand text-[10px] font-orbitron font-bold uppercase tracking-wider border border-brand/20">
-                Verified Researcher
+                Verified Account
               </span>
             </div>
             <p className="text-xs text-content-secondary font-sans mt-0.5">
@@ -251,11 +251,10 @@ export default function AccountPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center space-x-2 px-4 py-3 border-b-2 font-orbitron text-xs font-semibold tracking-wider transition-all whitespace-nowrap ${
-                active
-                  ? 'border-brand text-brand bg-brand-light/30'
-                  : 'border-transparent text-content-muted hover:text-content-primary hover:border-brand-border'
-              }`}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 font-orbitron text-xs font-semibold tracking-wider transition-all whitespace-nowrap ${active
+                ? 'border-brand text-brand bg-brand-light/30'
+                : 'border-transparent text-content-muted hover:text-content-primary hover:border-brand-border'
+                }`}
             >
               <Icon className="w-4 h-4" />
               <span>{tab.label}</span>
@@ -272,7 +271,7 @@ export default function AccountPage() {
       {/* Tab: Overview */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Profile Card */}
           <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm space-y-6">
             <div className="flex items-center justify-between border-b border-brand-border pb-4">
@@ -474,7 +473,7 @@ export default function AccountPage() {
       {/* Tab: My Orders (Order tracking, history & live updates) */}
       {activeTab === 'orders' && (
         <div className="space-y-6">
-          
+
           {/* Orders Header & Search */}
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-5">
@@ -509,11 +508,10 @@ export default function AccountPage() {
                   <button
                     key={tab.id}
                     onClick={() => setOrderStatusFilter(tab.id)}
-                    className={`px-3.5 py-1.5 rounded-full font-orbitron text-xs font-semibold whitespace-nowrap transition-all ${
-                      orderStatusFilter === tab.id
-                        ? 'bg-brand text-white shadow-purple-sm'
-                        : 'bg-surface-soft text-content-secondary hover:text-brand hover:bg-brand-light'
-                    }`}
+                    className={`px-3.5 py-1.5 rounded-full font-orbitron text-xs font-semibold whitespace-nowrap transition-all ${orderStatusFilter === tab.id
+                      ? 'bg-brand text-white shadow-purple-sm'
+                      : 'bg-surface-soft text-content-secondary hover:text-brand hover:bg-brand-light'
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -578,7 +576,7 @@ export default function AccountPage() {
                   >
                     {/* Main Order Card Row */}
                     <div className="p-6 sm:p-7 space-y-5">
-                      
+
                       {/* Top Meta Bar */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border/60 pb-4">
                         <div className="flex items-center space-x-3 flex-wrap gap-y-2">
@@ -643,13 +641,12 @@ export default function AccountPage() {
                               return (
                                 <div key={step.id} className="relative z-10 flex flex-col items-center text-center px-1">
                                   <div
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center font-orbitron text-xs font-bold transition-all ${
-                                      isCompleted
-                                        ? 'bg-brand text-white shadow-purple-sm'
-                                        : isCurrent
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center font-orbitron text-xs font-bold transition-all ${isCompleted
+                                      ? 'bg-brand text-white shadow-purple-sm'
+                                      : isCurrent
                                         ? 'bg-white border-2 border-brand text-brand ring-4 ring-purple-100'
                                         : 'bg-gray-100 text-gray-400 border border-gray-200'
-                                    }`}
+                                      }`}
                                   >
                                     {isCompleted ? <Check className="w-4 h-4" /> : idx + 1}
                                   </div>
@@ -747,7 +744,7 @@ export default function AccountPage() {
                     {isExpanded && (
                       <div className="p-6 bg-surface-soft border-t-2 border-brand-border space-y-6 animate-in fade-in duration-200">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-                          
+
                           {/* Cold-Chain Shipping Logistics */}
                           <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-border space-y-3">
                             <div className="flex items-center space-x-2 text-brand font-orbitron font-bold">

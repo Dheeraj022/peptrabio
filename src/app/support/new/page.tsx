@@ -46,7 +46,7 @@ function CreateTicketForm() {
   const [orderNumber, setOrderNumber] = useState('');
   const [productName, setProductName] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  
+
   const [attachments, setAttachments] = useState<TicketAttachment[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [createdTicketNumber, setCreatedTicketNumber] = useState<string | null>(null);
@@ -82,7 +82,7 @@ function CreateTicketForm() {
 
           <div className="space-y-2 max-w-lg mx-auto">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-light text-brand text-[10px] font-orbitron font-bold uppercase tracking-wider">
-              <span>RESEARCHER SIGN IN REQUIRED</span>
+              <span>SIGN IN REQUIRED</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-orbitron font-extrabold text-content-primary">
               SUBMIT SUPPORT TICKET
@@ -103,7 +103,7 @@ function CreateTicketForm() {
               href={`/register?redirect=${encodeURIComponent(returnUrl)}`}
               className="w-full sm:w-auto px-8 py-3.5 border border-brand-border bg-surface-soft hover:bg-brand-light text-content-primary hover:text-brand rounded-xl font-orbitron text-xs font-semibold tracking-wider transition-all"
             >
-              CREATE RESEARCHER ACCOUNT
+              CREATE ACCOUNT
             </Link>
           </div>
         </div>
@@ -267,7 +267,7 @@ function CreateTicketForm() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      
+
       {/* Top Back Link */}
       <div>
         <Link
@@ -281,7 +281,7 @@ function CreateTicketForm() {
 
       {/* Form Container */}
       <div className="bg-white border-2 border-brand-border rounded-3xl p-6 sm:p-10 shadow-sm space-y-8">
-        
+
         {/* Header */}
         <div className="space-y-2 border-b border-brand-border pb-6">
           <div className="inline-flex items-center space-x-2 text-brand font-orbitron text-xs font-bold">
@@ -298,7 +298,7 @@ function CreateTicketForm() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          
+
           {/* Customer Name & Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -507,9 +507,8 @@ function CreateTicketForm() {
             <button
               type="submit"
               disabled={submitting}
-              className={`px-8 py-4 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-bold rounded-full shadow-purple-glow flex items-center space-x-2 transition-all ${
-                submitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02]'
-              }`}
+              className={`px-8 py-4 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-bold rounded-full shadow-purple-glow flex items-center space-x-2 transition-all ${submitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02]'
+                }`}
             >
               <Send className="w-4 h-4" />
               <span>{submitting ? 'SUBMITTING TICKET...' : 'SUBMIT SUPPORT TICKET'}</span>

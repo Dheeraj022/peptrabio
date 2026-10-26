@@ -38,7 +38,7 @@ export default function CustomerTicketDetailPage() {
   const [ticket, setTicket] = useState<SupportTicket | null>(null);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [replyText, setReplyText] = useState('');
   const [attachments, setAttachments] = useState<TicketAttachment[]>([]);
   const [sending, setSending] = useState(false);
@@ -158,7 +158,7 @@ export default function CustomerTicketDetailPage() {
 
           <div className="space-y-2 max-w-lg mx-auto">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-light text-brand text-[10px] font-orbitron font-bold uppercase tracking-wider">
-              <span>RESEARCHER SIGN IN REQUIRED</span>
+              <span>SIGN IN REQUIRED</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-orbitron font-extrabold text-content-primary">
               RESTRICTED TICKET THREAD
@@ -238,7 +238,7 @@ export default function CustomerTicketDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      
+
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <Link
@@ -277,7 +277,7 @@ export default function CustomerTicketDetailPage() {
                 {ticket.status.replace(/_/g, ' ')}
               </span>
             </div>
-            
+
             <h1 className="text-xl sm:text-2xl font-orbitron font-extrabold text-content-primary pt-1">
               {ticket.subject}
             </h1>
@@ -334,9 +334,8 @@ export default function CustomerTicketDetailPage() {
             return (
               <div
                 key={msg.id}
-                className={`flex flex-col space-y-2 ${
-                  isCustomer ? 'items-end' : 'items-start'
-                }`}
+                className={`flex flex-col space-y-2 ${isCustomer ? 'items-end' : 'items-start'
+                  }`}
               >
                 {/* Sender Title Bar */}
                 <div className="flex items-center space-x-2 text-xs font-sans">
@@ -366,11 +365,10 @@ export default function CustomerTicketDetailPage() {
 
                 {/* Message Box */}
                 <div
-                  className={`max-w-2xl rounded-2xl p-5 shadow-sm space-y-3 ${
-                    isCustomer
+                  className={`max-w-2xl rounded-2xl p-5 shadow-sm space-y-3 ${isCustomer
                       ? 'bg-white border-2 border-brand/40 text-content-primary rounded-tr-none'
                       : 'bg-white border-2 border-brand text-content-primary rounded-tl-none ring-4 ring-brand-light/60'
-                  }`}
+                    }`}
                 >
                   <p className="text-xs sm:text-sm font-sans leading-relaxed whitespace-pre-wrap">
                     {msg.message}
@@ -494,9 +492,8 @@ export default function CustomerTicketDetailPage() {
               <button
                 type="submit"
                 disabled={sending || (!replyText.trim() && attachments.length === 0)}
-                className={`px-8 py-3 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-bold rounded-full shadow-purple-glow flex items-center space-x-2 transition-all ${
-                  sending ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02]'
-                }`}
+                className={`px-8 py-3 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-bold rounded-full shadow-purple-glow flex items-center space-x-2 transition-all ${sending ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.02]'
+                  }`}
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{sending ? 'SENDING...' : 'SEND REPLY'}</span>

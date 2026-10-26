@@ -19,7 +19,7 @@ export function Footer() {
       {/* Upper Footer: Main Links & Information */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-          
+
           {/* Brand & Mission */}
           <div className="lg:col-span-2 space-y-4">
             <Logo size="lg" variant="footer" />
@@ -179,7 +179,7 @@ export function Footer() {
           <div className="flex space-x-4 font-orbitron text-[10px]">
             <Link href="/policies/research-use" className="hover:text-purple-400">RESEARCH ONLY</Link>
             <Link href="/policies/disclaimer" className="hover:text-purple-400">LEGAL DISCLAIMER</Link>
-            <Link href="/account" className="hover:text-purple-400">RESEARCHER PORTAL</Link>
+            <Link href="/account" className="hover:text-purple-400">ACCOUNT PORTAL</Link>
           </div>
         </div>
       </div>

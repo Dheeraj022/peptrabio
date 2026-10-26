@@ -63,7 +63,7 @@ function LoginFormContent() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-md p-8 sm:p-10 rounded-3xl border border-brand-border shadow-xl relative overflow-hidden">
-        
+
         {/* Glow accent */}
         <div className="absolute top-0 right-0 w-48 h-48 bg-brand/5 rounded-full blur-2xl pointer-events-none -mr-16 -mt-16" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-600/5 rounded-full blur-2xl pointer-events-none -ml-16 -mb-16" />
@@ -80,7 +80,7 @@ function LoginFormContent() {
             />
           </div>
           <h2 className="font-orbitron font-extrabold text-xl sm:text-2xl md:text-[26px] text-content-primary tracking-tight sm:tracking-wide whitespace-nowrap">
-            RESEARCHER <span className="text-brand">SIGN IN</span>
+            ACCOUNT <span className="text-brand">SIGN IN</span>
           </h2>
           <p className="mt-2 text-xs text-content-muted font-sans max-w-xs mx-auto">
             Access your laboratory requisitions, verified batch COAs, and customer support tickets.
@@ -166,7 +166,7 @@ function LoginFormContent() {
               href={redirectPath ? `/register?redirect=${encodeURIComponent(redirectPath)}` : '/register'}
               className="font-orbitron font-bold text-brand hover:underline"
             >
-              Create Researcher Account →
+              Create Account →
             </Link>
           </p>
         </div>

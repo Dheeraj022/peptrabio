@@ -133,8 +133,8 @@ const INITIAL_SCANS: ProductVerificationScan[] = [
 ];
 
 // In-memory server fallback cache
-let serverCodes: ProductVerificationCode[] = [...INITIAL_CODES];
-let serverScans: ProductVerificationScan[] = [...INITIAL_SCANS];
+let serverCodes: ProductVerificationCode[] = [];
+let serverScans: ProductVerificationScan[] = [];
 let serverBatches: VerificationCodeBatch[] = [];
 
 export function addServerVerificationCodes(newCodes: ProductVerificationCode[]) {
@@ -147,8 +147,41 @@ export function addServerVerificationCodes(newCodes: ProductVerificationCode[]) 
   }
 }
 
+export function deleteServerVerificationCode(id?: string, code?: string): void {
+  const normalizedCode = code ? code.trim().toUpperCase() : '';
+  serverCodes = serverCodes.filter((c) => {
+    if (id && c.id === id) return false;
+    if (normalizedCode && c.code?.toUpperCase() === normalizedCode) return false;
+    return true;
+  });
+}
+
 export function getServerVerificationCodes(): ProductVerificationCode[] {
   return serverCodes;
+}
+
+const DELETED_CODES_KEY = 'peptrabio_deleted_codes_v1';
+
+export function getDeletedCodes(): string[] {
+  if (!isBrowser()) return [];
+  try {
+    const raw = localStorage.getItem(DELETED_CODES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function recordDeletedCode(codeOrId: string): void {
+  if (!isBrowser() || !codeOrId) return;
+  try {
+    const list = getDeletedCodes();
+    const upper = codeOrId.trim().toUpperCase();
+    if (!list.includes(upper)) {
+      list.push(upper);
+      localStorage.setItem(DELETED_CODES_KEY, JSON.stringify(list));
+    }
+  } catch {}
 }
 
 function isBrowser(): boolean {
@@ -160,10 +193,13 @@ export function getLocalVerificationCodes(): ProductVerificationCode[] {
   try {
     const raw = localStorage.getItem(VERIFICATION_CODES_KEY);
     if (!raw) {
-      localStorage.setItem(VERIFICATION_CODES_KEY, JSON.stringify(INITIAL_CODES));
-      return INITIAL_CODES;
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    const deletedList = getDeletedCodes();
+    return parsed.filter(
+      (c: any) => !deletedList.includes(c.code?.toUpperCase()) && !deletedList.includes(c.id?.toUpperCase())
+    );
   } catch {
     return serverCodes;
   }
@@ -257,7 +293,7 @@ export async function executeAtomicVerification(
         p_user_agent: userAgent || null
       });
 
-      if (!error && data && data.status && data.status !== 'invalid') {
+      if (!error && data && data.status) {
         return data as VerifyApiResponse;
       }
     } catch (e) {
@@ -540,13 +576,22 @@ export async function createVerificationBatch(params: {
   const updated = [...newRecords, ...codes];
   saveLocalVerificationCodes(updated);
 
+  const batchRecord = {
+    id: batchId,
+    product_id: params.product_id,
+    batch_name: params.batch_name || params.batch_number,
+    batch_number: params.batch_number,
+    quantity: params.quantity,
+    created_at: new Date().toISOString()
+  };
+
   // Sync to server memory cache so /api/verify can immediately verify these codes
   if (isBrowser()) {
     try {
       fetch('/api/admin/verification/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ codes: newRecords }),
+        body: JSON.stringify({ batch: batchRecord, codes: newRecords }),
       }).catch((e) => console.warn('Server verification sync fallback', e));
     } catch {}
   } else {
@@ -562,7 +607,9 @@ export async function createVerificationBatch(params: {
         product_id: params.product_id,
         batch_name: params.batch_name || params.batch_number,
         batch_number: params.batch_number,
-        quantity: params.quantity
+        quantity: params.quantity,
+        codes: rawCodes,
+        authenticity_codes: rawCodes.join(', ')
       });
 
       await supabase.from('product_verification_codes').insert(
@@ -571,6 +618,7 @@ export async function createVerificationBatch(params: {
           product_id: r.product_id,
           batch_id: r.batch_id,
           code: r.code,
+          authenticity_code: r.code,
           batch_number: r.batch_number,
           serial_number: r.serial_number,
           max_scans: r.max_scans,
@@ -620,20 +668,54 @@ export async function updateCodeStatus(
 }
 
 /**
- * Deletes a verification code permanently
+ * Deletes a verification code permanently across local store, server memory, and Supabase
  */
-export async function deleteVerificationCode(codeId: string): Promise<boolean> {
+export async function deleteVerificationCode(codeId: string, codeStr?: string): Promise<boolean> {
+  const normCode = codeStr ? codeStr.trim().toUpperCase() : '';
+
+  // 1. Remove from local storage
   const codes = getLocalVerificationCodes();
-  const updated = codes.filter((c) => c.id !== codeId && c.code !== codeId);
+  const updated = codes.filter((c) => {
+    if (c.id === codeId) return false;
+    if (normCode && c.code?.toUpperCase() === normCode) return false;
+    if (c.code === codeId) return false;
+    return true;
+  });
   saveLocalVerificationCodes(updated);
 
+  // 2. Add to deleted tracking list
+  recordDeletedCode(codeId);
+  if (normCode) recordDeletedCode(normCode);
+
+  // 3. Remove from server in-memory list
+  deleteServerVerificationCode(codeId, codeStr);
+
+  // 4. Call server API to delete from server and Supabase
+  try {
+    await fetch(
+      `/api/admin/verification/codes?id=${encodeURIComponent(codeId)}&code=${encodeURIComponent(codeStr || '')}`,
+      { method: 'DELETE' }
+    );
+  } catch (err) {
+    console.warn('API delete call fallback', err);
+  }
+
+  // 5. Also attempt client Supabase delete if client is active
   const supabase = createClient();
   if (supabase) {
     try {
-      await supabase
-        .from('product_verification_codes')
-        .delete()
-        .eq('id', codeId);
+      if (codeId) {
+        await supabase.from('product_verification_scans').delete().eq('verification_code_id', codeId);
+      }
+      let query = supabase.from('product_verification_codes').delete();
+      if (codeId && normCode) {
+        query = query.or(`id.eq.${codeId},code.ilike.${normCode}`);
+      } else if (codeId) {
+        query = query.eq('id', codeId);
+      } else if (normCode) {
+        query = query.ilike('code', normCode);
+      }
+      await query;
     } catch (e) {
       console.warn('Supabase code deletion fallback', e);
     }

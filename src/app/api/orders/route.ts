@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const orderId = body.id && body.id.length === 36 ? body.id : generateUUID();
+    const orderId = body.id || generateUUID();
     const formattedOrderNumber = order_number || 'PB-ORD-' + Math.floor(10000 + Math.random() * 90000);
     const now = new Date().toISOString();
 
@@ -104,11 +104,11 @@ export async function POST(req: NextRequest) {
     const createdItems = [];
     if (Array.isArray(items) && items.length > 0) {
       const itemsToInsert = items.map((item: any) => {
-        const itemId = item.id && item.id.length === 36 ? item.id : generateUUID();
+        const itemId = item.id || generateUUID();
         return {
           id: itemId,
           order_id: orderId,
-          product_id: item.product_id && item.product_id.length === 36 ? item.product_id : null,
+          product_id: item.product_id || null,
           product_name: item.product_name || 'Peptide Material',
           product_code: item.product_code || null,
           quantity: Number(item.quantity) || 1,

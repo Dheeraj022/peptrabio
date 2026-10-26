@@ -8,7 +8,8 @@ import {
   getLocalVerificationCodes,
   saveLocalVerificationCodes,
   updateCodeStatus,
-  deleteVerificationCode
+  deleteVerificationCode,
+  getDeletedCodes
 } from '@/lib/verification-store';
 import { VerificationQRCodeModal } from '@/components/admin/VerificationQRCodeModal';
 import { VerificationScanHistoryModal } from '@/components/admin/VerificationScanHistoryModal';
@@ -44,11 +45,16 @@ export default function AdminVerificationPage() {
     action: VerificationCodeStatus;
   } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<ProductVerificationCode | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
   const loadData = async () => {
-    // 1. Load initial local codes immediately
-    const local = getLocalVerificationCodes();
+    const deletedList = getDeletedCodes();
+
+    // 1. Load initial local codes immediately, excluding any permanently deleted codes
+    const local = getLocalVerificationCodes().filter(
+      (c) => !deletedList.includes(c.code?.toUpperCase()) && !deletedList.includes(c.id?.toUpperCase())
+    );
     setCodes(local);
 
     // 2. Fetch latest server/database codes and updated scan counts
@@ -56,25 +62,14 @@ export default function AdminVerificationPage() {
       const res = await fetch('/api/admin/verification/codes');
       if (res.ok) {
         const data = await res.json();
-        if (data.codes && Array.isArray(data.codes) && data.codes.length > 0) {
-          // Merge server scan counts with local codes
-          const merged = local.map((lCode) => {
-            const sMatch = data.codes.find((sc: any) => sc.code?.toUpperCase() === lCode.code?.toUpperCase());
-            if (sMatch && sMatch.scan_count !== undefined) {
-              return { ...lCode, scan_count: Math.max(lCode.scan_count || 0, sMatch.scan_count) };
-            }
-            return lCode;
-          });
+        if (data && Array.isArray(data.codes)) {
+          // Filter out any explicitly deleted codes
+          const activeServerCodes = data.codes.filter(
+            (sc: any) => !deletedList.includes(sc.code?.toUpperCase()) && !deletedList.includes(sc.id?.toUpperCase())
+          );
 
-          // Also include any server codes that might not be in local
-          for (const sCode of data.codes) {
-            if (!merged.some((m) => m.code?.toUpperCase() === sCode.code?.toUpperCase())) {
-              merged.push(sCode);
-            }
-          }
-
-          setCodes(merged);
-          saveLocalVerificationCodes(merged);
+          setCodes(activeServerCodes);
+          saveLocalVerificationCodes(activeServerCodes);
         }
       }
     } catch (e) {
@@ -108,11 +103,22 @@ export default function AdminVerificationPage() {
     showToast(`Code status set to ${status}.`);
   };
 
-  const handleDeleteCode = async (codeId: string) => {
-    await deleteVerificationCode(codeId);
-    setDeleteConfirm(null);
-    loadData();
-    showToast('Verification code permanently deleted.');
+  const handleDeleteCode = async (code: ProductVerificationCode) => {
+    setIsDeleting(true);
+    // Optimistic instant UI update
+    setCodes((prev) => prev.filter((c) => c.id !== code.id && c.code !== code.code));
+
+    try {
+      await deleteVerificationCode(code.id, code.code);
+      setDeleteConfirm(null);
+      showToast(`Verification code ${code.code} permanently deleted.`);
+      loadData();
+    } catch (err) {
+      console.error(err);
+      showToast('Error deleting verification code.');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // CSV Export for packaging / printing team (Section 14 of spec)
@@ -526,33 +532,63 @@ export default function AdminVerificationPage() {
 
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white border-2 border-red-200 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
-              <div className="w-12 h-12 rounded-2xl bg-red-100 text-accent-danger flex items-center justify-center mx-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white border-2 border-red-200 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isDeleting) setDeleteConfirm(null);
+                }}
+                className="absolute top-5 right-5 p-1.5 rounded-full text-content-muted hover:bg-brand-light transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="w-12 h-12 rounded-2xl bg-red-100 text-accent-danger flex items-center justify-center mx-auto shadow-sm">
                 <Trash2 className="w-6 h-6" />
               </div>
 
-              <div className="text-center space-y-1">
+              <div className="text-center space-y-2">
                 <h3 className="font-orbitron font-bold text-lg text-content-primary">
                   DELETE VERIFICATION CODE
                 </h3>
-                <p className="text-xs text-content-secondary font-sans">
-                  Are you sure you want to permanently delete code <strong className="font-mono text-brand">{deleteConfirm.code}</strong> for <span className="font-medium text-content-primary">{deleteConfirm.product_name}</span>? This action cannot be undone.
+                <p className="text-xs text-content-secondary font-sans leading-relaxed">
+                  Are you sure you want to permanently delete code{' '}
+                  <strong className="font-mono text-brand font-bold text-sm">{deleteConfirm.code}</strong> for{' '}
+                  <span className="font-semibold text-content-primary">{deleteConfirm.product_name}</span>?
                 </p>
+                <div className="text-[11px] text-content-muted font-mono bg-brand-subtle py-1.5 px-3 rounded-xl inline-block border border-brand-border">
+                  Batch: {deleteConfirm.batch_number} • Serial: {deleteConfirm.serial_number || 'N/A'}
+                </div>
+              </div>
+
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-3 text-[11px] text-red-800 text-center font-sans">
+                ⚠️ This tag will be permanently expunged and will no longer verify as genuine.
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
+                  type="button"
+                  disabled={isDeleting}
                   onClick={() => setDeleteConfirm(null)}
                   className="py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-content-primary font-orbitron text-xs font-semibold rounded-full transition-all"
                 >
                   CANCEL
                 </button>
                 <button
-                  onClick={() => handleDeleteCode(deleteConfirm.id)}
-                  className="py-2.5 px-4 bg-accent-danger hover:bg-red-700 text-white font-orbitron text-xs font-semibold rounded-full transition-all shadow-sm"
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => handleDeleteCode(deleteConfirm)}
+                  className="py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-orbitron text-xs font-bold rounded-full transition-all shadow-md shadow-red-500/20 flex items-center justify-center space-x-1.5"
                 >
-                  DELETE
+                  {isDeleting ? (
+                    <span>DELETING...</span>
+                  ) : (
+                    <>
+                      <Trash2 className="w-3.5 h-3.5 mr-1" />
+                      <span>DELETE CODE</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

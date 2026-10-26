@@ -8,7 +8,7 @@ const ORDERS_STORAGE_KEY = 'peptrabio_orders_v6';
 const AUDIT_LOGS_STORAGE_KEY = 'peptrabio_audit_logs_v6';
 
 // Seed Initial Orders
-const INITIAL_ORDERS: Order[] = [
+export const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-1001',
     order_number: 'PB-ORD-9821',
@@ -116,7 +116,7 @@ const INITIAL_ORDERS: Order[] = [
       {
         id: 'item-2',
         order_id: 'ord-1002',
-        product_id: 'prod-bpc157',
+        product_id: 'prod-bpc-157',
         product_name: 'BPC-157 (5mg)',
         product_code: 'PB-BPC-005',
         quantity: 1,
@@ -126,7 +126,7 @@ const INITIAL_ORDERS: Order[] = [
       {
         id: 'item-3',
         order_id: 'ord-1002',
-        product_id: 'prod-tb500',
+        product_id: 'prod-tb-500-5mg',
         product_name: 'TB-500 (10mg)',
         product_code: 'PB-TB4-010',
         quantity: 1,

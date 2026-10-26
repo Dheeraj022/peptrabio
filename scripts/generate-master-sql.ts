@@ -660,11 +660,8 @@ ON CONFLICT (id) DO NOTHING;\n`;
     }
   }
 
-  // Seed Admin Settings & User
-  sql += `\n-- DEFAULT ADMIN SETTINGS & USER\n`;
-  sql += `INSERT INTO admin_users (id, email, role)
-VALUES ('admin-master', 'admin@peptrabio.com', 'admin')
-ON CONFLICT (id) DO NOTHING;\n`;
+  // Seed Admin Settings
+  sql += `\n-- DEFAULT ADMIN SETTINGS\n`;
 
   sql += `INSERT INTO admin_settings (id, store_name, support_email, currency, compliance_notice)
 VALUES ('default', 'PEPTRA BIO', 'support@peptrabio.com', 'INR', 'RESEARCH USE ONLY • ALL PEPTIDES ARE SOLD STRICTLY FOR IN VITRO LABORATORY RESEARCH')

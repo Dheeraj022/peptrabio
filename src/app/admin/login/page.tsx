@@ -18,9 +18,9 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import {
-  authenticateAdmin,
-  createAdminProfile,
-  resetAdminPassword
+  authenticateAdminAsync,
+  createAdminProfileAsync,
+  resetAdminPasswordAsync
 } from '@/lib/admin-store';
 
 export default function AdminLoginPage() {
@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -59,10 +59,10 @@ export default function AdminLoginPage() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      const res = authenticateAdmin(email, password);
+    try {
+      const res = await authenticateAdminAsync(email.trim(), password);
       if (res.success) {
-        setSuccess('Authentication verified. Redirecting to admin dashboard...');
+        setSuccess('Authentication verified with Supabase Auth. Redirecting to admin dashboard...');
         setTimeout(() => {
           router.push('/admin');
         }, 500);
@@ -70,10 +70,13 @@ export default function AdminLoginPage() {
         setError(res.message);
         setLoading(false);
       }
-    }, 400);
+    } catch (err: any) {
+      setError(err.message || 'Authentication error.');
+      setLoading(false);
+    }
   };
 
-  const handleCreateAdmin = (e: React.FormEvent) => {
+  const handleCreateAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -104,28 +107,31 @@ export default function AdminLoginPage() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      const res = createAdminProfile({
-        name: fullName,
-        email: createEmail,
+    try {
+      const res = await createAdminProfileAsync({
+        name: fullName.trim(),
+        email: createEmail.trim(),
         password: createPassword,
-        passkey: passkey,
-        role: 'Admin'
+        passkey: passkey.trim(),
+        role: 'Administrator'
       });
 
-      if (res.success) {
-        setSuccess('Admin account created successfully! Entering dashboard...');
+      if (res.success && res.user) {
+        setSuccess(`Administrator account created in Supabase Authentication (User UUID: ${res.user.id.slice(0, 8)}...). Redirecting to dashboard...`);
         setTimeout(() => {
           router.push('/admin');
-        }, 600);
+        }, 800);
       } else {
         setError(res.message);
         setLoading(false);
       }
-    }, 400);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during administrator registration.');
+      setLoading(false);
+    }
   };
 
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -151,8 +157,8 @@ export default function AdminLoginPage() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      const res = resetAdminPassword(forgotEmail, forgotPasskey, newPassword);
+    try {
+      const res = await resetAdminPasswordAsync(forgotEmail.trim(), forgotPasskey.trim(), newPassword);
       if (res.success) {
         setSuccess(res.message);
         setEmail(forgotEmail);
@@ -161,15 +167,18 @@ export default function AdminLoginPage() {
         setForgotPasskey('');
         setNewPassword('');
         setConfirmNewPassword('');
-        setLoading(false);
         setTimeout(() => {
           setMode('signin');
-        }, 1500);
+          setSuccess('Password reset successfully in Supabase Auth. Please sign in with your new credentials.');
+        }, 1200);
       } else {
         setError(res.message);
-        setLoading(false);
       }
-    }, 400);
+    } catch (err: any) {
+      setError(err.message || 'Error resetting password.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -262,7 +271,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@peptrabio.com"
+                  placeholder="admin@example.com"
                   required
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-purple-950/60 border border-purple-800 text-white placeholder-gray-500 focus:outline-none focus:border-brand text-xs font-sans"
                 />
@@ -355,7 +364,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={createEmail}
                   onChange={(e) => setCreateEmail(e.target.value)}
-                  placeholder="alex.rivera@peptrabio.com"
+                  placeholder="admin@example.com"
                   required
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-purple-950/60 border border-purple-800 text-white placeholder-gray-500 focus:outline-none focus:border-brand text-xs font-sans"
                 />

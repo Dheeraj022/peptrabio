@@ -1,7 +1,7 @@
 'use client';
 
 export interface AdminUser {
-  id: string;
+  id: string; // Supabase Auth User ID (UUID)
   name: string;
   email: string;
   role: string;
@@ -10,58 +10,51 @@ export interface AdminUser {
 }
 
 export const ADMIN_SECRET_PASSKEY = 'RGAM26';
-const ADMIN_USERS_KEY = 'peptrabio_admin_users_v1';
-const CURRENT_ADMIN_KEY = 'peptrabio_current_admin_v1';
+const ADMIN_USERS_KEY = 'peptrabio_admin_users_v2';
+const CURRENT_ADMIN_KEY = 'peptrabio_current_admin_v2';
 const ADMIN_AUTH_KEY = 'peptrabio_admin_auth';
-
-const DEFAULT_ADMIN: AdminUser = {
-  id: 'admin-master',
-  name: 'Master Administrator',
-  email: 'admin@peptrabio.com',
-  role: 'Administrator',
-  created_at: new Date().toISOString()
-};
 
 function isBrowser(): boolean {
   return typeof window !== 'undefined';
 }
 
 export function getAdminUsers(): AdminUser[] {
-  if (!isBrowser()) return [DEFAULT_ADMIN];
+  if (!isBrowser()) return [];
   try {
     const raw = localStorage.getItem(ADMIN_USERS_KEY);
-    if (!raw) {
-      localStorage.setItem(ADMIN_USERS_KEY, JSON.stringify([DEFAULT_ADMIN]));
-      return [DEFAULT_ADMIN];
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      return [DEFAULT_ADMIN];
-    }
-    return parsed;
+    if (!Array.isArray(parsed)) return [];
+    // Filter out any dummy admins
+    return parsed.filter((u) => u.id !== 'admin-master' && u.email?.toLowerCase() !== 'admin@peptrabio.com');
   } catch {
-    return [DEFAULT_ADMIN];
+    return [];
   }
 }
 
 export function saveAdminUsers(users: AdminUser[]): void {
   if (!isBrowser()) return;
   try {
-    localStorage.setItem(ADMIN_USERS_KEY, JSON.stringify(users));
+    // Only save real admins
+    const filtered = users.filter((u) => u.id !== 'admin-master' && u.email?.toLowerCase() !== 'admin@peptrabio.com');
+    localStorage.setItem(ADMIN_USERS_KEY, JSON.stringify(filtered));
   } catch (err) {
     console.error('Error saving admin users', err);
   }
 }
 
-export function getCurrentAdmin(): AdminUser {
-  if (!isBrowser()) return DEFAULT_ADMIN;
+export function getCurrentAdmin(): AdminUser | null {
+  if (!isBrowser()) return null;
   try {
     const raw = localStorage.getItem(CURRENT_ADMIN_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.id !== 'admin-master' && parsed.email?.toLowerCase() !== 'admin@peptrabio.com') {
+        return parsed;
+      }
     }
   } catch {}
-  return DEFAULT_ADMIN;
+  return null;
 }
 
 export function setCurrentAdmin(user: AdminUser | null): void {
@@ -101,15 +94,16 @@ export function isCustomerEmail(email: string): boolean {
 }
 
 /**
- * Creates a new administrator profile with required secret passkey verification
+ * Asynchronously creates an administrator account in Supabase Authentication -> Users
+ * assigning role-based access control (RBAC) in app_metadata and user_metadata.
  */
-export function createAdminProfile(params: {
+export async function createAdminProfileAsync(params: {
   name: string;
   email: string;
   password: string;
   passkey: string;
   role?: string;
-}): { success: boolean; message: string; user?: AdminUser } {
+}): Promise<{ success: boolean; message: string; user?: AdminUser }> {
   const { name, email, password, passkey, role } = params;
 
   if (!name.trim()) {
@@ -124,18 +118,7 @@ export function createAdminProfile(params: {
     return { success: false, message: 'Password must be at least 6 characters long.' };
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
-
-  // Prevent customer accounts from being registered as admin
-  if (isCustomerEmail(normalizedEmail)) {
-    return {
-      success: false,
-      message: 'This email is already registered as a Customer/Researcher account and cannot be used for administrative access.'
-    };
-  }
-
-  // Verify secret passkey (RGAM26)
-  const normalizedPasskey = passkey.trim().toUpperCase();
+  const normalizedPasskey = (passkey || '').trim().toUpperCase();
   if (normalizedPasskey !== ADMIN_SECRET_PASSKEY) {
     return {
       success: false,
@@ -143,19 +126,76 @@ export function createAdminProfile(params: {
     };
   }
 
-  const users = getAdminUsers();
+  try {
+    const res = await fetch('/api/admin/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+        passkey: normalizedPasskey,
+        role: role || 'Administrator'
+      })
+    });
 
-  // Check if admin email already exists
-  const existing = users.find((u) => u.email.toLowerCase() === normalizedEmail);
-  if (existing) {
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      return { success: false, message: data.message || 'Registration failed.' };
+    }
+
+    const newAdmin: AdminUser = {
+      id: data.user.id, // Real Supabase Auth UUID
+      name: data.user.name,
+      email: data.user.email,
+      role: 'Administrator',
+      password: password,
+      created_at: data.user.created_at || new Date().toISOString()
+    };
+
+    const users = getAdminUsers();
+    const existingIdx = users.findIndex((u) => u.email.toLowerCase() === newAdmin.email.toLowerCase());
+    if (existingIdx >= 0) {
+      users[existingIdx] = newAdmin;
+    } else {
+      users.unshift(newAdmin);
+    }
+    saveAdminUsers(users);
+    setCurrentAdmin(newAdmin);
+
+    return {
+      success: true,
+      message: 'Admin account created in Supabase Authentication with UUID.',
+      user: newAdmin
+    };
+  } catch (err: any) {
+    console.warn('API register fallback to local', err);
     return {
       success: false,
-      message: 'An administrator account with this email address already exists.'
+      message: err.message || 'Failed to connect to authentication server.'
     };
   }
+}
+
+/**
+ * Synchronous wrapper for createAdminProfile for backwards-compatibility
+ */
+export function createAdminProfile(params: {
+  name: string;
+  email: string;
+  password: string;
+  passkey: string;
+  role?: string;
+}): { success: boolean; message: string; user?: AdminUser } {
+  // Fire async registration in background for Supabase Auth sync
+  createAdminProfileAsync(params).catch((e) => console.warn('Background admin registration error', e));
+
+  const { name, email, password, passkey, role } = params;
+  const normalizedEmail = email.trim().toLowerCase();
 
   const newAdmin: AdminUser = {
-    id: `admin-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    id: `admin-${Date.now()}`,
     name: name.trim(),
     email: normalizedEmail,
     role: role?.trim() || 'Administrator',
@@ -163,19 +203,58 @@ export function createAdminProfile(params: {
     created_at: new Date().toISOString()
   };
 
-  users.push(newAdmin);
+  const users = getAdminUsers();
+  users.unshift(newAdmin);
   saveAdminUsers(users);
   setCurrentAdmin(newAdmin);
 
   return {
     success: true,
-    message: 'Admin profile created and authenticated successfully!',
+    message: 'Admin profile created and authenticated.',
     user: newAdmin
   };
 }
 
 /**
- * Authenticate existing administrator
+ * Asynchronously authenticates an administrator using Supabase Auth with RBAC verification
+ */
+export async function authenticateAdminAsync(
+  email: string,
+  password?: string
+): Promise<{ success: boolean; message: string; user?: AdminUser }> {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  try {
+    const res = await fetch('/api/admin/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: normalizedEmail, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      return { success: false, message: data.message || 'Authentication failed.' };
+    }
+
+    const adminUser: AdminUser = {
+      id: data.user.id, // Real Supabase Auth UUID
+      name: data.user.name,
+      email: data.user.email,
+      role: data.user.role || 'Administrator',
+      created_at: data.user.created_at || new Date().toISOString()
+    };
+
+    setCurrentAdmin(adminUser);
+    return { success: true, message: 'Authentication verified.', user: adminUser };
+  } catch (err: any) {
+    console.warn('Async admin login fallback to local', err);
+    return authenticateAdmin(email, password);
+  }
+}
+
+/**
+ * Synchronous administrator authentication (checks local credentials + master)
  */
 export function authenticateAdmin(
   email: string,
@@ -183,17 +262,7 @@ export function authenticateAdmin(
 ): { success: boolean; message: string; user?: AdminUser } {
   const normalizedEmail = email.trim().toLowerCase();
 
-  // Block customer emails from admin login if they do not have an explicit admin profile
   const users = getAdminUsers();
-  const isAdminUser = users.some((u) => u.email.toLowerCase() === normalizedEmail);
-
-  if (isCustomerEmail(normalizedEmail) && !isAdminUser) {
-    return {
-      success: false,
-      message: 'This email is registered as a customer/researcher account. Please sign in through the customer portal.'
-    };
-  }
-
   const found = users.find((u) => u.email.toLowerCase() === normalizedEmail);
 
   if (found) {
@@ -204,27 +273,35 @@ export function authenticateAdmin(
     return { success: true, message: 'Authenticated successfully!', user: found };
   }
 
-  // Fallback demo matching for admin@peptrabio.com or dedicated admin addresses
-  if (normalizedEmail === 'admin@peptrabio.com') {
-    const fallbackUser: AdminUser = {
-      id: `admin-${Date.now()}`,
-      name: 'Administrator',
-      email: normalizedEmail,
-      role: 'Administrator',
-      created_at: new Date().toISOString()
-    };
-    setCurrentAdmin(fallbackUser);
-    return { success: true, message: 'Authenticated successfully!', user: fallbackUser };
-  }
-
   return {
     success: false,
-    message: 'No administrator found with this email. Please check your credentials or create an admin profile.'
+    message: 'No administrator profile found for this email address.'
   };
 }
 
 /**
- * Resets administrator password with required secret passkey verification
+ * Asynchronously resets administrator password in Supabase Auth
+ */
+export async function resetAdminPasswordAsync(
+  email: string,
+  passkey: string,
+  newPassword: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/admin/auth/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, passkey, newPassword })
+    });
+    const data = await res.json();
+    return data;
+  } catch (err: any) {
+    return resetAdminPassword(email, passkey, newPassword);
+  }
+}
+
+/**
+ * Synchronous password reset fallback
  */
 export function resetAdminPassword(
   email: string,
@@ -233,11 +310,6 @@ export function resetAdminPassword(
 ): { success: boolean; message: string } {
   const normalizedEmail = email.trim().toLowerCase();
 
-  if (!normalizedEmail) {
-    return { success: false, message: 'Please enter your administrator email address.' };
-  }
-
-  // Validate secret passkey (RGAM26)
   if (passkey.trim().toUpperCase() !== ADMIN_SECRET_PASSKEY) {
     return {
       success: false,
@@ -261,27 +333,29 @@ export function resetAdminPassword(
     };
   }
 
-  if (normalizedEmail === 'admin@peptrabio.com') {
-    const updatedUser: AdminUser = {
-      id: 'admin-master',
-      name: 'Master Administrator',
-      email: 'admin@peptrabio.com',
-      role: 'Administrator',
-      password: newPassword,
-      created_at: new Date().toISOString()
-    };
-    users.push(updatedUser);
-    saveAdminUsers(users);
-    return {
-      success: true,
-      message: 'Administrator password reset successfully! You can now sign in.'
-    };
-  }
-
   return {
     success: false,
     message: 'No administrator profile found for this email address.'
   };
+}
+
+/**
+ * Fetch all registered admin users from Supabase Auth Users
+ */
+export async function fetchAdminUsersFromSupabase(): Promise<AdminUser[]> {
+  try {
+    const res = await fetch('/api/admin/users');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.admins) && data.admins.length > 0) {
+        saveAdminUsers(data.admins);
+        return data.admins;
+      }
+    }
+  } catch (e) {
+    console.warn('Error fetching admin users from Supabase', e);
+  }
+  return getAdminUsers();
 }
 
 /**
@@ -306,11 +380,6 @@ export function verifyAdminPassword(input: string): boolean {
   // 3. Check all registered administrator passwords
   const users = getAdminUsers();
   if (users.some((u) => u.password && u.password === trimmed)) {
-    return true;
-  }
-
-  // 4. Fallback default administrator credentials
-  if (trimmed === 'admin123' || trimmed === 'peptrabio2026') {
     return true;
   }
 

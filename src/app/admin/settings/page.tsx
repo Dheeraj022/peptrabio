@@ -15,7 +15,12 @@ import {
   KeyRound,
   AlertCircle
 } from 'lucide-react';
-import { getAdminUsers, createAdminProfile, AdminUser } from '@/lib/admin-store';
+import {
+  getAdminUsers,
+  createAdminProfileAsync,
+  fetchAdminUsersFromSupabase,
+  AdminUser
+} from '@/lib/admin-store';
 
 const SETTINGS_STORAGE_KEY = 'peptrabio_admin_settings_v1';
 
@@ -40,26 +45,30 @@ export default function AdminSettingsPage() {
   const [adminError, setAdminError] = useState<string | null>(null);
   const [adminSuccess, setAdminSuccess] = useState<string | null>(null);
 
-  const loadAdmins = () => {
+  const loadAdmins = async () => {
     setAdminList(getAdminUsers());
+    const fresh = await fetchAdminUsersFromSupabase();
+    if (fresh && fresh.length > 0) {
+      setAdminList(fresh);
+    }
   };
 
-  const handleCreateNewAdmin = (e: React.FormEvent) => {
+  const handleCreateNewAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdminError(null);
     setAdminSuccess(null);
 
-    const res = createAdminProfile({
+    const res = await createAdminProfileAsync({
       name: newAdminName,
       email: newAdminEmail,
       password: newAdminPassword,
       passkey: newAdminPasskey,
-      role: 'Admin'
+      role: 'Administrator'
     });
 
-    if (res.success) {
-      setAdminSuccess('Administrator created successfully!');
-      loadAdmins();
+    if (res.success && res.user) {
+      setAdminSuccess(`Administrator created in Supabase Authentication (User UUID: ${res.user.id.slice(0, 8)}...)!`);
+      await loadAdmins();
       setNewAdminName('');
       setNewAdminEmail('');
       setNewAdminPassword('');
@@ -283,24 +292,37 @@ export default function AdminSettingsPage() {
 
           {/* Admin List */}
           <div className="divide-y divide-brand-border/60">
-            {adminList.map((admin) => (
-              <div key={admin.id} className="py-3 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-lg bg-brand-light text-brand flex items-center justify-center font-orbitron font-bold text-xs">
-                    {admin.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="font-medium text-xs text-content-primary">{admin.name}</div>
-                    <div className="text-[11px] text-content-muted font-mono">{admin.email}</div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-brand font-orbitron text-[10px] font-semibold border border-purple-200">
-                    {admin.role}
-                  </span>
-                </div>
+            {adminList.length === 0 ? (
+              <div className="py-8 text-center text-xs text-content-muted font-sans">
+                No administrators registered yet. Click &quot;CREATE ADMIN PROFILE&quot; to add an authorized administrator.
               </div>
-            ))}
+            ) : (
+              adminList.map((admin) => (
+                <div key={admin.id} className="py-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-lg bg-brand-light text-brand flex items-center justify-center font-orbitron font-bold text-xs">
+                      {admin.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="font-medium text-xs text-content-primary flex items-center space-x-2">
+                        <span>{admin.name}</span>
+                        {admin.id && admin.id.length > 20 && (
+                          <span className="text-[9px] font-mono bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200" title={`Supabase Auth User ID: ${admin.id}`}>
+                            UUID: {admin.id.slice(0, 8)}...
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-content-muted font-mono">{admin.email}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-brand font-orbitron text-[10px] font-semibold border border-purple-200">
+                      {admin.role}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           <div className="p-3.5 rounded-2xl bg-purple-50 border border-purple-200 flex items-center space-x-2.5 text-xs text-purple-900 font-sans">

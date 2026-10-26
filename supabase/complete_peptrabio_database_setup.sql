@@ -1892,10 +1892,7 @@ INSERT INTO orders (
 INSERT INTO order_items (id, order_id, product_id, product_name, product_code, quantity, unit_price, total_price) VALUES ('item-2', 'ord-1002', 'prod-bpc-157', 'BPC-157 (5mg)', 'PB-BPC-005', 1, 62, 62) ON CONFLICT (id) DO NOTHING;
 INSERT INTO order_items (id, order_id, product_id, product_name, product_code, quantity, unit_price, total_price) VALUES ('item-3', 'ord-1002', 'prod-tb-500-5mg', 'TB-500 (10mg)', 'PB-TB4-010', 1, 88, 88) ON CONFLICT (id) DO NOTHING;
 
--- DEFAULT ADMIN SETTINGS & USER
-INSERT INTO admin_users (id, email, role)
-VALUES ('admin-master', 'admin@peptrabio.com', 'admin')
-ON CONFLICT (id) DO NOTHING;
+-- DEFAULT ADMIN SETTINGS
 INSERT INTO admin_settings (id, store_name, support_email, currency, compliance_notice)
 VALUES ('default', 'PEPTRA BIO', 'support@peptrabio.com', 'INR', 'RESEARCH USE ONLY • ALL PEPTIDES ARE SOLD STRICTLY FOR IN VITRO LABORATORY RESEARCH')
 ON CONFLICT (id) DO UPDATE SET updated_at = NOW();

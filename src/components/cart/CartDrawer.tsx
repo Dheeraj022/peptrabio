@@ -5,11 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useAuth } from '@/context/AuthContext';
 import { X, Trash2, Plus, Minus, ArrowRight, ShieldAlert, ShoppingBag } from 'lucide-react';
 
 export function CartDrawer() {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, subtotal, totalItems } = useCart();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
 
   if (!isCartOpen) return null;
 
@@ -165,11 +167,11 @@ export function CartDrawer() {
                   VIEW CART
                 </Link>
                 <Link
-                  href="/checkout"
+                  href={user ? "/checkout" : "/login?redirect=/checkout"}
                   onClick={() => setIsCartOpen(false)}
                   className="w-full py-3 px-4 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full text-center shadow-purple-sm flex items-center justify-center group transition-all hover:scale-[1.02]"
                 >
-                  CHECKOUT
+                  {user ? 'CHECKOUT' : 'SIGN IN TO ORDER'}
                   <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useAuth } from '@/context/AuthContext';
 import {
   Trash2,
   Plus,
@@ -19,6 +20,7 @@ import {
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, subtotal, totalItems } = useCart();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
 
   if (cart.length === 0) {
     return (
@@ -206,10 +208,10 @@ export default function CartPage() {
             </div>
 
             <Link
-              href="/checkout"
+              href={user ? "/checkout" : "/login?redirect=/checkout"}
               className="w-full py-4 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-glow flex items-center justify-center space-x-2 transition-all hover:scale-[1.02]"
             >
-              <span>PROCEED TO CHECKOUT</span>
+              <span>{user ? 'PROCEED TO CHECKOUT' : 'SIGN IN TO CHECKOUT'}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 

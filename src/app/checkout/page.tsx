@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useAuth } from '@/context/AuthContext';
 import { createNewOrder } from '@/lib/products-store';
 import { Order, OrderItem } from '@/types';
 import {
@@ -17,12 +19,15 @@ import {
   CreditCard,
   Building,
   FileCheck2,
-  Check
+  Check,
+  UserCheck
 } from 'lucide-react';
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const { cart, subtotal, clearCart } = useCart();
   const { formatPrice } = useCurrency();
+  const { user, isLoading } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -45,6 +50,24 @@ export default function CheckoutPage() {
     notes: '',
   });
 
+  // Pre-fill user details from authenticated account
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => {
+        const parts = (user.name || '').trim().split(' ');
+        const firstName = parts[0] || '';
+        const lastName = parts.slice(1).join(' ') || '';
+        return {
+          ...prev,
+          email: prev.email || user.email || '',
+          firstName: prev.firstName || firstName,
+          lastName: prev.lastName || lastName,
+          phone: prev.phone || user.phone || '',
+        };
+      });
+    }
+  }, [user]);
+
   const [complianceAcknowledged, setComplianceAcknowledged] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
@@ -66,6 +89,12 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
+
+    if (!user) {
+      setErrorMsg('You must be signed in to your account to place an order.');
+      router.push('/login?redirect=/checkout');
+      return;
+    }
 
     if (!complianceAcknowledged) {
       setErrorMsg('You must agree to the Research Use Only compliance acknowledgment to proceed.');
@@ -118,14 +147,15 @@ export default function CheckoutPage() {
           };
 
       const newOrder = await createNewOrder({
+        user_id: user.id,
         status: 'paid',
         subtotal,
         shipping: shippingCost,
         tax: 0,
         total: grandTotal,
-        customer_email: formData.email,
-        customer_name: `${formData.firstName} ${formData.lastName}`,
-        customer_phone: formData.phone,
+        customer_email: formData.email || user.email,
+        customer_name: `${formData.firstName} ${formData.lastName}`.trim() || user.name,
+        customer_phone: formData.phone || user.phone,
         shipping_address: shippingAddress,
         billing_address: billingAddress,
         compliance_acknowledged: true,
@@ -224,6 +254,64 @@ export default function CheckoutPage() {
     );
   }
 
+  // AUTH LOADING STATE
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="font-orbitron text-xs text-content-secondary flex items-center space-x-3">
+          <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+          <span>VERIFYING ACCOUNT SESSION...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // MANDATORY USER LOGIN BARRIER
+  if (!user) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-6">
+        <div className="bg-white border-2 border-brand-border rounded-3xl p-8 sm:p-12 shadow-xl space-y-6 text-center">
+          <div className="w-16 h-16 rounded-full bg-brand-light text-brand flex items-center justify-center mx-auto shadow-purple-sm">
+            <Lock className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="px-3.5 py-1 rounded-full bg-brand-light text-brand font-orbitron text-xs font-bold tracking-wider">
+              ACCOUNT LOGIN REQUIRED
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-orbitron font-extrabold text-content-primary">
+              SIGN IN TO PLACE ORDER
+            </h1>
+            <p className="text-xs sm:text-sm text-content-secondary font-sans max-w-md mx-auto leading-relaxed">
+              You must have an account and be logged in to order research materials, track shipment milestones, and manage order history.
+            </p>
+          </div>
+
+          <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/login?redirect=/checkout"
+              className="px-8 py-3.5 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm transition-all"
+            >
+              SIGN IN TO CHECKOUT
+            </Link>
+            <Link
+              href="/register?redirect=/checkout"
+              className="px-8 py-3.5 bg-white border border-brand-border text-brand hover:bg-brand-light font-orbitron text-xs font-semibold rounded-full transition-all"
+            >
+              CREATE AN ACCOUNT
+            </Link>
+          </div>
+
+          <div className="pt-2">
+            <Link href="/cart" className="text-xs text-content-muted hover:text-brand hover:underline font-orbitron">
+              ← RETURN TO CART
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // EMPTY CHECKOUT REDIRECT
   if (cart.length === 0) {
     return (
@@ -251,11 +339,27 @@ export default function CheckoutPage() {
       <div className="border-b border-brand-border pb-4">
         <div className="flex items-center space-x-2 text-xs font-orbitron text-brand font-semibold uppercase">
           <Lock className="w-4 h-4" />
-          <span>Encrypted Laboratory Order Processing</span>
+          <span>Encrypted Order Processing</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-orbitron font-extrabold text-content-primary">
           RESEARCH ORDER CHECKOUT
         </h1>
+      </div>
+
+      {/* Logged in User Bar */}
+      <div className="p-4 rounded-2xl bg-brand-light/40 border border-brand/30 flex items-center space-x-3 text-xs">
+        <div className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-orbitron font-bold text-xs shrink-0">
+          {user.name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <div className="font-orbitron font-bold text-content-primary flex items-center space-x-2">
+            <span>{user.name}</span>
+            <span className="px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success text-[10px] font-mono font-bold">
+              LOGGED IN
+            </span>
+          </div>
+          <p className="text-[11px] text-content-secondary font-sans">{user.email}</p>
+        </div>
       </div>
 
       {errorMsg && (

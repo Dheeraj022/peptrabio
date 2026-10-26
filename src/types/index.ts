@@ -135,6 +135,7 @@ export type OrderItem = {
   quantity: number;
   unit_price: number;
   total_price: number;
+  image_url?: string;
 };
 
 export type AdminUser = {

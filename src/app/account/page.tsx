@@ -30,6 +30,7 @@ import {
   ShieldCheck,
   AlertCircle
 } from 'lucide-react';
+import { getPaymentStatusBadge } from '@/lib/payment-config';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -603,6 +604,16 @@ export default function AccountPage() {
                             <span className={`w-2 h-2 rounded-full ${statusBadge.dot}`} />
                             <span>{statusBadge.label}</span>
                           </span>
+
+                          {order.payment_status && (() => {
+                            const pBadge = getPaymentStatusBadge(order.payment_status);
+                            return (
+                              <span className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] font-orbitron font-bold uppercase tracking-wider border ${pBadge.bg} ${pBadge.text} ${pBadge.border}`}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                                <span>Payment: {pBadge.label}</span>
+                              </span>
+                            );
+                          })()}
                         </div>
 
                         <div className="flex items-center justify-between sm:justify-end space-x-4 text-xs">
@@ -781,9 +792,27 @@ export default function AccountPage() {
                                 <span className="font-mono font-medium text-content-primary">{formatPrice(order.shipping)}</span>
                               </div>
                               <div className="flex justify-between py-1 border-b border-gray-100">
-                                <span className="text-content-muted">Total Paid:</span>
-                                <span className="font-mono font-bold text-brand">{formatPrice(order.total)}</span>
+                                <span className="text-content-muted">Total Order Amount:</span>
+                                <span className="font-mono font-bold text-content-primary">{formatPrice(order.total)}</span>
                               </div>
+                              {order.payment_type === 'partial' && order.advance_amount !== undefined ? (
+                                <>
+                                  <div className="flex justify-between py-1 border-b border-gray-100 text-emerald-700">
+                                    <span className="font-medium">10% Advance Paid:</span>
+                                    <span className="font-mono font-bold">₹{order.advance_amount.toLocaleString('en-IN')}</span>
+                                  </div>
+                                  <div className="flex justify-between py-1 border-b border-gray-100 text-amber-700">
+                                    <span className="font-medium">Remaining COD Balance:</span>
+                                    <span className="font-mono font-bold">₹{order.remaining_cod_amount?.toLocaleString('en-IN')}</span>
+                                  </div>
+                                </>
+                              ) : null}
+                              {order.utr_number && (
+                                <div className="flex justify-between py-1 border-b border-gray-100">
+                                  <span className="text-content-muted">UPI UTR Ref:</span>
+                                  <span className="font-mono text-content-primary font-bold">{order.utr_number}</span>
+                                </div>
+                              )}
                               {order.shipping_address && (
                                 <div className="pt-1">
                                   <span className="text-content-muted block text-[11px] mb-0.5">Shipping Destination:</span>

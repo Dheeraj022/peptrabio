@@ -15,7 +15,8 @@ import {
   X,
   ExternalLink,
   ShieldCheck,
-  LifeBuoy
+  LifeBuoy,
+  CreditCard
 } from 'lucide-react';
 import { getCurrentAdmin, setCurrentAdmin, AdminUser } from '@/lib/admin-store';
 
@@ -55,6 +56,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Products Catalog', href: '/admin/products', icon: Package },
     { name: 'Add Product', href: '/admin/products/new', icon: PlusCircle },
+    { name: 'Payment Verifications', href: '/admin/payments', icon: CreditCard },
     { name: 'Authenticity Codes', href: '/admin/verification', icon: ShieldCheck },
     { name: 'Support Tickets', href: '/admin/tickets', icon: LifeBuoy },
     { name: 'Orders Management', href: '/admin/orders', icon: ShoppingBag },

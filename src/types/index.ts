@@ -75,6 +75,10 @@ export type CartItem = {
 
 export type OrderStatus = 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
 
+export type PaymentMethod = 'partial_cod' | 'full_online';
+export type PaymentType = 'partial' | 'full';
+export type PaymentStatus = 'unpaid' | 'awaiting_verification' | 'verified' | 'rejected' | 'refunded';
+
 export type Address = {
   first_name: string;
   last_name: string;
@@ -92,6 +96,20 @@ export type Order = {
   order_number: string;
   user_id?: string;
   status: OrderStatus;
+  payment_status: PaymentStatus;
+  payment_method?: PaymentMethod;
+  payment_type?: PaymentType;
+  advance_percentage?: number;
+  advance_amount?: number;
+  remaining_cod_amount?: number;
+  utr_number?: string;
+  screenshot_url?: string;
+  payment_submitted_at?: string;
+  payment_verified_at?: string;
+  payment_verified_by?: string;
+  payment_rejection_reason?: string;
+  payment_notes?: string;
+  currency?: string;
   subtotal: number;
   shipping: number;
   tax: number;

@@ -12,7 +12,18 @@ const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-1001',
     order_number: 'PB-ORD-9821',
-    status: 'paid',
+    status: 'processing',
+    payment_status: 'verified',
+    payment_method: 'partial_cod',
+    payment_type: 'partial',
+    advance_percentage: 10,
+    advance_amount: 15.00,
+    remaining_cod_amount: 136.00,
+    utr_number: 'UTR491029482019',
+    payment_submitted_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    payment_verified_at: new Date(Date.now() - 86400000).toISOString(),
+    payment_verified_by: 'admin@peptrabio.com',
+    currency: 'INR',
     subtotal: 136.00,
     shipping: 15.00,
     tax: 0.00,
@@ -60,7 +71,16 @@ const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-1002',
     order_number: 'PB-ORD-9822',
-    status: 'processing',
+    status: 'pending',
+    payment_status: 'awaiting_verification',
+    payment_method: 'full_online',
+    payment_type: 'full',
+    advance_percentage: 100,
+    advance_amount: 165.00,
+    remaining_cod_amount: 0.00,
+    utr_number: 'UTR882910482012',
+    payment_submitted_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+    currency: 'INR',
     subtotal: 150.00,
     shipping: 15.00,
     tax: 0.00,
@@ -434,7 +454,7 @@ function generateUUID(): string {
   });
 }
 
-export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number' | 'created_at' | 'updated_at'>): Promise<Order> {
+export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number' | 'created_at' | 'updated_at'> & { order_number?: string }): Promise<Order> {
   const orders = getLocalOrders();
   const orderId = generateUUID();
 
@@ -448,7 +468,16 @@ export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number
   const newOrder: Order = {
     ...orderData,
     id: orderId,
-    order_number: 'PB-ORD-' + Math.floor(10000 + Math.random() * 90000),
+    order_number: orderData.order_number || ('PB-ORD-' + Math.floor(10000 + Math.random() * 90000)),
+    payment_status: orderData.payment_status || 'unpaid',
+    payment_method: orderData.payment_method || 'partial_cod',
+    payment_type: orderData.payment_type || 'partial',
+    advance_percentage: orderData.advance_percentage ?? 10,
+    advance_amount: orderData.advance_amount ?? 0,
+    remaining_cod_amount: orderData.remaining_cod_amount ?? 0,
+    utr_number: orderData.utr_number || undefined,
+    screenshot_url: orderData.screenshot_url || undefined,
+    currency: orderData.currency || 'INR',
     items: itemsWithUuid,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -472,7 +501,8 @@ export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number
   addAuditLog('order_created', 'order', newOrder.id, {
     order_number: newOrder.order_number,
     total: newOrder.total,
-    customer: newOrder.customer_email
+    customer: newOrder.customer_email,
+    payment_status: newOrder.payment_status,
   });
 
   // Push order to Supabase database via server endpoint
@@ -497,6 +527,131 @@ export async function createNewOrder(orderData: Omit<Order, 'id' | 'order_number
   }
 
   return newOrder;
+}
+
+export async function confirmOrderPaymentInStore({
+  orderId,
+  orderNumber,
+  paymentType,
+  utrNumber,
+  screenshotUrl,
+  notes,
+}: {
+  orderId?: string;
+  orderNumber?: string;
+  paymentType: 'partial' | 'full';
+  utrNumber: string;
+  screenshotUrl?: string;
+  notes?: string;
+}): Promise<Order | null> {
+  const orders = getLocalOrders();
+  const index = orders.findIndex(o => (orderId && o.id === orderId) || (orderNumber && o.order_number === orderNumber));
+  const now = new Date().toISOString();
+
+  if (index !== -1) {
+    orders[index].payment_status = 'awaiting_verification';
+    orders[index].payment_type = paymentType;
+    orders[index].payment_method = paymentType === 'partial' ? 'partial_cod' : 'full_online';
+    orders[index].utr_number = utrNumber.trim();
+    if (screenshotUrl) orders[index].screenshot_url = screenshotUrl;
+    if (notes) orders[index].payment_notes = notes;
+    orders[index].payment_submitted_at = now;
+    orders[index].updated_at = now;
+    saveLocalOrders(orders);
+
+    addAuditLog('payment_submitted', 'order_payment', orders[index].id, {
+      order_number: orders[index].order_number,
+      utr: utrNumber,
+      payment_type: paymentType,
+    });
+  }
+
+  // Trigger server sync
+  try {
+    const res = await fetch('/api/payment/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId,
+        orderNumber,
+        paymentType,
+        utrNumber,
+        screenshotUrl,
+        notes,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.order) return data.order as Order;
+    }
+  } catch (e) {
+    console.warn('Payment confirm API sync failed, local store updated:', e);
+  }
+
+  return index !== -1 ? orders[index] : null;
+}
+
+export async function verifyOrderPaymentInStore({
+  orderId,
+  action,
+  adminEmail = 'admin@peptrabio.com',
+  verificationNotes,
+  rejectionReason,
+}: {
+  orderId: string;
+  action: 'verify' | 'reject';
+  adminEmail?: string;
+  verificationNotes?: string;
+  rejectionReason?: string;
+}): Promise<Order | null> {
+  const orders = getLocalOrders();
+  const index = orders.findIndex(o => o.id === orderId);
+  const now = new Date().toISOString();
+  const isVerified = action === 'verify';
+
+  if (index !== -1) {
+    orders[index].payment_status = isVerified ? 'verified' : 'rejected';
+    orders[index].payment_verified_at = now;
+    orders[index].payment_verified_by = adminEmail;
+    orders[index].updated_at = now;
+    if (isVerified) {
+      orders[index].status = 'processing';
+      if (verificationNotes) orders[index].payment_notes = verificationNotes;
+    } else {
+      orders[index].payment_rejection_reason = rejectionReason || 'Payment rejected.';
+      if (verificationNotes) orders[index].payment_notes = verificationNotes;
+    }
+    saveLocalOrders(orders);
+
+    addAuditLog(isVerified ? 'payment_verified' : 'payment_rejected', 'order_payment', orderId, {
+      order_number: orders[index].order_number,
+      notes: verificationNotes,
+      reason: rejectionReason,
+    });
+  }
+
+  // Trigger server sync
+  try {
+    const res = await fetch('/api/admin/payments/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId,
+        action,
+        adminEmail,
+        verificationNotes,
+        rejectionReason,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.order) return data.order as Order;
+    }
+  } catch (e) {
+    console.warn('Admin payment verify API sync failed, local store updated:', e);
+  }
+
+  return index !== -1 ? orders[index] : null;
 }
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<Order | null> {

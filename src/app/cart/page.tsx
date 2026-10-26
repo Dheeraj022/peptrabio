@@ -198,12 +198,12 @@ export default function CartPage() {
                 <span className="text-accent-success font-medium">Included</span>
               </div>
               <div className="flex justify-between text-content-secondary">
-                <span>Estimated Standard Transit</span>
-                <span className="font-mono text-content-primary">{formatPrice(15.00)}</span>
+                <span>Shipping & Delivery</span>
+                <span className="text-accent-success font-semibold">FREE</span>
               </div>
               <div className="border-t border-brand-border pt-3 flex justify-between font-orbitron font-bold text-base text-content-primary">
                 <span>Total Estimated</span>
-                <span className="text-brand">{formatPrice(subtotal + 15)}</span>
+                <span className="text-brand">{formatPrice(subtotal)}</span>
               </div>
             </div>
 

@@ -17,17 +17,17 @@ const INITIAL_ORDERS: Order[] = [
     payment_method: 'partial_cod',
     payment_type: 'partial',
     advance_percentage: 10,
-    advance_amount: 15.00,
-    remaining_cod_amount: 136.00,
+    advance_amount: 13.60,
+    remaining_cod_amount: 122.40,
     utr_number: 'UTR491029482019',
     payment_submitted_at: new Date(Date.now() - 86400000 * 2).toISOString(),
     payment_verified_at: new Date(Date.now() - 86400000).toISOString(),
     payment_verified_by: 'admin@peptrabio.com',
     currency: 'INR',
     subtotal: 136.00,
-    shipping: 15.00,
+    shipping: 0.00,
     tax: 0.00,
-    total: 151.00,
+    total: 136.00,
     customer_email: 'lab.researcher@biotech-institute.edu',
     customer_name: 'Dr. Sarah Mitchell',
     customer_phone: '+1 (555) 234-5678',
@@ -76,15 +76,15 @@ const INITIAL_ORDERS: Order[] = [
     payment_method: 'full_online',
     payment_type: 'full',
     advance_percentage: 100,
-    advance_amount: 165.00,
+    advance_amount: 150.00,
     remaining_cod_amount: 0.00,
     utr_number: 'UTR882910482012',
     payment_submitted_at: new Date(Date.now() - 3600000 * 4).toISOString(),
     currency: 'INR',
     subtotal: 150.00,
-    shipping: 15.00,
+    shipping: 0.00,
     tax: 0.00,
-    total: 165.00,
+    total: 150.00,
     customer_email: 'q.vance@stanford-bio.org',
     customer_name: 'Dr. Quentin Vance',
     customer_phone: '+1 (555) 890-1234',
@@ -679,6 +679,45 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
 
   return orders[index];
 }
+
+export async function deleteOrder(orderId: string): Promise<boolean> {
+  const orders = getLocalOrders();
+  const index = orders.findIndex((o) => o.id === orderId);
+  if (index === -1) return false;
+
+  const targetOrder = orders[index];
+  const updatedOrders = orders.filter((o) => o.id !== orderId);
+  saveLocalOrders(updatedOrders);
+
+  addAuditLog('order_deleted', 'order', orderId, {
+    order_number: targetOrder.order_number,
+    customer_email: targetOrder.customer_email,
+    customer_name: targetOrder.customer_name,
+    total: targetOrder.total,
+  });
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      await supabase.from('order_items').delete().eq('order_id', orderId);
+      await supabase.from('orders').delete().eq('id', orderId);
+    } catch (e) {
+      console.warn('Failed to delete order from Supabase:', e);
+    }
+  }
+
+  try {
+    await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, {
+      method: 'DELETE',
+    });
+  } catch (err) {
+    // API endpoint might be offline or client fallback
+  }
+
+  return true;
+}
+
+export const deleteOrderFromStore = deleteOrder;
 
 export function fetchCustomerOrders(customerEmail?: string, userId?: string): Order[] {
   const all = getLocalOrders();

@@ -25,7 +25,6 @@ export default function AdminSettingsPage() {
   const [storeName, setStoreName] = useState('PEPTRA BIO');
   const [supportEmail, setSupportEmail] = useState('support@peptrabio.com');
   const [selectedCurrency, setSelectedCurrency] = useState<SupportedCurrency>(globalCurrency || 'INR');
-  const [shippingRate, setShippingRate] = useState('15.00');
   const [complianceNotice, setComplianceNotice] = useState(
     'RESEARCH USE ONLY • ALL PEPTIDES ARE SOLD STRICTLY FOR IN VITRO LABORATORY RESEARCH'
   );
@@ -84,7 +83,6 @@ export default function AdminSettingsPage() {
           const parsed = JSON.parse(raw);
           if (parsed.storeName) setStoreName(parsed.storeName);
           if (parsed.supportEmail) setSupportEmail(parsed.supportEmail);
-          if (parsed.shippingRate) setShippingRate(parsed.shippingRate);
           if (parsed.complianceNotice) setComplianceNotice(parsed.complianceNotice);
         }
       } catch (err) {
@@ -115,7 +113,6 @@ export default function AdminSettingsPage() {
           storeName,
           supportEmail,
           currency: selectedCurrency,
-          shippingRate,
           complianceNotice,
           updated_at: new Date().toISOString()
         };
@@ -227,18 +224,6 @@ export default function AdminSettingsPage() {
                 <option value="GBP">GBP (£)</option>
                 <option value="CAD">CAD ($)</option>
               </select>
-            </div>
-
-            <div>
-              <label className="block font-orbitron text-[10px] text-content-muted mb-1">
-                COLD-CHAIN FLAT SHIPPING RATE (USD)
-              </label>
-              <input
-                type="text"
-                value={shippingRate}
-                onChange={(e) => setShippingRate(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-brand-border text-xs font-sans font-mono focus:outline-none focus:border-brand"
-              />
             </div>
 
             <div className="sm:col-span-2">

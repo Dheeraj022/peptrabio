@@ -6,6 +6,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { ProductVerificationCode, VerificationCodeStatus } from '@/types/verification';
 import {
   getLocalVerificationCodes,
+  saveLocalVerificationCodes,
   updateCodeStatus,
   deleteVerificationCode
 } from '@/lib/verification-store';
@@ -45,12 +46,54 @@ export default function AdminVerificationPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<ProductVerificationCode | null>(null);
   const [toastMessage, setToastMessage] = useState('');
 
-  const loadData = () => {
-    setCodes(getLocalVerificationCodes());
+  const loadData = async () => {
+    // 1. Load initial local codes immediately
+    const local = getLocalVerificationCodes();
+    setCodes(local);
+
+    // 2. Fetch latest server/database codes and updated scan counts
+    try {
+      const res = await fetch('/api/admin/verification/codes');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.codes && Array.isArray(data.codes) && data.codes.length > 0) {
+          // Merge server scan counts with local codes
+          const merged = local.map((lCode) => {
+            const sMatch = data.codes.find((sc: any) => sc.code?.toUpperCase() === lCode.code?.toUpperCase());
+            if (sMatch && sMatch.scan_count !== undefined) {
+              return { ...lCode, scan_count: Math.max(lCode.scan_count || 0, sMatch.scan_count) };
+            }
+            return lCode;
+          });
+
+          // Also include any server codes that might not be in local
+          for (const sCode of data.codes) {
+            if (!merged.some((m) => m.code?.toUpperCase() === sCode.code?.toUpperCase())) {
+              merged.push(sCode);
+            }
+          }
+
+          setCodes(merged);
+          saveLocalVerificationCodes(merged);
+        }
+      }
+    } catch (e) {
+      console.warn('Could not sync remote verification codes', e);
+    }
   };
 
   useEffect(() => {
     loadData();
+
+    // Auto-refresh when tab gains focus or on a short interval for live scan monitoring
+    const handleFocus = () => loadData();
+    window.addEventListener('focus', handleFocus);
+    const interval = setInterval(loadData, 4000);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(interval);
+    };
   }, []);
 
   const showToast = (msg: string) => {

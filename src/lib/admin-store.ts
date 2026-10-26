@@ -283,3 +283,36 @@ export function resetAdminPassword(
     message: 'No administrator profile found for this email address.'
   };
 }
+
+/**
+ * Verifies if the entered password or passkey matches the master passkey (RGAM26),
+ * the currently logged in administrator's password, or any registered administrator password.
+ */
+export function verifyAdminPassword(input: string): boolean {
+  if (!input || !input.trim()) return false;
+  const trimmed = input.trim();
+
+  // 1. Check against master passkey RGAM26 (case-insensitive)
+  if (trimmed.toUpperCase() === ADMIN_SECRET_PASSKEY) {
+    return true;
+  }
+
+  // 2. Check current active administrator's password
+  const current = getCurrentAdmin();
+  if (current?.password && current.password === trimmed) {
+    return true;
+  }
+
+  // 3. Check all registered administrator passwords
+  const users = getAdminUsers();
+  if (users.some((u) => u.password && u.password === trimmed)) {
+    return true;
+  }
+
+  // 4. Fallback default administrator credentials
+  if (trimmed === 'admin123' || trimmed === 'peptrabio2026') {
+    return true;
+  }
+
+  return false;
+}

@@ -5,6 +5,11 @@ import { useSearchParams } from 'next/navigation';
 import { VerifyApiResponse } from '@/types/verification';
 import { VerificationResultCard } from '@/components/verification/VerificationResultCard';
 import {
+  executeClientVerification,
+  getLocalVerificationCodes,
+  saveLocalVerificationCodes
+} from '@/lib/verification-store';
+import {
   ShieldCheck,
   QrCode,
   Search,
@@ -53,9 +58,45 @@ function VerifyContent() {
       });
 
       const data: VerifyApiResponse = await res.json();
+
+      // If server does not recognize the code (e.g. batch created in browser), check client-side store
+      if (data.status === 'invalid') {
+        const localResult = executeClientVerification(target);
+        if (localResult && localResult.status !== 'invalid') {
+          setResult(localResult);
+          // Sync all local codes to the server memory cache in background
+          fetch('/api/admin/verification/batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codes: getLocalVerificationCodes() }),
+          }).catch(() => {});
+          return;
+        }
+      }
+
+      // When server returns genuine or limit_reached, update the local storage scan count immediately
+      if (typeof window !== 'undefined' && data.code && data.scan_number !== undefined) {
+        const localCodes = getLocalVerificationCodes();
+        const idx = localCodes.findIndex(c => c.code.toUpperCase() === data.code?.toUpperCase());
+        if (idx !== -1) {
+          localCodes[idx] = {
+            ...localCodes[idx],
+            scan_count: data.scan_number,
+            updated_at: new Date().toISOString()
+          };
+          saveLocalVerificationCodes(localCodes);
+        }
+      }
+
       setResult(data);
     } catch (err: any) {
-      setError('Connection error. Please check your network and try again.');
+      // Local fallback on network failure
+      const localResult = executeClientVerification(target);
+      if (localResult && localResult.status !== 'invalid') {
+        setResult(localResult);
+      } else {
+        setError('Connection error. Please check your network and try again.');
+      }
     } finally {
       setLoading(false);
     }

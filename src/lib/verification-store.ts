@@ -137,6 +137,20 @@ let serverCodes: ProductVerificationCode[] = [...INITIAL_CODES];
 let serverScans: ProductVerificationScan[] = [...INITIAL_SCANS];
 let serverBatches: VerificationCodeBatch[] = [];
 
+export function addServerVerificationCodes(newCodes: ProductVerificationCode[]) {
+  const existingSet = new Set(serverCodes.map((c) => c.code));
+  for (const c of newCodes) {
+    if (!existingSet.has(c.code)) {
+      serverCodes.unshift(c);
+      existingSet.add(c.code);
+    }
+  }
+}
+
+export function getServerVerificationCodes(): ProductVerificationCode[] {
+  return serverCodes;
+}
+
 function isBrowser(): boolean {
   return typeof window !== 'undefined';
 }
@@ -358,7 +372,110 @@ export async function executeAtomicVerification(
   scans.unshift(scanRec);
   saveLocalVerificationScans(scans);
 
+  // Sync scan count with Supabase if active
+  if (supabase) {
+    try {
+      await supabase
+        .from('product_verification_codes')
+        .update({ scan_count: newScanCount, updated_at: new Date().toISOString() })
+        .eq('code', codeRec.code);
+    } catch {}
+  }
+
   // Fetch safe public product info
+  const prod = products.find((p) => p.id === codeRec.product_id);
+
+  return {
+    status: 'genuine',
+    scan_number: newScanCount,
+    max_scans: codeRec.max_scans,
+    scans_remaining: scansRemaining,
+    code: codeRec.code,
+    product: {
+      name: prod?.name || codeRec.product_name || 'Research Peptide',
+      product_code: prod?.product_code || codeRec.product_code || 'PB-SPEC',
+      batch_number: codeRec.batch_number,
+      size: prod?.size || '5 mg',
+      purity: prod?.purity || '99%+',
+      format: prod?.format || 'Lyophilized Solid'
+    },
+    verified_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Client-Side Verification Execution (Used as immediate local fallback when running in browser)
+ */
+export function executeClientVerification(code: string): VerifyApiResponse {
+  const normalized = code.trim().toUpperCase();
+
+  if (!normalized || normalized.length < 6) {
+    return {
+      status: 'invalid',
+      message: 'We could not find this verification code. Please check the code printed on your product box and try again.'
+    };
+  }
+
+  const codes = getLocalVerificationCodes();
+  const scans = getLocalVerificationScans();
+  const products = getLocalProducts();
+
+  const targetIndex = codes.findIndex((c) => c.code.toUpperCase() === normalized);
+
+  if (targetIndex === -1) {
+    return {
+      status: 'invalid',
+      message: 'We could not find this verification code. Please check the code printed on your product box and try again.'
+    };
+  }
+
+  const codeRec = codes[targetIndex];
+
+  if (codeRec.status === 'deactivated') {
+    return {
+      status: 'deactivated',
+      message: 'This verification code is currently unavailable. Please contact our support team for assistance.'
+    };
+  }
+
+  if (codeRec.status === 'blocked') {
+    return {
+      status: 'blocked',
+      message: 'This verification code is currently unavailable. Please contact our support team for assistance.'
+    };
+  }
+
+  if (codeRec.scan_count >= codeRec.max_scans) {
+    return {
+      status: 'limit_reached',
+      scan_number: codeRec.scan_count + 1,
+      max_scans: codeRec.max_scans,
+      code: codeRec.code,
+      message: 'Verification limit reached. Please contact our support team to verify the product and scan history.'
+    };
+  }
+
+  const newScanCount = codeRec.scan_count + 1;
+  const scansRemaining = codeRec.max_scans - newScanCount;
+
+  codes[targetIndex] = {
+    ...codeRec,
+    scan_count: newScanCount,
+    updated_at: new Date().toISOString()
+  };
+  saveLocalVerificationCodes(codes);
+
+  const scanRec: ProductVerificationScan = {
+    id: 'scan-' + Date.now(),
+    verification_code_id: codeRec.id,
+    scan_number: newScanCount,
+    scanned_at: new Date().toISOString(),
+    result: 'genuine',
+    created_at: new Date().toISOString()
+  };
+  scans.unshift(scanRec);
+  saveLocalVerificationScans(scans);
+
   const prod = products.find((p) => p.id === codeRec.product_id);
 
   return {
@@ -422,6 +539,19 @@ export async function createVerificationBatch(params: {
 
   const updated = [...newRecords, ...codes];
   saveLocalVerificationCodes(updated);
+
+  // Sync to server memory cache so /api/verify can immediately verify these codes
+  if (isBrowser()) {
+    try {
+      fetch('/api/admin/verification/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codes: newRecords }),
+      }).catch((e) => console.warn('Server verification sync fallback', e));
+    } catch {}
+  } else {
+    addServerVerificationCodes(newRecords);
+  }
 
   // Sync with Supabase if active
   const supabase = createClient();

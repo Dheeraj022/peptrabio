@@ -172,3 +172,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ orders: [], error: err.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const supabase = createAdminClient();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
+    }
+
+    if (supabase) {
+      // First delete associated order items
+      await supabase.from('order_items').delete().eq('order_id', id);
+      const { error } = await supabase.from('orders').delete().eq('id', id);
+      if (error) {
+        console.error('Supabase delete order error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+    }
+
+    return NextResponse.json({ success: true, message: 'Order deleted successfully' }, { status: 200 });
+  } catch (err: any) {
+    console.error('Order DELETE API error:', err);
+    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 });
+  }
+}

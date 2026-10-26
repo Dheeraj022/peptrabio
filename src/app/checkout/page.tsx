@@ -125,9 +125,9 @@ export default function CheckoutPage() {
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Standard shipping cost
-  const shippingCost = 15.00;
-  const rawGrandTotalUSD = subtotal + shippingCost;
+  // Free shipping rate across entire site
+  const shippingCost = 0;
+  const rawGrandTotalUSD = subtotal;
 
   // Convert to INR for UPI transactions (or local currency)
   const grandTotalINR = currency === 'INR' ? convertPrice(rawGrandTotalUSD) : Math.round(rawGrandTotalUSD * 86.5);
@@ -486,7 +486,7 @@ export default function CheckoutPage() {
                         required
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        placeholder="Sir Name"
+                        placeholder="Last Name"
                         className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                       />
                     </div>
@@ -928,8 +928,8 @@ export default function CheckoutPage() {
                   <span className="font-mono font-medium">₹{Math.round(subtotal * 86.5).toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between text-content-secondary">
-                  <span>Cold-Chain Express Shipping</span>
-                  <span className="font-mono font-medium">₹{Math.round(shippingCost * 86.5).toLocaleString('en-IN')}</span>
+                  <span>Shipping & Delivery</span>
+                  <span className="font-mono font-medium text-emerald-600 font-semibold">FREE</span>
                 </div>
                 <div className="border-t border-brand-border pt-2 flex justify-between font-orbitron font-extrabold text-base text-content-primary">
                   <span>Total Order Amount</span>

@@ -99,7 +99,7 @@ function LoginFormContent() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-5 relative">
           <div>
             <label className="block font-orbitron text-[11px] font-bold tracking-wider text-content-primary uppercase mb-1.5">
-              Email Address / Academic ID
+              Email Address
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-muted">
@@ -110,7 +110,6 @@ function LoginFormContent() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="dr.name@institution.edu"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-soft border border-brand-border text-xs text-content-primary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all"
               />
             </div>

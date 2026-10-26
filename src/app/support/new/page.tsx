@@ -308,7 +308,6 @@ function CreateTicketForm() {
               <input
                 type="text"
                 required
-                placeholder="Dr. Jane Doe"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-brand-border bg-surface-soft text-xs font-sans focus:outline-none focus:border-brand"
@@ -317,12 +316,11 @@ function CreateTicketForm() {
 
             <div>
               <label className="block font-orbitron text-xs font-bold text-content-primary mb-1.5">
-                RESEARCH / ACADEMIC EMAIL *
+                EMAIL ADDRESS *
               </label>
               <input
                 type="email"
                 required
-                placeholder="researcher@institution.edu"
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-brand-border bg-surface-soft text-xs font-sans focus:outline-none focus:border-brand"

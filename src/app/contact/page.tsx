@@ -148,21 +148,19 @@ function ContactFormContent() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Dr. Jordan Lee"
                     className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                   />
                 </div>
 
                 <div>
                   <label className="block font-orbitron text-[10px] text-content-muted mb-1">
-                    BUSINESS / ACADEMIC EMAIL *
+                    EMAIL ADDRESS *
                   </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="j.lee@university.edu"
                     className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                   />
                 </div>
@@ -170,13 +168,12 @@ function ContactFormContent() {
 
               <div>
                 <label className="block font-orbitron text-[10px] text-content-muted mb-1">
-                  ORGANIZATION / INSTITUTION
+                  COMPANY / ORGANIZATION (OPTIONAL)
                 </label>
                 <input
                   type="text"
                   value={formData.institution}
                   onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-                  placeholder="Bio-Analytical Laboratory Corp."
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>

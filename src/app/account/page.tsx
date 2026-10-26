@@ -276,7 +276,7 @@ export default function AccountPage() {
           <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm space-y-6">
             <div className="flex items-center justify-between border-b border-brand-border pb-4">
               <h2 className="font-orbitron font-bold text-base text-content-primary">
-                Researcher Profile Details
+                Profile Details
               </h2>
               <button
                 type="button"
@@ -335,7 +335,7 @@ export default function AccountPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Institutional Email</span>
+                  <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Email Address</span>
                   <div className="font-semibold text-content-primary flex items-center space-x-2">
                     <Mail className="w-3.5 h-3.5 text-brand" />
                     <span>{user.email}</span>
@@ -346,7 +346,7 @@ export default function AccountPage() {
                   <span className="font-orbitron text-[10px] font-bold text-content-muted uppercase block">Phone Contact</span>
                   <div className="font-semibold text-content-primary flex items-center space-x-2">
                     <Phone className="w-3.5 h-3.5 text-brand" />
-                    <span>{user.phone || '+1 (617) 555-0199'}</span>
+                    <span>{user.phone || 'Not provided'}</span>
                   </div>
                 </div>
               </div>

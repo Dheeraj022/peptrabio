@@ -274,7 +274,7 @@ export default function CheckoutPage() {
           <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
             <h2 className="font-orbitron font-bold text-base text-content-primary flex items-center space-x-2">
               <span className="w-6 h-6 rounded-full bg-brand text-white text-xs flex items-center justify-center font-mono">1</span>
-              <span>CUSTOMER & INSTITUTION INFORMATION</span>
+              <span>CUSTOMER INFORMATION</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
@@ -288,7 +288,6 @@ export default function CheckoutPage() {
                   required
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  placeholder="Dr. Sarah"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
@@ -303,14 +302,13 @@ export default function CheckoutPage() {
                   required
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  placeholder="Mitchell"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
 
               <div>
                 <label className="block text-content-muted font-orbitron text-[10px] mb-1">
-                  INSTITUTIONAL / BUSINESS EMAIL *
+                  EMAIL ADDRESS *
                 </label>
                 <input
                   type="email"
@@ -318,35 +316,32 @@ export default function CheckoutPage() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="s.mitchell@biotech-institute.edu"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
 
               <div>
                 <label className="block text-content-muted font-orbitron text-[10px] mb-1">
-                  CONTACT TELEPHONE
+                  PHONE NUMBER
                 </label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  placeholder="+1 (555) 019-2834"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
 
               <div className="sm:col-span-2">
                 <label className="block text-content-muted font-orbitron text-[10px] mb-1">
-                  LABORATORY / UNIVERSITY / COMPANY NAME
+                  COMPANY NAME (OPTIONAL)
                 </label>
                 <input
                   type="text"
                   name="company"
                   value={formData.company}
                   onChange={handleInputChange}
-                  placeholder="Molecular Dynamics Core Lab"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
@@ -357,7 +352,7 @@ export default function CheckoutPage() {
           <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
             <h2 className="font-orbitron font-bold text-base text-content-primary flex items-center space-x-2">
               <span className="w-6 h-6 rounded-full bg-brand text-white text-xs flex items-center justify-center font-mono">2</span>
-              <span>LABORATORY DELIVERY ADDRESS</span>
+              <span>SHIPPING ADDRESS</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
@@ -371,21 +366,19 @@ export default function CheckoutPage() {
                   required
                   value={formData.street}
                   onChange={handleInputChange}
-                  placeholder="450 Technology Parkway"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
 
               <div>
                 <label className="block text-content-muted font-orbitron text-[10px] mb-1">
-                  BUILDING / SUITE / LAB ROOM
+                  APARTMENT, SUITE, ETC. (OPTIONAL)
                 </label>
                 <input
                   type="text"
                   name="apartment"
                   value={formData.apartment}
                   onChange={handleInputChange}
-                  placeholder="Suite 300 / Rm 4B"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
@@ -400,7 +393,6 @@ export default function CheckoutPage() {
                   required
                   value={formData.city}
                   onChange={handleInputChange}
-                  placeholder="Cambridge"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
@@ -415,7 +407,6 @@ export default function CheckoutPage() {
                   required
                   value={formData.state}
                   onChange={handleInputChange}
-                  placeholder="MA"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
@@ -430,7 +421,6 @@ export default function CheckoutPage() {
                   required
                   value={formData.postalCode}
                   onChange={handleInputChange}
-                  placeholder="02139"
                   className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                 />
               </div>
@@ -455,18 +445,17 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* 3. Research Instructions Note */}
+          {/* 3. Order Notes */}
           <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
             <h2 className="font-orbitron font-bold text-base text-content-primary flex items-center space-x-2">
               <span className="w-6 h-6 rounded-full bg-brand text-white text-xs flex items-center justify-center font-mono">3</span>
-              <span>SPECIAL HANDLING / RESEARCH NOTES</span>
+              <span>ORDER NOTES (OPTIONAL)</span>
             </h2>
             <textarea
               name="notes"
               rows={2}
               value={formData.notes}
               onChange={handleInputChange}
-              placeholder="e.g. Please include physical signed batch COA in shipment packaging."
               className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
             />
           </div>

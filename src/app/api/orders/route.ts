@@ -166,10 +166,83 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ orders: [], error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ orders: data || [] }, { status: 200 });
+    const reconciledOrders = (data || []).map((o: any) => {
+      if (
+        (o.status === 'paid' || o.status === 'processing' || o.status === 'shipped' || o.status === 'delivered') &&
+        o.payment_status === 'awaiting_verification'
+      ) {
+        return {
+          ...o,
+          payment_status: 'verified',
+          payment_verified_at: o.payment_verified_at || o.updated_at || new Date().toISOString(),
+        };
+      }
+      return o;
+    });
+
+    return NextResponse.json({ orders: reconciledOrders }, { status: 200 });
   } catch (err: any) {
     console.error('Order GET API error:', err);
     return NextResponse.json({ orders: [], error: err.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const supabase = createAdminClient();
+    const body = await req.json();
+    const { id, status, payment_status, ...rest } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
+    }
+
+    const now = new Date().toISOString();
+    const updatePayload: Record<string, any> = {
+      ...rest,
+      updated_at: now,
+    };
+
+    if (status) {
+      updatePayload.status = status;
+      // Auto-reconcile payment if marked as paid/processing/shipped/delivered
+      if (status === 'paid' || status === 'processing' || status === 'shipped' || status === 'delivered') {
+        if (!payment_status || payment_status === 'awaiting_verification' || payment_status === 'verified') {
+          updatePayload.payment_status = 'verified';
+          updatePayload.payment_verified_at = now;
+        }
+      } else if (status === 'refunded') {
+        updatePayload.payment_status = 'refunded';
+      }
+    }
+
+    if (payment_status) {
+      updatePayload.payment_status = payment_status;
+      if (payment_status === 'verified') {
+        updatePayload.payment_verified_at = now;
+      }
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('orders')
+        .update(updatePayload)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase patch order error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true, order: data }, { status: 200 });
+    }
+
+    return NextResponse.json({ success: true, message: 'Updated locally' }, { status: 200 });
+  } catch (err: any) {
+    console.error('Order PATCH API error:', err);
+    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 });
   }
 }
 

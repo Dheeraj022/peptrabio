@@ -1,4 +1,4 @@
-import { Product, ProductCategory, Order, OrderStatus, AdminAuditLog } from '@/types';
+import { Product, ProductCategory, Order, OrderStatus, PaymentStatus, AdminAuditLog } from '@/types';
 import { SEED_PRODUCTS, SEED_CATEGORIES } from './seed-data';
 import { createClient } from './supabase/client';
 
@@ -187,7 +187,23 @@ export function getLocalOrders(): Order[] {
       localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(INITIAL_ORDERS));
       return INITIAL_ORDERS;
     }
-    return JSON.parse(raw);
+    const parsed: Order[] = JSON.parse(raw);
+    let changed = false;
+    for (const o of parsed) {
+      // Auto-reconcile: If order status is paid/processing/shipped/delivered, payment is verified
+      if (
+        (o.status === 'paid' || o.status === 'processing' || o.status === 'shipped' || o.status === 'delivered') &&
+        o.payment_status === 'awaiting_verification'
+      ) {
+        o.payment_status = 'verified';
+        if (!o.payment_verified_at) o.payment_verified_at = o.updated_at || new Date().toISOString();
+        changed = true;
+      }
+    }
+    if (changed) {
+      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(parsed));
+    }
+    return parsed;
   } catch {
     return INITIAL_ORDERS;
   }
@@ -659,21 +675,115 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
   const index = orders.findIndex(o => o.id === orderId);
   if (index === -1) return null;
 
+  const now = new Date().toISOString();
   orders[index].status = status;
-  orders[index].updated_at = new Date().toISOString();
+  orders[index].updated_at = now;
+
+  const updatePayload: Record<string, any> = {
+    status,
+    updated_at: now
+  };
+
+  // If marked paid/processing/shipped/delivered, automatically verify payment
+  if (status === 'paid' || status === 'processing' || status === 'shipped' || status === 'delivered') {
+    if (orders[index].payment_status !== 'verified') {
+      orders[index].payment_status = 'verified';
+      orders[index].payment_verified_at = now;
+      orders[index].payment_verified_by = 'admin@peptrabio.com';
+      updatePayload.payment_status = 'verified';
+      updatePayload.payment_verified_at = now;
+      updatePayload.payment_verified_by = 'admin@peptrabio.com';
+    }
+  } else if (status === 'refunded') {
+    orders[index].payment_status = 'refunded';
+    updatePayload.payment_status = 'refunded';
+  }
+
   saveLocalOrders(orders);
 
   addAuditLog('order_status_updated', 'order', orderId, {
     order_number: orders[index].order_number,
-    status
+    status,
+    payment_status: orders[index].payment_status
   });
+
+  // Server API sync via PATCH
+  try {
+    await fetch('/api/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: orderId,
+        ...updatePayload
+      })
+    });
+  } catch (apiErr) {
+    console.warn('Failed to update order via API PATCH', apiErr);
+  }
 
   const supabase = createClient();
   if (supabase) {
     try {
-      await supabase.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('id', orderId);
+      await supabase.from('orders').update(updatePayload).eq('id', orderId);
     } catch (e) {
       console.warn('Failed to update order status in Supabase', e);
+    }
+  }
+
+  return orders[index];
+}
+
+export async function updateOrderPaymentStatus(orderId: string, paymentStatus: PaymentStatus): Promise<Order | null> {
+  const orders = getLocalOrders();
+  const index = orders.findIndex(o => o.id === orderId);
+  if (index === -1) return null;
+
+  const now = new Date().toISOString();
+  orders[index].payment_status = paymentStatus;
+  orders[index].updated_at = now;
+
+  const updatePayload: Record<string, any> = {
+    payment_status: paymentStatus,
+    updated_at: now
+  };
+
+  if (paymentStatus === 'verified') {
+    orders[index].payment_verified_at = now;
+    orders[index].payment_verified_by = 'admin@peptrabio.com';
+    updatePayload.payment_verified_at = now;
+    updatePayload.payment_verified_by = 'admin@peptrabio.com';
+    if (orders[index].status === 'pending') {
+      orders[index].status = 'paid';
+      updatePayload.status = 'paid';
+    }
+  }
+
+  saveLocalOrders(orders);
+
+  addAuditLog('order_payment_status_updated', 'order', orderId, {
+    order_number: orders[index].order_number,
+    payment_status: paymentStatus
+  });
+
+  try {
+    await fetch('/api/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: orderId,
+        ...updatePayload
+      })
+    });
+  } catch (apiErr) {
+    console.warn('Failed to update order payment status via API PATCH', apiErr);
+  }
+
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      await supabase.from('orders').update(updatePayload).eq('id', orderId);
+    } catch (e) {
+      console.warn('Failed to update order payment status in Supabase', e);
     }
   }
 

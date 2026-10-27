@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useCurrency } from '@/context/CurrencyContext';
-import { Order, OrderStatus } from '@/types';
-import { getLocalOrders, updateOrderStatus, deleteOrder } from '@/lib/products-store';
+import { Order, OrderStatus, PaymentStatus } from '@/types';
+import { getLocalOrders, updateOrderStatus, updateOrderPaymentStatus, deleteOrder } from '@/lib/products-store';
+import { getPaymentStatusBadge } from '@/lib/payment-config';
 import { verifyAdminPassword } from '@/lib/admin-store';
 import {
   ShoppingBag,
@@ -20,7 +21,8 @@ import {
   X,
   Trash2,
   Lock,
-  AlertTriangle
+  AlertTriangle,
+  CreditCard
 } from 'lucide-react';
 
 export default function AdminOrdersPage() {
@@ -56,7 +58,26 @@ export default function AdminOrdersPage() {
     loadOrders();
     showToast(`Order status updated to ${newStatus}.`);
     if (selectedOrder && selectedOrder.id === orderId) {
-      setSelectedOrder((prev) => prev ? { ...prev, status: newStatus } : null);
+      setSelectedOrder((prev) => prev ? {
+        ...prev,
+        status: newStatus,
+        payment_status: (newStatus === 'paid' || newStatus === 'processing' || newStatus === 'shipped' || newStatus === 'delivered')
+          ? 'verified'
+          : (newStatus === 'refunded' ? 'refunded' : prev.payment_status)
+      } : null);
+    }
+  };
+
+  const handlePaymentStatusChange = async (orderId: string, newPaymentStatus: PaymentStatus) => {
+    await updateOrderPaymentStatus(orderId, newPaymentStatus);
+    loadOrders();
+    showToast(`Payment status updated to ${newPaymentStatus}.`);
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder((prev) => prev ? {
+        ...prev,
+        payment_status: newPaymentStatus,
+        status: newPaymentStatus === 'verified' && prev.status === 'pending' ? 'paid' : prev.status
+      } : null);
     }
   };
 
@@ -183,6 +204,7 @@ export default function AdminOrdersPage() {
                   <th className="py-3.5 px-4">Items</th>
                   <th className="py-3.5 px-4">Total Amount</th>
                   <th className="py-3.5 px-4">Compliance Check</th>
+                  <th className="py-3.5 px-4">Payment Status</th>
                   <th className="py-3.5 px-4">Fulfillment Status</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
@@ -190,7 +212,7 @@ export default function AdminOrdersPage() {
               <tbody className="divide-y divide-brand-border/60">
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-12 text-content-muted">
+                    <td colSpan={8} className="text-center py-12 text-content-muted">
                       No orders found matching criteria.
                     </td>
                   </tr>
@@ -232,6 +254,31 @@ export default function AdminOrdersPage() {
                             UNVERIFIED
                           </span>
                         )}
+                      </td>
+
+                      <td className="py-3.5 px-4">
+                        {(() => {
+                          const pBadge = getPaymentStatusBadge(order.payment_status || 'unpaid');
+                          return (
+                            <div className="space-y-1">
+                              <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full font-orbitron text-[9px] font-bold uppercase tracking-wider border ${pBadge.bg} ${pBadge.text} ${pBadge.border}`}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                                <span>{pBadge.label}</span>
+                              </span>
+                              {order.payment_status === 'awaiting_verification' && (
+                                <div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handlePaymentStatusChange(order.id, 'verified')}
+                                    className="text-[9px] font-orbitron font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300 transition-colors shadow-xs"
+                                  >
+                                    ✓ Verify Now
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       <td className="py-3.5 px-4">
@@ -319,22 +366,39 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
-              {/* Status change row inside modal */}
-              <div className="flex items-center justify-between bg-brand-subtle p-3.5 rounded-2xl border border-brand-border">
-                <span className="font-orbitron text-xs font-semibold text-content-primary">UPDATE STATUS:</span>
-                <select
-                  value={selectedOrder.status}
-                  onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value as OrderStatus)}
-                  className="px-3 py-1 rounded-full font-orbitron text-xs font-semibold uppercase bg-white border border-brand text-brand cursor-pointer"
-                >
-                  <option value="pending">Pending</option>
-                  <option value="paid">Paid</option>
-                  <option value="processing">Processing</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
-                  <option value="refunded">Refunded</option>
-                </select>
+              {/* Status and Payment change rows inside modal */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex items-center justify-between bg-brand-subtle p-3 rounded-2xl border border-brand-border">
+                  <span className="font-orbitron text-xs font-semibold text-content-primary">FULFILLMENT:</span>
+                  <select
+                    value={selectedOrder.status}
+                    onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value as OrderStatus)}
+                    className="px-3 py-1 rounded-full font-orbitron text-xs font-semibold uppercase bg-white border border-brand text-brand cursor-pointer"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between bg-brand-subtle p-3 rounded-2xl border border-brand-border">
+                  <span className="font-orbitron text-xs font-semibold text-content-primary">PAYMENT:</span>
+                  <select
+                    value={selectedOrder.payment_status || 'unpaid'}
+                    onChange={(e) => handlePaymentStatusChange(selectedOrder.id, e.target.value as PaymentStatus)}
+                    className="px-3 py-1 rounded-full font-orbitron text-xs font-semibold uppercase bg-white border border-brand text-brand cursor-pointer"
+                  >
+                    <option value="unpaid">Unpaid</option>
+                    <option value="awaiting_verification">Awaiting Verification</option>
+                    <option value="verified">Payment Verified</option>
+                    <option value="rejected">Payment Rejected</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                </div>
               </div>
 
               {/* Customer & Destination info */}

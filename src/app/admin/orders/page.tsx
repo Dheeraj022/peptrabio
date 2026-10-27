@@ -81,6 +81,15 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const getOrderTotal = (order: Order) => {
+    if (order.subtotal && order.total && order.subtotal > 0) {
+      if (Math.abs(order.total - order.subtotal * 86.5) < 5 || order.total > order.subtotal * 10) {
+        return order.subtotal + (order.shipping || 0);
+      }
+    }
+    return order.total;
+  };
+
   const initiateDeleteOrder = (order: Order, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setOrderToDelete(order);
@@ -240,7 +249,7 @@ export default function AdminOrdersPage() {
                       </td>
 
                       <td className="py-3.5 px-4 font-mono font-bold text-content-primary">
-                        {formatPrice(order.total)}
+                        {formatPrice(getOrderTotal(order))}
                       </td>
 
                       <td className="py-3.5 px-4">
@@ -440,7 +449,7 @@ export default function AdminOrdersPage() {
               <div className="border-t border-brand-border pt-3 space-y-1.5 text-xs font-sans text-right">
                 <div className="text-content-secondary">Subtotal: {formatPrice(selectedOrder.subtotal)}</div>
                 <div className="text-content-secondary">Shipping: {formatPrice(selectedOrder.shipping)}</div>
-                <div className="font-orbitron font-bold text-base text-brand">Total: {formatPrice(selectedOrder.total)}</div>
+                <div className="font-orbitron font-bold text-base text-brand">Total: {formatPrice(getOrderTotal(selectedOrder))}</div>
               </div>
 
             </div>

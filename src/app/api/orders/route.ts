@@ -167,17 +167,30 @@ export async function GET(req: NextRequest) {
     }
 
     const reconciledOrders = (data || []).map((o: any) => {
+      let total = o.total;
+      if (o.subtotal && o.total && o.subtotal > 0) {
+        const expectedUsdTotal = o.subtotal + (o.shipping || 0);
+        if (Math.abs(o.total - o.subtotal * 86.5) < 5 || o.total > o.subtotal * 10) {
+          total = expectedUsdTotal;
+        }
+      }
+
+      let payment_status = o.payment_status;
+      let payment_verified_at = o.payment_verified_at;
       if (
         (o.status === 'paid' || o.status === 'processing' || o.status === 'shipped' || o.status === 'delivered') &&
         o.payment_status === 'awaiting_verification'
       ) {
-        return {
-          ...o,
-          payment_status: 'verified',
-          payment_verified_at: o.payment_verified_at || o.updated_at || new Date().toISOString(),
-        };
+        payment_status = 'verified';
+        payment_verified_at = o.payment_verified_at || o.updated_at || new Date().toISOString();
       }
-      return o;
+
+      return {
+        ...o,
+        total,
+        payment_status,
+        payment_verified_at,
+      };
     });
 
     return NextResponse.json({ orders: reconciledOrders }, { status: 200 });

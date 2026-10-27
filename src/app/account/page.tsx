@@ -79,6 +79,15 @@ export default function AccountPage() {
     }
   };
 
+  const getOrderTotal = (order: Order) => {
+    if (order.subtotal && order.total && order.subtotal > 0) {
+      if (Math.abs(order.total - order.subtotal * 86.5) < 5 || order.total > order.subtotal * 10) {
+        return order.subtotal + (order.shipping || 0);
+      }
+    }
+    return order.total;
+  };
+
   if (isLoading || !user) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -408,7 +417,7 @@ export default function AccountPage() {
                         </div>
                         <div className="flex items-center justify-between sm:justify-end space-x-3 text-xs">
                           <span className="font-mono font-bold text-content-primary">
-                            {formatPrice(order.total)}
+                            {formatPrice(getOrderTotal(order))}
                           </span>
                           <span className="text-brand font-orbitron text-[10px] font-bold group-hover:translate-x-0.5 transition-transform">
                             Details →
@@ -619,7 +628,7 @@ export default function AccountPage() {
                             Placed on {new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
                           <span className="font-mono font-bold text-base text-content-primary">
-                            {formatPrice(order.total)}
+                            {formatPrice(getOrderTotal(order))}
                           </span>
                         </div>
                       </div>
@@ -790,7 +799,7 @@ export default function AccountPage() {
                               </div>
                               <div className="flex justify-between py-1 border-b border-gray-100">
                                 <span className="text-content-muted">Total Order Amount:</span>
-                                <span className="font-mono font-bold text-content-primary">{formatPrice(order.total)}</span>
+                                <span className="font-mono font-bold text-content-primary">{formatPrice(getOrderTotal(order))}</span>
                               </div>
                               {order.payment_type === 'partial' && order.advance_amount !== undefined ? (
                                 <>

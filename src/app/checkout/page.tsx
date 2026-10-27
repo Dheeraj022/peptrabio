@@ -263,7 +263,7 @@ export default function CheckoutPage() {
         subtotal,
         shipping: shippingCost,
         tax: 0,
-        total: grandTotalINR,
+        total: rawGrandTotalUSD,
         customer_email: formData.email || user.email,
         customer_name: `${formData.firstName} ${formData.lastName}`.trim() || user.name,
         customer_phone: formData.phone || user.phone,
@@ -1147,7 +1147,7 @@ export default function CheckoutPage() {
                   <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200">
                     <span className="text-content-muted block mb-1">Total Order Amount</span>
                     <span className="font-mono font-extrabold text-base text-content-primary">
-                      ₹{completedOrder.total.toLocaleString('en-IN')}
+                      {formatPrice(completedOrder.total)}
                     </span>
                   </div>
 

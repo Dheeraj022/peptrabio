@@ -199,6 +199,15 @@ export function getLocalOrders(): Order[] {
         if (!o.payment_verified_at) o.payment_verified_at = o.updated_at || new Date().toISOString();
         changed = true;
       }
+
+      // Fix double currency conversion bug if total was stored in INR instead of base USD
+      if (o.subtotal && o.total && o.subtotal > 0) {
+        const expectedUsdTotal = o.subtotal + (o.shipping || 0);
+        if (Math.abs(o.total - o.subtotal * 86.5) < 5 || o.total > o.subtotal * 10) {
+          o.total = expectedUsdTotal;
+          changed = true;
+        }
+      }
     }
     if (changed) {
       localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(parsed));
@@ -850,7 +859,15 @@ export async function fetchCustomerOrdersAsync(customerEmail?: string, userId?: 
     if (res.ok) {
       const json = await res.json();
       if (json.orders && Array.isArray(json.orders) && json.orders.length > 0) {
-        return json.orders as Order[];
+        return (json.orders as Order[]).map((o) => {
+          if (o.subtotal && o.total && o.subtotal > 0) {
+            const expectedUsdTotal = o.subtotal + (o.shipping || 0);
+            if (Math.abs(o.total - o.subtotal * 86.5) < 5 || o.total > o.subtotal * 10) {
+              return { ...o, total: expectedUsdTotal };
+            }
+          }
+          return o;
+        });
       }
     }
   } catch (err) {

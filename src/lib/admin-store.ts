@@ -9,7 +9,8 @@ export interface AdminUser {
   created_at: string;
 }
 
-export const ADMIN_SECRET_PASSKEY = 'RGAM26';
+import { ADMIN_SECRET_PASSKEY } from './admin-constants';
+export { ADMIN_SECRET_PASSKEY };
 const ADMIN_USERS_KEY = 'peptrabio_admin_users_v2';
 const CURRENT_ADMIN_KEY = 'peptrabio_current_admin_v2';
 const ADMIN_AUTH_KEY = 'peptrabio_admin_auth';

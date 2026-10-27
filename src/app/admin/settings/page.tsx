@@ -13,7 +13,9 @@ import {
   Sliders,
   UserPlus,
   KeyRound,
-  AlertCircle
+  AlertCircle,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import {
   getAdminUsers,
@@ -42,6 +44,7 @@ export default function AdminSettingsPage() {
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
   const [newAdminPasskey, setNewAdminPasskey] = useState('');
+  const [showAdminPasskey, setShowAdminPasskey] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);
   const [adminSuccess, setAdminSuccess] = useState<string | null>(null);
 
@@ -418,14 +421,23 @@ export default function AdminSettingsPage() {
                       REQUIRED
                     </span>
                   </div>
-                  <input
-                    type="password"
-                    value={newAdminPasskey}
-                    onChange={(e) => setNewAdminPasskey(e.target.value)}
-                    placeholder="Enter Secret Passkey"
-                    required
-                    className="w-full px-3 py-2 rounded-xl bg-purple-900/60 border border-purple-500 text-white font-mono text-xs tracking-wider uppercase focus:outline-none focus:ring-1 focus:ring-purple-400"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showAdminPasskey ? "text" : "password"}
+                      value={newAdminPasskey}
+                      onChange={(e) => setNewAdminPasskey(e.target.value)}
+                      placeholder="Enter Secret Passkey (RGAM26)"
+                      required
+                      className="w-full pl-3 pr-10 py-2 rounded-xl bg-purple-900/60 border border-purple-500 text-white font-mono text-xs tracking-wider uppercase focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminPasskey(!showAdminPasskey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white p-1"
+                    >
+                      {showAdminPasskey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-2">

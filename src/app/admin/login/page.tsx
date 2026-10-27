@@ -15,7 +15,9 @@ import {
   AlertCircle,
   CheckCircle2,
   HelpCircle,
-  ArrowLeft
+  ArrowLeft,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import {
   authenticateAdminAsync,
@@ -37,6 +39,7 @@ export default function AdminLoginPage() {
   const [createPassword, setCreatePassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passkey, setPasskey] = useState('');
+  const [showPasskey, setShowPasskey] = useState(false);
 
   // Forgot Password state
   const [forgotEmail, setForgotEmail] = useState('');
@@ -411,14 +414,23 @@ export default function AdminLoginPage() {
                   REQUIRED
                 </span>
               </div>
-              <input
-                type="password"
-                value={passkey}
-                onChange={(e) => setPasskey(e.target.value)}
-                placeholder="Enter Secret Passkey"
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl bg-purple-950 border border-purple-500 text-white placeholder-purple-400 font-mono text-xs tracking-widest uppercase focus:outline-none focus:ring-1 focus:ring-purple-400"
-              />
+              <div className="relative">
+                <input
+                  type={showPasskey ? "text" : "password"}
+                  value={passkey}
+                  onChange={(e) => setPasskey(e.target.value)}
+                  placeholder="Enter Secret Passkey (RGAM26)"
+                  required
+                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-purple-950 border border-purple-500 text-white placeholder-purple-400 font-mono text-xs tracking-widest uppercase focus:outline-none focus:ring-1 focus:ring-purple-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasskey(!showPasskey)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white p-1"
+                >
+                  {showPasskey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               <p className="text-[10px] text-purple-300/80 font-sans">
                 Enter the confidential authorization passkey issued to administrators.
               </p>

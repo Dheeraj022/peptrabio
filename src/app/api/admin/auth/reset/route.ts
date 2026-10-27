@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { ADMIN_SECRET_PASSKEY } from '@/lib/admin-store';
+import { ADMIN_SECRET_PASSKEY } from '@/lib/admin-constants';
 
 export async function POST(req: NextRequest) {
   try {

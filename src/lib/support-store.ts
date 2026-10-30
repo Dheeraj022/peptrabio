@@ -270,10 +270,22 @@ export async function fetchTicketMessages(ticketIdOrNumber: string, isStaff = fa
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
         const msgIds = new Set(data.map((m) => m.id));
-        const localOnly = ticketMessages.filter((m) => !msgIds.has(m.id));
+
+        // Deduplicate: remove any local message that either has the same ID or matches the same sender, message text, and rough timestamp
+        const localOnly = ticketMessages.filter((m) => {
+          if (msgIds.has(m.id)) return false;
+          const isDupe = data.some(
+            (remote) =>
+              remote.sender_role === m.sender_role &&
+              remote.message.trim() === m.message.trim() &&
+              Math.abs(new Date(remote.created_at).getTime() - new Date(m.created_at).getTime()) < 10000
+          );
+          return !isDupe;
+        });
+
         ticketMessages = [...data, ...localOnly];
 
-        // Also sync these fresh messages into local cache so future renders are instant
+        // Also sync these fresh messages into local cache so future renders are clean
         const otherMessages = allLocalMessages.filter((m) => m.ticket_id !== targetId && m.ticket_id !== ticketIdOrNumber);
         saveLocalMessages([...otherMessages, ...ticketMessages]);
       }
@@ -282,12 +294,22 @@ export async function fetchTicketMessages(ticketIdOrNumber: string, isStaff = fa
     }
   }
 
-  ticketMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  // Final deduplication pass on message list
+  const seenIds = new Set<string>();
+  const uniqueMessages: TicketMessage[] = [];
+  for (const m of ticketMessages) {
+    if (!seenIds.has(m.id)) {
+      seenIds.add(m.id);
+      uniqueMessages.push(m);
+    }
+  }
+
+  uniqueMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
   if (!isStaff) {
-    return ticketMessages.filter((m) => !m.is_internal_note);
+    return uniqueMessages.filter((m) => !m.is_internal_note);
   }
-  return ticketMessages;
+  return uniqueMessages;
 }
 
 /**
@@ -463,8 +485,11 @@ export async function sendTicketReply(params: {
     throw new Error('This ticket is closed. Please create a new support ticket.');
   }
 
+  const messageId = generateUUID();
+  const eventId = generateUUID();
+
   const newMessage: TicketMessage = {
-    id: `msg-${Date.now()}`,
+    id: messageId,
     ticket_id: targetId,
     sender_name: params.senderName,
     sender_role: params.senderRole,
@@ -494,7 +519,7 @@ export async function sendTicketReply(params: {
 
   // Log audit event
   const event: TicketEvent = {
-    id: `evt-${Date.now()}`,
+    id: eventId,
     ticket_id: targetId,
     event_type: params.isInternalNote ? 'Internal Note Added' : 'Reply Sent',
     actor_name: params.senderName,
@@ -517,6 +542,8 @@ export async function sendTicketReply(params: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ticketId: targetId,
+        messageId,
+        eventId,
         senderName: params.senderName,
         senderRole: params.senderRole,
         message: params.message.trim(),

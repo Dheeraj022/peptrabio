@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
 
     const resolvedTicketId = ticketRecord ? ticketRecord.id : ticketId;
     const now = new Date().toISOString();
-    const messageId = generateUUID();
-    const eventId = generateUUID();
+    const messageId = (body.messageId && String(body.messageId).trim()) || generateUUID();
+    const eventId = (body.eventId && String(body.eventId).trim()) || generateUUID();
 
     const messageRecord = {
       id: messageId,

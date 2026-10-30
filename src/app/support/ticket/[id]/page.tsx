@@ -100,11 +100,15 @@ export default function CustomerTicketDetailPage() {
 
 
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setUploading(true);
     const newAttachments: TicketAttachment[] = [];
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file.size > 10 * 1024 * 1024) {
@@ -112,23 +116,62 @@ export default function CustomerTicketDetailPage() {
         continue;
       }
 
-      const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'application/pdf'];
-      if (!validTypes.includes(file.type)) {
-        alert(`File ${file.name} is not supported. Use JPG, PNG, or PDF.`);
-        continue;
-      }
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('ticketId', ticket?.id || idOrNumber || 'ticket');
 
-      const blobUrl = URL.createObjectURL(file);
-      newAttachments.push({
-        id: `att-${Date.now()}-${i}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        url: blobUrl,
-      });
+        const res = await fetch('/api/support/ticket/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (data.success && data.url) {
+          newAttachments.push({
+            id: `att-${Date.now()}-${i}`,
+            name: data.name || file.name,
+            size: data.size || file.size,
+            type: data.type || file.type,
+            url: data.url,
+          });
+        } else {
+          // Client-side fallback to base64 Data URI if API fails
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          });
+          const base64Url = await base64Promise;
+          newAttachments.push({
+            id: `att-${Date.now()}-${i}`,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: base64Url,
+          });
+        }
+      } catch (err) {
+        console.error('File upload failed, using Data URI fallback:', err);
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+        const base64Url = await base64Promise;
+        newAttachments.push({
+          id: `att-${Date.now()}-${i}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: base64Url,
+        });
+      }
     }
 
     setAttachments((prev) => [...prev, ...newAttachments]);
+    setUploading(false);
+    e.target.value = '';
   };
 
   const removeAttachment = (id: string) => {
@@ -406,17 +449,18 @@ export default function CustomerTicketDetailPage() {
                         <a
                           key={att.id}
                           href={att.url}
+                          download={att.name}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-soft hover:bg-brand-light border border-brand-border text-xs font-sans text-brand transition-colors"
+                          className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-soft hover:bg-brand-light border border-brand-border text-xs font-sans text-brand transition-colors cursor-pointer group"
                         >
                           {att.type.includes('pdf') ? (
-                            <File className="w-4 h-4 text-red-500" />
+                            <File className="w-4 h-4 text-red-500 shrink-0" />
                           ) : (
-                            <ImageIcon className="w-4 h-4 text-brand" />
+                            <ImageIcon className="w-4 h-4 text-brand shrink-0" />
                           )}
-                          <span className="font-medium truncate max-w-[160px]">{att.name}</span>
-                          <Download className="w-3 h-3 text-content-muted" />
+                          <span className="font-medium truncate max-w-[180px] group-hover:underline">{att.name}</span>
+                          <Download className="w-3.5 h-3.5 text-content-muted group-hover:text-brand shrink-0" />
                         </a>
                       ))}
                     </div>

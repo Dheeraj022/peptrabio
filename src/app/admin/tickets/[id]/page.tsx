@@ -121,28 +121,77 @@ export default function AdminTicketDetailPage() {
     };
   }, [ticketId]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setUploading(true);
     const newAttachments: TicketAttachment[] = [];
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file.size > 10 * 1024 * 1024) {
         alert(`File ${file.name} is larger than 10MB.`);
         continue;
       }
-      const blobUrl = URL.createObjectURL(file);
-      newAttachments.push({
-        id: `att-${Date.now()}-${i}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        url: blobUrl,
-      });
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('ticketId', ticket?.id || ticketId || 'admin_ticket');
+
+        const res = await fetch('/api/support/ticket/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (data.success && data.url) {
+          newAttachments.push({
+            id: `att-${Date.now()}-${i}`,
+            name: data.name || file.name,
+            size: data.size || file.size,
+            type: data.type || file.type,
+            url: data.url,
+          });
+        } else {
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          });
+          const base64Url = await base64Promise;
+          newAttachments.push({
+            id: `att-${Date.now()}-${i}`,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: base64Url,
+          });
+        }
+      } catch (err) {
+        console.error('Admin file upload failed, using Data URI fallback:', err);
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+        const base64Url = await base64Promise;
+        newAttachments.push({
+          id: `att-${Date.now()}-${i}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: base64Url,
+        });
+      }
     }
 
     setAttachments((prev) => [...prev, ...newAttachments]);
+    setUploading(false);
+    e.target.value = '';
   };
 
   const removeAttachment = (id: string) => {
@@ -400,21 +449,22 @@ export default function AdminTicketDetailPage() {
                               <a
                                 key={att.id}
                                 href={att.url}
+                                download={att.name}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-sans transition-colors ${
+                                className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-sans transition-colors cursor-pointer group ${
                                   isCustomer
                                     ? 'bg-white border border-brand-border text-brand'
                                     : 'bg-white/20 text-white hover:bg-white/30'
                                 }`}
                               >
                                 {att.type.includes('pdf') ? (
-                                  <File className="w-3.5 h-3.5 text-red-500" />
+                                  <File className="w-3.5 h-3.5 text-red-500 shrink-0" />
                                 ) : (
-                                  <ImageIcon className="w-3.5 h-3.5" />
+                                  <ImageIcon className="w-3.5 h-3.5 shrink-0" />
                                 )}
-                                <span className="font-medium truncate max-w-[160px]">{att.name}</span>
-                                <Download className="w-3 h-3 opacity-70" />
+                                <span className="font-medium truncate max-w-[180px] group-hover:underline">{att.name}</span>
+                                <Download className="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0" />
                               </a>
                             ))}
                           </div>

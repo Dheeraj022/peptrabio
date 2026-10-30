@@ -143,37 +143,78 @@ function CreateTicketForm() {
     }
   }, [searchParams]);
 
-  // Handle local simulated attachment upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle attachment upload with server persistence
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    setUploading(true);
     const newAttachments: TicketAttachment[] = [];
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      // File validation: Images or PDF up to 10MB
       if (file.size > 10 * 1024 * 1024) {
         alert(`File ${file.name} is larger than the 10MB limit.`);
         continue;
       }
 
-      const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'application/pdf'];
-      if (!validTypes.includes(file.type)) {
-        alert(`File ${file.name} is not a supported file type (JPG, PNG, WEBP, PDF only).`);
-        continue;
-      }
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('ticketId', 'new_ticket');
 
-      const blobUrl = URL.createObjectURL(file);
-      newAttachments.push({
-        id: `att-${Date.now()}-${i}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        url: blobUrl,
-      });
+        const res = await fetch('/api/support/ticket/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (data.success && data.url) {
+          newAttachments.push({
+            id: `att-${Date.now()}-${i}`,
+            name: data.name || file.name,
+            size: data.size || file.size,
+            type: data.type || file.type,
+            url: data.url,
+          });
+        } else {
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          });
+          const base64Url = await base64Promise;
+          newAttachments.push({
+            id: `att-${Date.now()}-${i}`,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: base64Url,
+          });
+        }
+      } catch (err) {
+        console.error('File upload failed, using Data URI fallback:', err);
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+        const base64Url = await base64Promise;
+        newAttachments.push({
+          id: `att-${Date.now()}-${i}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: base64Url,
+        });
+      }
     }
 
     setAttachments((prev) => [...prev, ...newAttachments]);
+    setUploading(false);
+    e.target.value = '';
   };
 
   const removeAttachment = (id: string) => {

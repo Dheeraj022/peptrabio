@@ -55,7 +55,8 @@ const SUPPORT_AGENTS = [
 export default function AdminTicketDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const ticketId = (params?.id as string) || '';
+  const rawId = (params?.id as string) || '';
+  const ticketId = decodeURIComponent(rawId);
 
   const [ticket, setTicket] = useState<SupportTicket | null>(null);
   const [messages, setMessages] = useState<TicketMessage[]>([]);

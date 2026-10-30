@@ -33,7 +33,8 @@ export default function CustomerTicketDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user, isLoading, login } = useAuth();
-  const idOrNumber = (params?.id as string) || '';
+  const rawId = (params?.id as string) || '';
+  const idOrNumber = decodeURIComponent(rawId);
 
   const [ticket, setTicket] = useState<SupportTicket | null>(null);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
@@ -69,7 +70,33 @@ export default function CustomerTicketDetailPage() {
 
   useEffect(() => {
     loadData();
-  }, [idOrNumber]);
+
+    const handleStorage = (e: StorageEvent) => {
+      if (
+        e.key === 'peptrabio_support_tickets_v1' ||
+        e.key === 'peptrabio_support_messages_v1' ||
+        e.key === 'peptrabio_support_events_v1'
+      ) {
+        loadData();
+      }
+    };
+
+    const handleCustom = () => {
+      loadData();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('peptrabio_tickets_updated', handleCustom);
+
+    // Periodic sync every 4 seconds to pull fresh admin messages from server
+    const interval = setInterval(loadData, 4000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('peptrabio_tickets_updated', handleCustom);
+      clearInterval(interval);
+    };
+  }, [idOrNumber, user]);
 
   useEffect(() => {
     if (!loading) {

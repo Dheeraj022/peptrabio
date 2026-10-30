@@ -205,12 +205,12 @@ export async function fetchCustomerTickets(customerEmail?: string, customerId?: 
  * Fetch a single ticket by ID or Ticket Number
  */
 export async function fetchTicketById(idOrNumber: string): Promise<SupportTicket | null> {
-  const local = getLocalTickets().find(
+  const localTickets = getLocalTickets();
+  const local = localTickets.find(
     (t) =>
       t.id.toLowerCase() === idOrNumber.toLowerCase() ||
       t.ticket_number.toLowerCase() === idOrNumber.toLowerCase()
   );
-  if (local) return local;
 
   const supabase = createClient();
   if (supabase) {
@@ -222,20 +222,37 @@ export async function fetchTicketById(idOrNumber: string): Promise<SupportTicket
         .maybeSingle();
 
       if (!error && data) {
-        return data as SupportTicket;
+        const fetched = data as SupportTicket;
+        const idx = localTickets.findIndex((t) => t.id === fetched.id);
+        if (idx !== -1) {
+          localTickets[idx] = fetched;
+        } else {
+          localTickets.unshift(fetched);
+        }
+        saveLocalTickets(localTickets);
+        return fetched;
       }
-    } catch {}
+    } catch (e) {
+      console.warn('Supabase fetchTicketById error:', e);
+    }
   }
 
-  return null;
+  return local || null;
 }
 
 /**
  * Fetch messages for a ticket
  * Filters out internal notes if isStaff is false!
  */
-export async function fetchTicketMessages(ticketId: string, isStaff = false): Promise<TicketMessage[]> {
-  let ticketMessages = getLocalMessages().filter((m) => m.ticket_id === ticketId);
+export async function fetchTicketMessages(ticketIdOrNumber: string, isStaff = false): Promise<TicketMessage[]> {
+  const localTickets = getLocalTickets();
+  const ticketObj = localTickets.find(
+    (t) => t.id.toLowerCase() === ticketIdOrNumber.toLowerCase() || t.ticket_number.toLowerCase() === ticketIdOrNumber.toLowerCase()
+  );
+  const targetId = ticketObj ? ticketObj.id : ticketIdOrNumber;
+
+  let allLocalMessages = getLocalMessages();
+  let ticketMessages = allLocalMessages.filter((m) => m.ticket_id === targetId || m.ticket_id === ticketIdOrNumber);
 
   const supabase = createClient();
   if (supabase) {
@@ -243,7 +260,7 @@ export async function fetchTicketMessages(ticketId: string, isStaff = false): Pr
       const query = supabase
         .from('support_ticket_messages')
         .select('*')
-        .eq('ticket_id', ticketId)
+        .eq('ticket_id', targetId)
         .order('created_at', { ascending: true });
 
       if (!isStaff) {
@@ -255,9 +272,17 @@ export async function fetchTicketMessages(ticketId: string, isStaff = false): Pr
         const msgIds = new Set(data.map((m) => m.id));
         const localOnly = ticketMessages.filter((m) => !msgIds.has(m.id));
         ticketMessages = [...data, ...localOnly];
+
+        // Also sync these fresh messages into local cache so future renders are instant
+        const otherMessages = allLocalMessages.filter((m) => m.ticket_id !== targetId && m.ticket_id !== ticketIdOrNumber);
+        saveLocalMessages([...otherMessages, ...ticketMessages]);
       }
-    } catch {}
+    } catch (e) {
+      console.warn('Supabase fetchTicketMessages fallback:', e);
+    }
   }
+
+  ticketMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
   if (!isStaff) {
     return ticketMessages.filter((m) => !m.is_internal_note);
@@ -268,8 +293,15 @@ export async function fetchTicketMessages(ticketId: string, isStaff = false): Pr
 /**
  * Fetch audit events for a ticket
  */
-export async function fetchTicketEvents(ticketId: string): Promise<TicketEvent[]> {
-  let events = getLocalEvents().filter((e) => e.ticket_id === ticketId);
+export async function fetchTicketEvents(ticketIdOrNumber: string): Promise<TicketEvent[]> {
+  const localTickets = getLocalTickets();
+  const ticketObj = localTickets.find(
+    (t) => t.id.toLowerCase() === ticketIdOrNumber.toLowerCase() || t.ticket_number.toLowerCase() === ticketIdOrNumber.toLowerCase()
+  );
+  const targetId = ticketObj ? ticketObj.id : ticketIdOrNumber;
+
+  let allLocalEvents = getLocalEvents();
+  let events = allLocalEvents.filter((e) => e.ticket_id === targetId || e.ticket_id === ticketIdOrNumber);
 
   const supabase = createClient();
   if (supabase) {
@@ -277,13 +309,16 @@ export async function fetchTicketEvents(ticketId: string): Promise<TicketEvent[]
       const { data, error } = await supabase
         .from('support_ticket_events')
         .select('*')
-        .eq('ticket_id', ticketId)
+        .eq('ticket_id', targetId)
         .order('created_at', { ascending: true });
 
       if (!error && data && data.length > 0) {
         const evtIds = new Set(data.map((e) => e.id));
         const localOnly = events.filter((e) => !evtIds.has(e.id));
         events = [...data, ...localOnly];
+
+        const otherEvents = allLocalEvents.filter((e) => e.ticket_id !== targetId && e.ticket_id !== ticketIdOrNumber);
+        saveLocalEvents([...otherEvents, ...events]);
       }
     } catch {}
   }
@@ -412,12 +447,15 @@ export async function sendTicketReply(params: {
   const messages = getLocalMessages();
   const events = getLocalEvents();
 
-  const ticketIndex = tickets.findIndex((t) => t.id === params.ticketId);
+  const ticketIndex = tickets.findIndex(
+    (t) => t.id === params.ticketId || t.ticket_number.toLowerCase() === params.ticketId.toLowerCase()
+  );
   if (ticketIndex === -1) {
     throw new Error('Ticket not found');
   }
 
   const ticket = tickets[ticketIndex];
+  const targetId = ticket.id;
   const now = new Date().toISOString();
 
   // Closed ticket check for customer
@@ -427,7 +465,7 @@ export async function sendTicketReply(params: {
 
   const newMessage: TicketMessage = {
     id: `msg-${Date.now()}`,
-    ticket_id: params.ticketId,
+    ticket_id: targetId,
     sender_name: params.senderName,
     sender_role: params.senderRole,
     message: params.message.trim(),
@@ -457,7 +495,7 @@ export async function sendTicketReply(params: {
   // Log audit event
   const event: TicketEvent = {
     id: `evt-${Date.now()}`,
-    ticket_id: params.ticketId,
+    ticket_id: targetId,
     event_type: params.isInternalNote ? 'Internal Note Added' : 'Reply Sent',
     actor_name: params.senderName,
     actor_role: params.senderRole,
@@ -471,6 +509,29 @@ export async function sendTicketReply(params: {
   saveLocalTickets(tickets);
   saveLocalMessages(messages);
   saveLocalEvents(events);
+
+  // Sync reply and audit event to Supabase database via server endpoint
+  try {
+    fetch('/api/support/ticket/reply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ticketId: targetId,
+        senderName: params.senderName,
+        senderRole: params.senderRole,
+        message: params.message.trim(),
+        isInternalNote: !!params.isInternalNote,
+        attachments: params.attachments || [],
+        newStatus: ticket.status,
+      }),
+    }).catch((err) => console.warn('Reply API sync error:', err));
+  } catch (err) {
+    console.warn('Reply sync error:', err);
+  }
+
+  if (isBrowser()) {
+    window.dispatchEvent(new Event('peptrabio_tickets_updated'));
+  }
 
   return newMessage;
 }
@@ -487,7 +548,9 @@ export async function updateTicketStatus(
   const tickets = getLocalTickets();
   const events = getLocalEvents();
 
-  const ticketIndex = tickets.findIndex((t) => t.id === ticketId);
+  const ticketIndex = tickets.findIndex(
+    (t) => t.id === ticketId || t.ticket_number.toLowerCase() === ticketId.toLowerCase()
+  );
   if (ticketIndex === -1) throw new Error('Ticket not found');
 
   const ticket = tickets[ticketIndex];
@@ -507,7 +570,7 @@ export async function updateTicketStatus(
 
   events.push({
     id: `evt-${Date.now()}`,
-    ticket_id: ticketId,
+    ticket_id: ticket.id,
     event_type: 'Status Changed',
     actor_name: actorName,
     actor_role: actorRole,
@@ -517,6 +580,10 @@ export async function updateTicketStatus(
 
   saveLocalTickets(tickets);
   saveLocalEvents(events);
+
+  if (isBrowser()) {
+    window.dispatchEvent(new Event('peptrabio_tickets_updated'));
+  }
 
   return ticket;
 }
@@ -532,7 +599,9 @@ export async function updateTicketPriority(
   const tickets = getLocalTickets();
   const events = getLocalEvents();
 
-  const ticketIndex = tickets.findIndex((t) => t.id === ticketId);
+  const ticketIndex = tickets.findIndex(
+    (t) => t.id === ticketId || t.ticket_number.toLowerCase() === ticketId.toLowerCase()
+  );
   if (ticketIndex === -1) throw new Error('Ticket not found');
 
   const ticket = tickets[ticketIndex];
@@ -545,7 +614,7 @@ export async function updateTicketPriority(
 
   events.push({
     id: `evt-${Date.now()}`,
-    ticket_id: ticketId,
+    ticket_id: ticket.id,
     event_type: 'Priority Changed',
     actor_name: actorName,
     actor_role: 'admin',
@@ -555,6 +624,10 @@ export async function updateTicketPriority(
 
   saveLocalTickets(tickets);
   saveLocalEvents(events);
+
+  if (isBrowser()) {
+    window.dispatchEvent(new Event('peptrabio_tickets_updated'));
+  }
 
   return ticket;
 }
@@ -571,7 +644,9 @@ export async function assignTicket(
   const tickets = getLocalTickets();
   const events = getLocalEvents();
 
-  const ticketIndex = tickets.findIndex((t) => t.id === ticketId);
+  const ticketIndex = tickets.findIndex(
+    (t) => t.id === ticketId || t.ticket_number.toLowerCase() === ticketId.toLowerCase()
+  );
   if (ticketIndex === -1) throw new Error('Ticket not found');
 
   const ticket = tickets[ticketIndex];
@@ -584,7 +659,7 @@ export async function assignTicket(
 
   events.push({
     id: `evt-${Date.now()}`,
-    ticket_id: ticketId,
+    ticket_id: ticket.id,
     event_type: 'Assigned',
     actor_name: actorName,
     actor_role: 'admin',
@@ -595,6 +670,10 @@ export async function assignTicket(
   saveLocalTickets(tickets);
   saveLocalEvents(events);
 
+  if (isBrowser()) {
+    window.dispatchEvent(new Event('peptrabio_tickets_updated'));
+  }
+
   return ticket;
 }
 
@@ -603,24 +682,31 @@ export async function assignTicket(
  */
 export async function deleteTicket(ticketId: string): Promise<boolean> {
   const tickets = getLocalTickets();
-  const updatedTickets = tickets.filter((t) => t.id !== ticketId && t.ticket_number !== ticketId);
+  const ticketToDelete = tickets.find((t) => t.id === ticketId || t.ticket_number.toLowerCase() === ticketId.toLowerCase());
+  const actualId = ticketToDelete ? ticketToDelete.id : ticketId;
+
+  const updatedTickets = tickets.filter((t) => t.id !== actualId && t.ticket_number.toLowerCase() !== ticketId.toLowerCase());
   saveLocalTickets(updatedTickets);
 
   const messages = getLocalMessages();
-  const updatedMessages = messages.filter((m) => m.ticket_id !== ticketId);
+  const updatedMessages = messages.filter((m) => m.ticket_id !== actualId && m.ticket_id !== ticketId);
   saveLocalMessages(updatedMessages);
 
   const events = getLocalEvents();
-  const updatedEvents = events.filter((e) => e.ticket_id !== ticketId);
+  const updatedEvents = events.filter((e) => e.ticket_id !== actualId && e.ticket_id !== ticketId);
   saveLocalEvents(updatedEvents);
 
   const supabase = createClient();
   if (supabase) {
     try {
-      await supabase.from('support_tickets').delete().eq('id', ticketId);
+      await supabase.from('support_tickets').delete().eq('id', actualId);
     } catch (e) {
       console.warn('Supabase delete ticket fallback', e);
     }
+  }
+
+  if (isBrowser()) {
+    window.dispatchEvent(new Event('peptrabio_tickets_updated'));
   }
 
   return true;

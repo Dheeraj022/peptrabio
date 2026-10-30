@@ -295,6 +295,20 @@ export async function resetAdminPasswordAsync(
       body: JSON.stringify({ email, passkey, newPassword })
     });
     const data = await res.json();
+    if (data.success) {
+      // Sync local storage copy if present
+      const users = getAdminUsers();
+      const index = users.findIndex((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+      if (index >= 0) {
+        users[index].password = newPassword;
+        saveAdminUsers(users);
+      }
+      const current = getCurrentAdmin();
+      if (current && current.email.toLowerCase() === email.trim().toLowerCase()) {
+        current.password = newPassword;
+        setCurrentAdmin(current);
+      }
+    }
     return data;
   } catch (err: any) {
     return resetAdminPassword(email, passkey, newPassword);

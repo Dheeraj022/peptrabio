@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useCurrency } from '@/context/CurrencyContext';
 import { Product, Order, AdminAuditLog } from '@/types';
-import { getLocalProducts, getLocalOrders, getLocalAuditLogs } from '@/lib/products-store';
+import { getLocalProducts, getLocalOrders, fetchAllOrdersAsync, getLocalAuditLogs } from '@/lib/products-store';
 import {
   Package,
   ShoppingBag,
@@ -29,6 +29,10 @@ export default function AdminDashboardPage() {
     setProducts(getLocalProducts());
     setOrders(getLocalOrders());
     setAuditLogs(getLocalAuditLogs());
+
+    fetchAllOrdersAsync().then((fresh) => {
+      setOrders(fresh);
+    });
   }, []);
 
   const totalProducts = products.length;

@@ -874,17 +874,14 @@ export function fetchCustomerOrders(customerEmail?: string, userId?: string): Or
   }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
 
-export async function fetchCustomerOrdersAsync(customerEmail?: string, userId?: string): Promise<Order[]> {
+export async function fetchAllOrdersAsync(): Promise<Order[]> {
+  const localOrders = getLocalOrders();
   try {
-    let url = '/api/orders?';
-    if (customerEmail) url += `email=${encodeURIComponent(customerEmail)}&`;
-    if (userId) url += `userId=${encodeURIComponent(userId)}&`;
-
-    const res = await fetch(url);
+    const res = await fetch('/api/orders');
     if (res.ok) {
       const json = await res.json();
-      if (json.orders && Array.isArray(json.orders) && json.orders.length > 0) {
-        return (json.orders as Order[]).map((o) => {
+      if (json.orders && Array.isArray(json.orders)) {
+        const fetchedOrders: Order[] = json.orders.map((o: any) => {
           if (o.subtotal && o.total && o.subtotal > 0) {
             const expectedUsdTotal = o.subtotal + (o.shipping || 0);
             if (Math.abs(o.total - o.subtotal * 86.5) < 5 || o.total > o.subtotal * 10) {
@@ -893,11 +890,37 @@ export async function fetchCustomerOrdersAsync(customerEmail?: string, userId?: 
           }
           return o;
         });
+
+        // Merge remote Supabase orders with local orders without duplicates
+        const orderMap = new Map<string, Order>();
+        // Add local seed/stored orders first
+        localOrders.forEach((o) => orderMap.set(o.id, o));
+        // Overwrite or append remote orders
+        fetchedOrders.forEach((o) => orderMap.set(o.id, o));
+
+        const merged = Array.from(orderMap.values()).sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+
+        saveLocalOrders(merged);
+        return merged;
       }
     }
   } catch (err) {
-    console.warn('Failed to fetch orders from API:', err);
+    console.warn('Failed to fetch all orders from /api/orders:', err);
   }
-  return fetchCustomerOrders(customerEmail, userId);
+
+  return localOrders;
+}
+
+export async function fetchCustomerOrdersAsync(customerEmail?: string, userId?: string): Promise<Order[]> {
+  const all = await fetchAllOrdersAsync();
+  if (!customerEmail && !userId) return [];
+  const normalizedEmail = customerEmail ? customerEmail.trim().toLowerCase() : '';
+  return all.filter((o) => {
+    const matchesEmail = normalizedEmail && o.customer_email && o.customer_email.trim().toLowerCase() === normalizedEmail;
+    const matchesUser = userId && o.user_id && o.user_id === userId;
+    return Boolean(matchesEmail || matchesUser);
+  }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
 

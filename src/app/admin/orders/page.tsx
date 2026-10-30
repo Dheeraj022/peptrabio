@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useCurrency } from '@/context/CurrencyContext';
 import { Order, OrderStatus, PaymentStatus } from '@/types';
-import { getLocalOrders, updateOrderStatus, updateOrderPaymentStatus, deleteOrder } from '@/lib/products-store';
+import { getLocalOrders, fetchAllOrdersAsync, updateOrderStatus, updateOrderPaymentStatus, deleteOrder } from '@/lib/products-store';
 import { getPaymentStatusBadge } from '@/lib/payment-config';
 import { verifyAdminPassword } from '@/lib/admin-store';
 import {
@@ -40,8 +40,12 @@ export default function AdminOrdersPage() {
   const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const loadOrders = () => {
+  const loadOrders = async () => {
+    // 1. Instant optimistic load from local storage
     setOrders(getLocalOrders());
+    // 2. Fetch fresh orders from database & sync
+    const freshOrders = await fetchAllOrdersAsync();
+    setOrders(freshOrders);
   };
 
   useEffect(() => {

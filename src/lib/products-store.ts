@@ -208,6 +208,18 @@ export function getLocalOrders(): Order[] {
           changed = true;
         }
       }
+
+      // Reconcile partial payment advance and COD amounts to match currency
+      if (o.payment_type === 'partial') {
+        const orderTotalINR = Math.round((o.total || (o.subtotal + (o.shipping || 0))) * 86.5);
+        // If advance_amount was stored in USD (e.g. 11.8 instead of 1021 INR)
+        if (o.advance_amount !== undefined && o.advance_amount < 100 && orderTotalINR >= 500) {
+          const advPct = (o.advance_percentage || 10) / 100;
+          o.advance_amount = Math.round(orderTotalINR * advPct);
+          o.remaining_cod_amount = orderTotalINR - o.advance_amount;
+          changed = true;
+        }
+      }
     }
     if (changed) {
       localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(parsed));

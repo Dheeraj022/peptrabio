@@ -801,17 +801,30 @@ export default function AccountPage() {
                                 <span className="text-content-muted">Total Order Amount:</span>
                                 <span className="font-mono font-bold text-content-primary">{formatPrice(getOrderTotal(order))}</span>
                               </div>
-                              {order.payment_type === 'partial' && order.advance_amount !== undefined ? (
-                                <>
-                                  <div className="flex justify-between py-1 border-b border-gray-100 text-emerald-700">
-                                    <span className="font-medium">10% Advance Paid:</span>
-                                    <span className="font-mono font-bold">₹{order.advance_amount.toLocaleString('en-IN')}</span>
-                                  </div>
-                                  <div className="flex justify-between py-1 border-b border-gray-100 text-amber-700">
-                                    <span className="font-medium">Remaining COD Balance:</span>
-                                    <span className="font-mono font-bold">₹{order.remaining_cod_amount?.toLocaleString('en-IN')}</span>
-                                  </div>
-                                </>
+                              {order.payment_type === 'partial' ? (
+                                (() => {
+                                  const totalInr = Math.round(getOrderTotal(order) * 86.5);
+                                  const advPct = (order.advance_percentage || 10) / 100;
+                                  const advanceInr = (order.advance_amount && order.advance_amount > 100)
+                                    ? order.advance_amount
+                                    : Math.round(totalInr * advPct);
+                                  const remainingInr = (order.remaining_cod_amount && order.remaining_cod_amount > 100)
+                                    ? order.remaining_cod_amount
+                                    : totalInr - advanceInr;
+
+                                  return (
+                                    <>
+                                      <div className="flex justify-between py-1 border-b border-gray-100 text-emerald-700">
+                                        <span className="font-medium">10% Advance Paid:</span>
+                                        <span className="font-mono font-bold">₹{advanceInr.toLocaleString('en-IN')}</span>
+                                      </div>
+                                      <div className="flex justify-between py-1 border-b border-gray-100 text-amber-700">
+                                        <span className="font-medium">Remaining COD Balance:</span>
+                                        <span className="font-mono font-bold">₹{remainingInr.toLocaleString('en-IN')}</span>
+                                      </div>
+                                    </>
+                                  );
+                                })()
                               ) : null}
                               {order.utr_number && (
                                 <div className="flex justify-between py-1 border-b border-gray-100">

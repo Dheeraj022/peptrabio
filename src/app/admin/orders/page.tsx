@@ -217,7 +217,7 @@ export default function AdminOrdersPage() {
                   <th className="py-3.5 px-4">Order #</th>
                   <th className="py-3.5 px-4">Customer & Institution</th>
                   <th className="py-3.5 px-4">Items</th>
-                  <th className="py-3.5 px-4">Total Amount</th>
+                  <th className="py-3.5 px-4">Total & Due Balance</th>
                   <th className="py-3.5 px-4">Compliance Check</th>
                   <th className="py-3.5 px-4">Payment Status</th>
                   <th className="py-3.5 px-4">Fulfillment Status</th>
@@ -254,8 +254,54 @@ export default function AdminOrdersPage() {
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 font-mono font-bold text-content-primary">
-                        {formatPrice(getOrderTotal(order))}
+                      <td className="py-3.5 px-4">
+                        {(() => {
+                          const totalInr = Math.round(getOrderTotal(order) * 86.5);
+                          const isPartial = order.payment_type === 'partial';
+                          const isDeliveredOrFull = order.status === 'delivered';
+                          const advPct = (order.advance_percentage || 10) / 100;
+                          
+                          // Calculate due amount
+                          const advancePaid = (order.advance_amount && order.advance_amount > 100)
+                            ? order.advance_amount
+                            : Math.round(totalInr * advPct);
+                            
+                          const remainingDue = (order.remaining_cod_amount && order.remaining_cod_amount > 100)
+                            ? order.remaining_cod_amount
+                            : (totalInr - advancePaid);
+
+                          return (
+                            <div className="space-y-1">
+                              <div className="font-mono font-bold text-content-primary">
+                                {formatPrice(getOrderTotal(order))}
+                              </div>
+
+                              {isPartial ? (
+                                isDeliveredOrFull ? (
+                                  <div className="text-[10px] font-orbitron font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 inline-block">
+                                    ✓ Fully Collected
+                                  </div>
+                                ) : (
+                                  <div className="text-[10px] font-sans">
+                                    <span className="font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 inline-flex items-center space-x-1">
+                                      <span>Due:</span>
+                                      <strong className="font-mono">₹{remainingDue.toLocaleString('en-IN')}</strong>
+                                      <span className="text-[9px] text-amber-600">(COD)</span>
+                                    </span>
+                                  </div>
+                                )
+                              ) : (
+                                <div className="text-[10px] font-orbitron text-content-muted">
+                                  {order.payment_status === 'verified' ? (
+                                    <span className="text-emerald-700 font-semibold">Due: ₹0 (Paid Full)</span>
+                                  ) : (
+                                    <span className="text-content-muted font-medium">Full Pre-paid</span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       <td className="py-3.5 px-4">
@@ -451,11 +497,39 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
-              {/* Totals */}
+              {/* Totals & Breakdown */}
               <div className="border-t border-brand-border pt-3 space-y-1.5 text-xs font-sans text-right">
                 <div className="text-content-secondary">Subtotal: {formatPrice(selectedOrder.subtotal)}</div>
                 <div className="text-content-secondary">Shipping: {formatPrice(selectedOrder.shipping)}</div>
                 <div className="font-orbitron font-bold text-base text-brand">Total: {formatPrice(getOrderTotal(selectedOrder))}</div>
+
+                {selectedOrder.payment_type === 'partial' && (
+                  (() => {
+                    const totalInr = Math.round(getOrderTotal(selectedOrder) * 86.5);
+                    const advPct = (selectedOrder.advance_percentage || 10) / 100;
+                    const advancePaid = (selectedOrder.advance_amount && selectedOrder.advance_amount > 100)
+                      ? selectedOrder.advance_amount
+                      : Math.round(totalInr * advPct);
+                    const remainingDue = (selectedOrder.remaining_cod_amount && selectedOrder.remaining_cod_amount > 100)
+                      ? selectedOrder.remaining_cod_amount
+                      : (totalInr - advancePaid);
+
+                    return (
+                      <div className="pt-2 border-t border-gray-100 space-y-1 text-xs">
+                        <div className="text-emerald-700 font-semibold flex justify-end items-center space-x-2">
+                          <span>10% Advance Received:</span>
+                          <span className="font-mono font-bold">₹{advancePaid.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="text-amber-800 font-bold flex justify-end items-center space-x-2">
+                          <span>Due Balance on Delivery (COD):</span>
+                          <span className="font-mono bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                            ₹{remainingDue.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()
+                )}
               </div>
 
             </div>

@@ -55,7 +55,8 @@ export default function AdminOrdersPage() {
 
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     const targetOrder = orders.find(o => o.id === orderId);
-    await updateOrderStatus(orderId, newStatus);
+    const displayedPrice = targetOrder ? formatPrice(getOrderTotal(targetOrder)) : undefined;
+    await updateOrderStatus(orderId, newStatus, displayedPrice);
     loadOrders();
     showToast(`Order status updated to ${newStatus.toUpperCase()}. Notification sent to ${targetOrder?.customer_email || 'customer'}.`);
     if (selectedOrder && selectedOrder.id === orderId) {

@@ -679,7 +679,11 @@ export async function verifyOrderPaymentInStore({
   return index !== -1 ? orders[index] : null;
 }
 
-export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<Order | null> {
+export async function updateOrderStatus(
+  orderId: string,
+  status: OrderStatus,
+  formattedTotal?: string
+): Promise<Order | null> {
   const orders = getLocalOrders();
   const index = orders.findIndex(o => o.id === orderId);
   if (index === -1) return null;
@@ -727,6 +731,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
         customer_email: orders[index].customer_email,
         customer_name: orders[index].customer_name,
         total: orders[index].total,
+        formatted_total: formattedTotal,
         ...updatePayload
       })
     });

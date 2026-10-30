@@ -205,7 +205,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const supabase = createAdminClient();
     const body = await req.json();
-    const { id, status, payment_status, ...rest } = body;
+    const { id, status, payment_status, formatted_total, ...rest } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
@@ -264,13 +264,24 @@ export async function PATCH(req: NextRequest) {
       const orderNumber = orderTarget?.order_number || body.order_number || id;
       const statusChanged = status && (!existingOrder || existingOrder.status !== status);
 
+      // Compute display price in INR (USD amount * 86.5 rate if in base USD)
+      let displayTotal = body.formatted_total;
+      if (!displayTotal) {
+        const rawTotal = Number(orderTarget?.total || body.total || 0);
+        if (rawTotal > 0) {
+          // If total is already in INR (typically > 500), format directly; otherwise convert USD (e.g. 62 -> 5363)
+          const inrAmount = rawTotal > 500 ? rawTotal : rawTotal * 86.5;
+          displayTotal = `₹${inrAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+      }
+
       if (status && statusChanged && targetEmail) {
         try {
           const emailHtml = buildOrderStatusEmailHtml({
             customerName,
             orderNumber,
             newStatus: status,
-            totalFormatted: orderTarget?.total ? `₹${Number(orderTarget.total).toLocaleString('en-IN')}` : undefined,
+            totalFormatted: displayTotal,
             trackingNumber: orderTarget?.tracking_number || body.tracking_number,
             trackingCarrier: orderTarget?.tracking_carrier || body.tracking_carrier,
           });
@@ -292,10 +303,18 @@ export async function PATCH(req: NextRequest) {
     // Local fallback if Supabase not configured
     if (status && body.customer_email) {
       try {
+        let displayTotal = body.formatted_total;
+        if (!displayTotal && body.total) {
+          const rawTotal = Number(body.total);
+          const inrAmount = rawTotal > 500 ? rawTotal : rawTotal * 86.5;
+          displayTotal = `₹${inrAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
         const emailHtml = buildOrderStatusEmailHtml({
           customerName: body.customer_name || 'Valued Customer',
           orderNumber: body.order_number || id,
           newStatus: status,
+          totalFormatted: displayTotal,
         });
         await sendEmail({
           to: body.customer_email,

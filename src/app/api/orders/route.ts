@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendEmail, buildOrderStatusEmailHtml } from '@/lib/email';
 import crypto from 'crypto';
 
 function generateUUID(): string {
@@ -237,6 +238,13 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (supabase) {
+      // Fetch previous order data to get customer info & check status change
+      const { data: existingOrder } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
       const { data, error } = await supabase
         .from('orders')
         .update(updatePayload)
@@ -249,7 +257,55 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
+      // If status has changed, send email notification to customer from info@peptrabio.com
+      const orderTarget = data || existingOrder;
+      const targetEmail = orderTarget?.customer_email || body.customer_email;
+      const customerName = orderTarget?.customer_name || body.customer_name || 'Valued Customer';
+      const orderNumber = orderTarget?.order_number || body.order_number || id;
+      const statusChanged = status && (!existingOrder || existingOrder.status !== status);
+
+      if (status && statusChanged && targetEmail) {
+        try {
+          const emailHtml = buildOrderStatusEmailHtml({
+            customerName,
+            orderNumber,
+            newStatus: status,
+            totalFormatted: orderTarget?.total ? `₹${Number(orderTarget.total).toLocaleString('en-IN')}` : undefined,
+            trackingNumber: orderTarget?.tracking_number || body.tracking_number,
+            trackingCarrier: orderTarget?.tracking_carrier || body.tracking_carrier,
+          });
+
+          await sendEmail({
+            to: targetEmail,
+            subject: `[Peptra Bio] Order Update: ${orderNumber} is now ${String(status).toUpperCase()}`,
+            html: emailHtml,
+            from: 'Peptra Bio <info@peptrabio.com>',
+          });
+        } catch (mailErr) {
+          console.error('Failed to dispatch status email to customer:', mailErr);
+        }
+      }
+
       return NextResponse.json({ success: true, order: data }, { status: 200 });
+    }
+
+    // Local fallback if Supabase not configured
+    if (status && body.customer_email) {
+      try {
+        const emailHtml = buildOrderStatusEmailHtml({
+          customerName: body.customer_name || 'Valued Customer',
+          orderNumber: body.order_number || id,
+          newStatus: status,
+        });
+        await sendEmail({
+          to: body.customer_email,
+          subject: `[Peptra Bio] Order Update: ${body.order_number || id} is now ${String(status).toUpperCase()}`,
+          html: emailHtml,
+          from: 'Peptra Bio <info@peptrabio.com>',
+        });
+      } catch (mailErr) {
+        console.error('Failed to dispatch local status email to customer:', mailErr);
+      }
     }
 
     return NextResponse.json({ success: true, message: 'Updated locally' }, { status: 200 });

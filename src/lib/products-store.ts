@@ -716,16 +716,24 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
     payment_status: orders[index].payment_status
   });
 
-  // Server API sync via PATCH
+  // Server API sync via PATCH (also dispatches customer email notification from info@peptrabio.com)
   try {
-    await fetch('/api/orders', {
+    const res = await fetch('/api/orders', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: orderId,
+        order_number: orders[index].order_number,
+        customer_email: orders[index].customer_email,
+        customer_name: orders[index].customer_name,
+        total: orders[index].total,
         ...updatePayload
       })
     });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.warn('Order PATCH API non-ok response:', errData);
+    }
   } catch (apiErr) {
     console.warn('Failed to update order via API PATCH', apiErr);
   }

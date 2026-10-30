@@ -608,6 +608,25 @@ export async function updateTicketStatus(
   saveLocalTickets(tickets);
   saveLocalEvents(events);
 
+  // Persist directly to Supabase database
+  try {
+    const res = await fetch('/api/support/ticket/update', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ticketId: ticket.id,
+        status: newStatus,
+        actorName,
+      }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.warn('Status update API non-ok response:', errData);
+    }
+  } catch (e) {
+    console.warn('Status update sync error:', e);
+  }
+
   if (isBrowser()) {
     window.dispatchEvent(new Event('peptrabio_tickets_updated'));
   }
@@ -651,6 +670,25 @@ export async function updateTicketPriority(
 
   saveLocalTickets(tickets);
   saveLocalEvents(events);
+
+  // Sync to database
+  try {
+    const res = await fetch('/api/support/ticket/update', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ticketId: ticket.id,
+        priority: newPriority,
+        actorName,
+      }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.warn('Priority update API non-ok response:', errData);
+    }
+  } catch (e) {
+    console.warn('Priority update sync error:', e);
+  }
 
   if (isBrowser()) {
     window.dispatchEvent(new Event('peptrabio_tickets_updated'));
@@ -696,6 +734,26 @@ export async function assignTicket(
 
   saveLocalTickets(tickets);
   saveLocalEvents(events);
+
+  // Sync to database
+  try {
+    const res = await fetch('/api/support/ticket/update', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ticketId: ticket.id,
+        assigned_to: assignedTo,
+        assigned_name: assignedName,
+        actorName,
+      }),
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.warn('Assign update API non-ok response:', errData);
+    }
+  } catch (e) {
+    console.warn('Assign update sync error:', e);
+  }
 
   if (isBrowser()) {
     window.dispatchEvent(new Event('peptrabio_tickets_updated'));

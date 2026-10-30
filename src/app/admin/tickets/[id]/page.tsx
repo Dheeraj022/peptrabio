@@ -227,8 +227,9 @@ export default function AdminTicketDetailPage() {
   const handleStatusChange = async (newStatus: TicketStatus) => {
     if (!ticket) return;
     try {
-      await updateTicketStatus(ticket.id, newStatus, 'Support Admin', 'admin');
       setSelectedStatus(newStatus);
+      setTicket((prev) => (prev ? { ...prev, status: newStatus } : null));
+      await updateTicketStatus(ticket.id, newStatus, 'Support Admin', 'admin');
       await loadData();
     } catch (err) {
       alert('Failed to update status');
@@ -238,8 +239,9 @@ export default function AdminTicketDetailPage() {
   const handlePriorityChange = async (newPriority: TicketPriority) => {
     if (!ticket) return;
     try {
-      await updateTicketPriority(ticket.id, newPriority, 'Support Admin');
       setSelectedPriority(newPriority);
+      setTicket((prev) => (prev ? { ...prev, priority: newPriority } : null));
+      await updateTicketPriority(ticket.id, newPriority, 'Support Admin');
       await loadData();
     } catch (err) {
       alert('Failed to update priority');
@@ -252,8 +254,17 @@ export default function AdminTicketDetailPage() {
     if (!agent) return;
 
     try {
-      await assignTicket(ticket.id, agent.id, agent.name, 'Support Admin');
       setSelectedAgent(agent.id);
+      setTicket((prev) =>
+        prev
+          ? {
+              ...prev,
+              assigned_to: agent.id,
+              assigned_name: agent.name,
+            }
+          : null
+      );
+      await assignTicket(ticket.id, agent.id, agent.name, 'Support Admin');
       await loadData();
     } catch (err) {
       alert('Failed to assign ticket');

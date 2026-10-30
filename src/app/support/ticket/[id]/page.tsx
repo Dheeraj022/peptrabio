@@ -98,11 +98,7 @@ export default function CustomerTicketDetailPage() {
     };
   }, [idOrNumber, user]);
 
-  useEffect(() => {
-    if (!loading) {
-      scrollToBottom();
-    }
-  }, [messages, loading]);
+
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -139,6 +135,7 @@ export default function CustomerTicketDetailPage() {
     setAttachments((prev) => prev.filter((a) => a.id !== id));
   };
 
+  // Only scroll down when the user sends a new reply, NOT when viewing/reading
   const handleSendReply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim() && attachments.length === 0) return;
@@ -158,6 +155,7 @@ export default function CustomerTicketDetailPage() {
       setReplyText('');
       setAttachments([]);
       await loadData();
+      scrollToBottom();
     } catch (err: any) {
       alert(err.message || 'Failed to send reply.');
     } finally {

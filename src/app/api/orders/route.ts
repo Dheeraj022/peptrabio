@@ -37,6 +37,8 @@ export async function POST(req: NextRequest) {
       screenshot_url = null,
       payment_submitted_at = null,
       currency = 'INR',
+      discount_code = null,
+      discount_amount = 0,
       shipping_address,
       billing_address,
       compliance_acknowledged = true,
@@ -71,6 +73,8 @@ export async function POST(req: NextRequest) {
       screenshot_url: screenshot_url ? String(screenshot_url) : null,
       payment_submitted_at: payment_submitted_at || (utr_number ? now : null),
       currency: currency || 'INR',
+      discount_code: discount_code ? String(discount_code).trim().toUpperCase() : null,
+      discount_amount: Number(discount_amount) || 0,
       subtotal: Number(subtotal) || 0,
       shipping: Number(shipping) || 0,
       tax: Number(tax) || 0,
@@ -94,7 +98,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { error: orderError } = await supabase.from('orders').insert(orderRecord);
+    let { error: orderError } = await supabase.from('orders').insert(orderRecord);
+
+    // Graceful fallback if discount_code column is not yet migrated in Supabase
+    if (orderError && orderError.message && orderError.message.includes('discount_code')) {
+      console.warn('discount_code column not found in orders table, retrying with fallback...');
+      const fallbackRecord: any = { ...orderRecord };
+      delete fallbackRecord.discount_code;
+      delete fallbackRecord.discount_amount;
+      if (discount_code) {
+        fallbackRecord.notes = (fallbackRecord.notes ? fallbackRecord.notes + ' | ' : '') +
+          `[Promo Applied: ${discount_code} (-₹${discount_amount})]`;
+      }
+      const retryResult = await supabase.from('orders').insert(fallbackRecord);
+      orderError = retryResult.error;
+    }
 
     if (orderError) {
       console.error('Supabase orders table insert error:', orderError);

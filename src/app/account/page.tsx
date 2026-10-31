@@ -1037,6 +1037,12 @@ export default function AccountPage() {
                                 <span className="text-content-muted">Subtotal:</span>
                                 <span className="font-mono font-medium text-content-primary">{formatPrice(order.subtotal)}</span>
                               </div>
+                              {order.discount_code && (
+                                <div className="flex justify-between py-1 border-b border-gray-100 text-emerald-700">
+                                  <span>Discount ({order.discount_code}):</span>
+                                  <span className="font-mono font-bold">-₹{(order.discount_amount || 0).toLocaleString('en-IN')}</span>
+                                </div>
+                              )}
                               <div className="flex justify-between py-1 border-b border-gray-100">
                                 <span className="text-content-muted">Insulated Cold-Chain Freight:</span>
                                 <span className="font-mono font-medium text-content-primary">{formatPrice(order.shipping)}</span>

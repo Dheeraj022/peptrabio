@@ -32,13 +32,19 @@ import {
   ExternalLink,
   User,
   MapPin,
-  Edit2
+  Edit2,
+  Tag,
+  Percent,
+  Sparkles,
+  X
 } from 'lucide-react';
 import {
   calculatePaymentBreakdown,
   generateWhatsAppPaymentLink,
   getPaymentStatusBadge
 } from '@/lib/payment-config';
+import { validateDiscountCode, incrementDiscountUsage, fetchDiscounts } from '@/lib/discounts-store';
+import { DiscountCode } from '@/types';
 import { UpiQrCode } from '@/components/checkout/UpiQrCode';
 import { PaymentConfirmationForm } from '@/components/checkout/PaymentConfirmationForm';
 import { UpiPaymentModal } from '@/components/checkout/UpiPaymentModal';
@@ -61,7 +67,7 @@ export default function CheckoutPage() {
     currency: 'INR',
   });
 
-  // Load payment config from server
+  // Load payment config & sync live discount codes from server
   useEffect(() => {
     fetch('/api/payment/config')
       .then((res) => (res.ok ? res.json() : null))
@@ -71,6 +77,9 @@ export default function CheckoutPage() {
         }
       })
       .catch((err) => console.warn('Payment config fetch fallback:', err));
+
+    // Sync discounts from Supabase
+    fetchDiscounts(false).catch(() => {});
   }, []);
 
   const [formData, setFormData] = useState({
@@ -125,17 +134,75 @@ export default function CheckoutPage() {
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Discount / Offer Code State
+  const [promoCodeInput, setPromoCodeInput] = useState<string>('');
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
+  const [promoMessage, setPromoMessage] = useState<{ type: 'success' | 'error' | 'warning'; text: string } | null>(null);
+
   // Free shipping rate across entire site
   const shippingCost = 0;
   const rawGrandTotalUSD = subtotal;
 
   // Convert to INR for UPI transactions (or local currency)
-  const grandTotalINR = currency === 'INR' ? convertPrice(rawGrandTotalUSD) : Math.round(rawGrandTotalUSD * 86.5);
+  const baseSubtotalINR = currency === 'INR' ? convertPrice(rawGrandTotalUSD) : Math.round(rawGrandTotalUSD * 86.5);
+
+  // Evaluate discount dynamically based on currently selected payment method
+  let effectiveDiscountAmount = 0;
+  let discountPaymentNotice = '';
+  let isPaymentMismatch = false;
+
+  if (appliedDiscount) {
+    const valResult = validateDiscountCode(appliedDiscount.code, baseSubtotalINR, selectedPaymentOption);
+    if (valResult.valid) {
+      if (valResult.isPaymentMismatch) {
+        isPaymentMismatch = true;
+        effectiveDiscountAmount = 0;
+        discountPaymentNotice = valResult.message;
+      } else {
+        effectiveDiscountAmount = valResult.discountAmount;
+        discountPaymentNotice = valResult.paymentRestrictionNotice || '';
+      }
+    } else {
+      isPaymentMismatch = true;
+      discountPaymentNotice = valResult.message;
+    }
+  }
+
+  const finalGrandTotalINR = Math.max(0, baseSubtotalINR - effectiveDiscountAmount);
 
   // Authoritative payment calculation (e.g. 10% advance on ₹8,999 = ₹900, COD = ₹8,099)
-  const breakdown = calculatePaymentBreakdown(grandTotalINR, paymentConfig.advancePercentage);
+  const breakdown = calculatePaymentBreakdown(finalGrandTotalINR, paymentConfig.advancePercentage);
   const currentPayableNow = selectedPaymentOption === 'partial' ? breakdown.advanceAmount : breakdown.totalAmount;
   const currentRemainingCod = selectedPaymentOption === 'partial' ? breakdown.remainingCodAmount : 0;
+
+  const handleApplyPromoCode = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setPromoMessage(null);
+
+    if (!promoCodeInput.trim()) {
+      setPromoMessage({ type: 'error', text: 'Please enter a discount code.' });
+      return;
+    }
+
+    const res = validateDiscountCode(promoCodeInput, baseSubtotalINR, selectedPaymentOption);
+    if (!res.valid) {
+      setPromoMessage({ type: 'error', text: res.message });
+      setAppliedDiscount(null);
+    } else {
+      setAppliedDiscount(res.discount || null);
+      if (res.isPaymentMismatch) {
+        setPromoMessage({ type: 'warning', text: res.message });
+      } else {
+        setPromoMessage({ type: 'success', text: res.message });
+      }
+    }
+  };
+
+  const handleRemovePromoCode = () => {
+    setAppliedDiscount(null);
+    setPromoCodeInput('');
+    setPromoMessage(null);
+  };
 
   // Generate temporary order reference number for UPI QR before submit
   const [tempOrderNumber] = useState<string>(() => 'PB-ORD-' + Math.floor(10000 + Math.random() * 90000));
@@ -260,10 +327,12 @@ export default function CheckoutPage() {
         utr_number: checkoutUtr.trim() || undefined,
         screenshot_url: checkoutScreenshotUrl || undefined,
         currency: 'INR',
+        discount_code: appliedDiscount?.code || undefined,
+        discount_amount: effectiveDiscountAmount || 0,
         subtotal,
         shipping: shippingCost,
         tax: 0,
-        total: rawGrandTotalUSD,
+        total: Math.max(0, rawGrandTotalUSD - (effectiveDiscountAmount / 86.5)),
         customer_email: formData.email || user.email,
         customer_name: `${formData.firstName} ${formData.lastName}`.trim() || user.name,
         customer_phone: formData.phone || user.phone,
@@ -273,6 +342,10 @@ export default function CheckoutPage() {
         notes: formData.notes,
         items: orderItems,
       });
+
+      if (appliedDiscount) {
+        incrementDiscountUsage(appliedDiscount.code);
+      }
 
       setCompletedOrder(newOrder);
       clearCart();
@@ -659,6 +732,115 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* Step 1 Discount / Offer Code Section */}
+                <div className="bg-white border-2 border-brand-border rounded-3xl p-6 shadow-sm space-y-3.5">
+                  <div className="flex items-center justify-between border-b border-brand-border pb-3">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-purple-50 text-brand flex items-center justify-center border border-purple-200 shrink-0">
+                        <Tag className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="font-orbitron font-bold text-xs sm:text-sm text-content-primary">
+                          APPLY DISCOUNT OFFER CODE
+                        </h3>
+                        <p className="text-[11px] text-content-muted font-sans mt-0.5">
+                          Enter your promotional offer code to receive instant price reductions.
+                        </p>
+                      </div>
+                    </div>
+                    {appliedDiscount && (
+                      <button
+                        type="button"
+                        onClick={handleRemovePromoCode}
+                        className="text-[11px] font-orbitron font-semibold text-red-600 hover:underline flex items-center space-x-1"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Remove</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {!appliedDiscount ? (
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          value={promoCodeInput}
+                          onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleApplyPromoCode();
+                            }
+                          }}
+                          placeholder="e.g. PEPTRA10, FULLPAY5, FLAT500"
+                          className="w-full px-4 py-2.5 rounded-xl border border-brand-border font-mono text-xs uppercase font-bold text-brand focus:outline-none focus:border-brand bg-white"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleApplyPromoCode()}
+                        className="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-semibold shadow-purple-sm transition-all shrink-0 flex items-center justify-center space-x-1.5"
+                      >
+                        <Tag className="w-3.5 h-3.5" />
+                        <span>APPLY CODE</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-emerald-950 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                          <div>
+                            <span className="font-mono font-bold text-sm text-emerald-950">
+                              {appliedDiscount.code}
+                            </span>
+                            <span className="ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-orbitron font-bold">
+                              {appliedDiscount.discount_type === 'percentage'
+                                ? `${appliedDiscount.discount_value}% OFF`
+                                : `₹${appliedDiscount.discount_value} FLAT OFF`}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="font-mono font-extrabold text-emerald-700 text-base">
+                          {effectiveDiscountAmount > 0 ? `-₹${effectiveDiscountAmount.toLocaleString('en-IN')}` : '₹0'}
+                        </span>
+                      </div>
+
+                      {discountPaymentNotice && (
+                        <p className="text-[11px] text-emerald-800 font-sans leading-tight">
+                          {discountPaymentNotice}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Promo Message */}
+                  {promoMessage && !appliedDiscount && (
+                    <p
+                      className={`text-[11px] font-sans ${
+                        promoMessage.type === 'error'
+                          ? 'text-accent-danger font-medium'
+                          : promoMessage.type === 'warning'
+                          ? 'text-amber-700 font-medium'
+                          : 'text-emerald-700 font-medium'
+                      }`}
+                    >
+                      {promoMessage.text}
+                    </p>
+                  )}
+
+                  {isPaymentMismatch && appliedDiscount && (
+                    <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs space-y-1">
+                      <div className="font-bold flex items-center space-x-1.5 text-amber-800">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>Payment Restriction Notice</span>
+                      </div>
+                      <p className="text-[11px]">{discountPaymentNotice}</p>
+                    </div>
+                  )}
+                </div>
+
                 {/* Step 1 Submit Button */}
                 <button
                   type="submit"
@@ -745,9 +927,26 @@ export default function CheckoutPage() {
                             </span>
                           </div>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-orbitron text-[9px] font-bold">
-                          RECOMMENDED
-                        </span>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-orbitron text-[9px] font-bold">
+                            RECOMMENDED
+                          </span>
+                          {appliedDiscount?.applicable_payment === 'partial' && (
+                            <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white font-orbitron text-[9px] font-bold animate-pulse">
+                              🏷️ ₹{effectiveDiscountAmount.toLocaleString('en-IN')} OFF
+                            </span>
+                          )}
+                          {appliedDiscount?.applicable_payment === 'both' && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-orbitron text-[9px] font-bold">
+                              🏷️ ₹{effectiveDiscountAmount.toLocaleString('en-IN')} OFF
+                            </span>
+                          )}
+                          {appliedDiscount?.applicable_payment === 'full' && (
+                            <span className="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 font-sans text-[9px] font-medium">
+                              Coupon needs Full Payment
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="mt-4 pt-3 border-t border-brand-border/60 space-y-1.5 font-sans text-xs">
@@ -792,9 +991,26 @@ export default function CheckoutPage() {
                             </span>
                           </div>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-orbitron text-[9px] font-bold">
-                          0% COD
-                        </span>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-orbitron text-[9px] font-bold">
+                            0% COD
+                          </span>
+                          {appliedDiscount?.applicable_payment === 'full' && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-orbitron text-[9px] font-bold animate-pulse">
+                              🏷️ ₹{effectiveDiscountAmount.toLocaleString('en-IN')} OFF
+                            </span>
+                          )}
+                          {appliedDiscount?.applicable_payment === 'both' && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-orbitron text-[9px] font-bold">
+                              🏷️ ₹{effectiveDiscountAmount.toLocaleString('en-IN')} OFF
+                            </span>
+                          )}
+                          {appliedDiscount?.applicable_payment === 'partial' && (
+                            <span className="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 font-sans text-[9px] font-medium">
+                              Coupon needs Partial COD
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="mt-4 pt-3 border-t border-brand-border/60 space-y-1.5 font-sans text-xs">
@@ -921,19 +1137,92 @@ export default function CheckoutPage() {
                 })}
               </div>
 
+              {/* Discount / Coupon Box in Requisition Summary */}
+              <div className="border-t border-brand-border pt-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-orbitron font-bold text-xs text-content-primary flex items-center space-x-1.5">
+                    <Tag className="w-3.5 h-3.5 text-brand" />
+                    <span>DISCOUNT OFFER CODE</span>
+                  </label>
+                  {appliedDiscount && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePromoCode}
+                      className="text-[11px] font-orbitron text-red-600 hover:underline flex items-center space-x-1"
+                    >
+                      <X className="w-3 h-3" />
+                      <span>Remove</span>
+                    </button>
+                  )}
+                </div>
+
+                {!appliedDiscount ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={promoCodeInput}
+                      onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleApplyPromoCode();
+                        }
+                      }}
+                      placeholder="e.g. PEPTRA10, FULLPAY5"
+                      className="w-full px-3 py-2 rounded-xl border border-brand-border font-mono text-xs uppercase font-bold text-brand focus:outline-none focus:border-brand bg-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleApplyPromoCode()}
+                      className="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-semibold shadow-xs transition-colors shrink-0"
+                    >
+                      APPLY
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 text-xs flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span className="font-mono font-bold">{appliedDiscount.code}</span>
+                      <span className="text-[10px] text-emerald-800">
+                        ({appliedDiscount.discount_type === 'percentage' ? `${appliedDiscount.discount_value}% OFF` : `₹${appliedDiscount.discount_value} OFF`})
+                      </span>
+                    </div>
+                    <span className="font-mono font-bold text-emerald-700">
+                      {effectiveDiscountAmount > 0 ? `-₹${effectiveDiscountAmount.toLocaleString('en-IN')}` : '₹0'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
               {/* Calculations Breakdown */}
               <div className="border-t border-brand-border pt-4 space-y-2 text-xs font-sans">
                 <div className="flex justify-between text-content-secondary">
                   <span>Products Subtotal</span>
-                  <span className="font-mono font-medium">₹{Math.round(subtotal * 86.5).toLocaleString('en-IN')}</span>
+                  <span className="font-mono font-medium">₹{baseSubtotalINR.toLocaleString('en-IN')}</span>
                 </div>
+
+                {appliedDiscount && (
+                  <div className="flex justify-between items-center text-emerald-700 font-medium">
+                    <span className="flex items-center space-x-1">
+                      <Tag className="w-3.5 h-3.5" />
+                      <span>Discount ({appliedDiscount.code})</span>
+                    </span>
+                    <span className="font-mono font-bold text-emerald-600">
+                      {effectiveDiscountAmount > 0
+                        ? `-₹${effectiveDiscountAmount.toLocaleString('en-IN')}`
+                        : '₹0 (Check Payment)'}
+                    </span>
+                  </div>
+                )}
+
                 <div className="flex justify-between text-content-secondary">
                   <span>Shipping & Delivery</span>
                   <span className="font-mono font-medium text-emerald-600 font-semibold">FREE</span>
                 </div>
                 <div className="border-t border-brand-border pt-2 flex justify-between font-orbitron font-extrabold text-base text-content-primary">
                   <span>Total Order Amount</span>
-                  <span className="text-brand">₹{breakdown.totalAmount.toLocaleString('en-IN')}</span>
+                  <span className="text-brand">₹{finalGrandTotalINR.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 

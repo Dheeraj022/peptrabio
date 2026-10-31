@@ -500,6 +500,12 @@ export default function AdminOrdersPage() {
               {/* Totals & Breakdown */}
               <div className="border-t border-brand-border pt-3 space-y-1.5 text-xs font-sans text-right">
                 <div className="text-content-secondary">Subtotal: {formatPrice(selectedOrder.subtotal)}</div>
+                {selectedOrder.discount_code && (
+                  <div className="text-emerald-700 font-semibold flex justify-end items-center space-x-1.5">
+                    <span>Discount Code ({selectedOrder.discount_code}):</span>
+                    <span className="font-mono font-bold">-₹{(selectedOrder.discount_amount || 0).toLocaleString('en-IN')}</span>
+                  </div>
+                )}
                 <div className="text-content-secondary">Shipping: {formatPrice(selectedOrder.shipping)}</div>
                 <div className="font-orbitron font-bold text-base text-brand">Total: {formatPrice(getOrderTotal(selectedOrder))}</div>
 

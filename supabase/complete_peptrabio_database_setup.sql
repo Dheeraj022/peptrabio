@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS product_images CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS admin_audit_logs CASCADE;
+DROP TABLE IF EXISTS discount_codes CASCADE;
 DROP TABLE IF EXISTS admin_users CASCADE;
 DROP TABLE IF EXISTS admin_settings CASCADE;
 DROP SEQUENCE IF EXISTS support_ticket_seq CASCADE;
@@ -125,6 +126,8 @@ CREATE TABLE orders (
   payment_rejection_reason TEXT,
   payment_notes TEXT,
   currency TEXT DEFAULT 'INR',
+  discount_code TEXT,
+  discount_amount NUMERIC(12,2) DEFAULT 0.00,
   subtotal NUMERIC(12,2) NOT NULL DEFAULT 0,
   shipping NUMERIC(12,2) NOT NULL DEFAULT 0,
   tax NUMERIC(12,2) NOT NULL DEFAULT 0,
@@ -275,6 +278,24 @@ CREATE TABLE admin_settings (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- DISCOUNT CODES & PROMOTIONS TABLE
+CREATE TABLE discount_codes (
+  id TEXT PRIMARY KEY,
+  code VARCHAR(50) UNIQUE NOT NULL,
+  description TEXT,
+  discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+  discount_value NUMERIC(10,2) NOT NULL CHECK (discount_value > 0),
+  applicable_payment VARCHAR(20) NOT NULL DEFAULT 'both' CHECK (applicable_payment IN ('both', 'full', 'partial')),
+  min_order_amount NUMERIC(10,2) DEFAULT 0,
+  max_discount_amount NUMERIC(10,2),
+  usage_limit INTEGER,
+  used_count INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  expires_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- ==============================================================================
 -- 4. PERFORMANCE INDEXES
 -- ==============================================================================
@@ -289,6 +310,8 @@ CREATE INDEX idx_orders_customer_email ON orders(customer_email);
 CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_payment_status ON orders(payment_status);
 CREATE INDEX idx_orders_utr_number ON orders(utr_number);
+CREATE INDEX idx_discount_codes_code ON discount_codes(UPPER(code));
+CREATE INDEX idx_discount_codes_active ON discount_codes(is_active);
 CREATE INDEX idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX idx_verification_codes_code ON product_verification_codes(code);
 CREATE INDEX idx_verification_codes_product_id ON product_verification_codes(product_id);
@@ -457,6 +480,7 @@ ALTER TABLE support_ticket_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_audit_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE discount_codes ENABLE ROW LEVEL SECURITY;
 
 -- CATEGORIES
 CREATE POLICY "Allow all read on categories" ON categories FOR SELECT USING (true);
@@ -497,6 +521,10 @@ CREATE POLICY "Allow all on support_ticket_events" ON support_ticket_events FOR 
 CREATE POLICY "Allow all on admin_users" ON admin_users FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all on admin_audit_logs" ON admin_audit_logs FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all on admin_settings" ON admin_settings FOR ALL USING (true) WITH CHECK (true);
+
+-- DISCOUNT CODES
+CREATE POLICY "Allow all read on discount_codes" ON discount_codes FOR SELECT USING (true);
+CREATE POLICY "Allow all write on discount_codes" ON discount_codes FOR ALL USING (true) WITH CHECK (true);
 
 -- ==============================================================================
 -- 8. COMPREHENSIVE SEED DATA INSERTION
@@ -1896,3 +1924,63 @@ INSERT INTO order_items (id, order_id, product_id, product_name, product_code, q
 INSERT INTO admin_settings (id, store_name, support_email, currency, compliance_notice)
 VALUES ('default', 'PEPTRA BIO', 'support@peptrabio.com', 'INR', 'RESEARCH USE ONLY • ALL PEPTIDES ARE SOLD STRICTLY FOR IN VITRO LABORATORY RESEARCH')
 ON CONFLICT (id) DO UPDATE SET updated_at = NOW();
+
+-- SEED DISCOUNT CODES
+INSERT INTO discount_codes (
+  id, code, description, discount_type, discount_value,
+  applicable_payment, min_order_amount, max_discount_amount,
+  usage_limit, used_count, is_active
+) VALUES 
+(
+  'disc-peptra10',
+  'PEPTRA10',
+  '10% Launch Research Discount (Valid on all payment options)',
+  'percentage',
+  10.00,
+  'both',
+  1000.00,
+  2500.00,
+  500,
+  24,
+  true
+),
+(
+  'disc-fullpay5',
+  'FULLPAY5',
+  '5% Extra Instant Discount on 100% Complete Online Payment',
+  'percentage',
+  5.00,
+  'full',
+  1500.00,
+  1500.00,
+  300,
+  18,
+  true
+),
+(
+  'disc-partialcod',
+  'PARTIALCOD',
+  '₹300 Flat Discount on Partial Advance (COD) Requisitions',
+  'fixed',
+  300.00,
+  'partial',
+  3000.00,
+  NULL,
+  200,
+  9,
+  true
+),
+(
+  'disc-flat500',
+  'FLAT500',
+  'Flat ₹500 Discount on Requisitions Above ₹4,000',
+  'fixed',
+  500.00,
+  'both',
+  4000.00,
+  NULL,
+  250,
+  31,
+  true
+)
+ON CONFLICT (code) DO NOTHING;

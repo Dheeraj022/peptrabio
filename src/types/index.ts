@@ -111,6 +111,8 @@ export type Order = {
   payment_rejection_reason?: string;
   payment_notes?: string;
   currency?: string;
+  discount_code?: string;
+  discount_amount?: number;
   subtotal: number;
   shipping: number;
   tax: number;
@@ -155,4 +157,24 @@ export type AdminAuditLog = {
   entity_id?: string;
   metadata?: Record<string, unknown>;
   created_at: string;
+};
+
+export type DiscountPaymentApplicability = 'both' | 'full' | 'partial';
+export type DiscountType = 'percentage' | 'fixed';
+
+export type DiscountCode = {
+  id: string;
+  code: string;
+  description?: string;
+  discount_type: DiscountType; // 'percentage' (% off) or 'fixed' (flat ₹ off)
+  discount_value: number; // e.g. 10 for 10%, or 500 for ₹500
+  applicable_payment: DiscountPaymentApplicability; // 'both' | 'full' | 'partial'
+  min_order_amount?: number; // Minimum subtotal in INR to qualify
+  max_discount_amount?: number; // Optional cap for percentage discounts in INR
+  usage_limit?: number; // Maximum times this coupon can be redeemed
+  used_count: number;
+  is_active: boolean;
+  expires_at?: string; // ISO date string (YYYY-MM-DD or full timestamp)
+  created_at: string;
+  updated_at: string;
 };

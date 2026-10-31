@@ -143,7 +143,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  const images =
+  const rawImages =
     product.images && product.images.length > 0
       ? product.images
       : [
@@ -157,6 +157,13 @@ export default function ProductDetailPage() {
             is_primary: true,
           },
         ];
+
+  // Sort images strictly by is_primary and sort_order (1 - 2 - 3 showcase sequence)
+  const images = [...rawImages].sort((a, b) => {
+    if (a.is_primary && !b.is_primary) return -1;
+    if (!a.is_primary && b.is_primary) return 1;
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
 
   const currentImage = images[selectedImageIndex] || images[0];
   const isOutOfStock = product.stock_quantity <= 0 || !product.is_active;
@@ -265,6 +272,7 @@ export default function ProductDetailPage() {
                 alt={currentImage.alt_text || product.name}
                 fill
                 priority
+                unoptimized
                 className="object-contain p-4 sm:p-6 group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 640px) 95vw, (max-width: 1024px) 50vw, 45vw"
               />
@@ -307,6 +315,7 @@ export default function ProductDetailPage() {
                     src={img.image_url}
                     alt={img.alt_text || `View ${idx + 1}`}
                     fill
+                    unoptimized
                     className="object-contain p-1"
                     sizes="80px"
                   />

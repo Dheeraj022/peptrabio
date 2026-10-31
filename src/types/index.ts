@@ -58,6 +58,7 @@ export type Product = {
   stock_quantity: number;
   is_active: boolean;
   is_featured: boolean;
+  showcase_order?: number;
   research_use_only: boolean;
   storage_information?: string;
   created_at?: string;

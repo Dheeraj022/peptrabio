@@ -131,6 +131,12 @@ function ShopContent() {
         if (sortBy === 'price-asc') return a.price - b.price;
         if (sortBy === 'price-desc') return b.price - a.price;
         if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
+        // Default showcase order: Prioritize explicit showcase order (1, 2, 3...)
+        if (a.showcase_order !== undefined && b.showcase_order !== undefined) {
+          return a.showcase_order - b.showcase_order;
+        }
+        if (a.showcase_order !== undefined) return -1;
+        if (b.showcase_order !== undefined) return 1;
         return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
       });
   }, [products, categories, selectedCategory, searchQuery, sortBy, inStockOnly]);

@@ -17,7 +17,17 @@ import {
   ShieldCheck,
   CheckCircle2,
   Sparkles,
-  AlertTriangle
+  AlertTriangle,
+  Upload,
+  ArrowUp,
+  ArrowDown,
+  Star,
+  ImagePlus,
+  Camera,
+  RefreshCw,
+  FolderOpen,
+  X,
+  Search
 } from 'lucide-react';
 
 export function ProductEditorForm({ initialProduct }: { initialProduct?: Product }) {
@@ -75,7 +85,73 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
 
   const [saving, setSaving] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const categories = getLocalCategories();
+
+  // Media Library Modal state
+  const [libraryModalIndex, setLibraryModalIndex] = useState<number | null>(null);
+  const [libraryImages, setLibraryImages] = useState<{ url: string; name: string; folder: string }[]>([]);
+  const [libraryLoading, setLibraryLoading] = useState(false);
+  const [librarySearch, setLibrarySearch] = useState('');
+  const [libraryFilter, setLibraryFilter] = useState<'all' | 'products' | 'labelbox' | 'uploads'>('all');
+
+  const openMediaLibrary = async (targetIndex: number) => {
+    setLibraryModalIndex(targetIndex);
+    if (libraryImages.length === 0) {
+      setLibraryLoading(true);
+      try {
+        const res = await fetch('/api/admin/media-library');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.items) setLibraryImages(data.items);
+        }
+      } catch (err) {
+        console.error('Failed to load media library:', err);
+      } finally {
+        setLibraryLoading(false);
+      }
+    }
+  };
+
+  const handleSelectLibraryImage = (url: string, name?: string) => {
+    if (libraryModalIndex === null) return;
+    if (libraryModalIndex >= 0) {
+      // Replace existing image at target index
+      setFormData((prev) => {
+        const next = [...(prev.images || [])];
+        if (next[libraryModalIndex]) {
+          next[libraryModalIndex] = {
+            ...next[libraryModalIndex],
+            image_url: url,
+            alt_text: name || next[libraryModalIndex].alt_text || formData.name || 'Product Photo',
+          };
+        }
+        return { ...prev, images: next };
+      });
+    } else if (libraryModalIndex === -1) {
+      // Add as new image to product
+      const currentCount = formData.images?.length || 0;
+      const newImg: ProductImage = {
+        id: 'img-' + Date.now(),
+        product_id: formData.id || '',
+        image_url: url,
+        alt_text: name || (formData.name ? `${formData.name} - View ${currentCount + 1}` : 'Product Photo'),
+        sort_order: currentCount,
+        is_primary: currentCount === 0,
+      };
+      setFormData((prev) => ({
+        ...prev,
+        images: [...(prev.images || []), newImg].map((img, idx) => ({
+          ...img,
+          sort_order: idx,
+          is_primary: idx === 0,
+        })),
+      }));
+    }
+    setLibraryModalIndex(null);
+  };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as any;
@@ -96,24 +172,160 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
     }
   };
 
-  // Image helpers
-  const handleAddImage = () => {
+  // Upload single file helper
+  const uploadSingleImage = async (file: File): Promise<string> => {
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      body.append('productName', formData.name || 'product');
+
+      const res = await fetch('/api/admin/products/upload', {
+        method: 'POST',
+        body,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.url) return data.url;
+      }
+    } catch (e) {
+      console.warn('Server upload fallback to base64:', e);
+    }
+
+    // Client-side fallback
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Image upload and showcase reordering helpers
+  const handleImageFiles = async (files: FileList | File[]) => {
+    if (!files || files.length === 0) return;
+    setUploadingImage(true);
+
+    try {
+      const newImages: ProductImage[] = [];
+      const currentCount = formData.images?.length || 0;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`File ${file.name} exceeds the 10MB limit.`);
+          continue;
+        }
+
+        const url = await uploadSingleImage(file);
+        const position = currentCount + newImages.length;
+        newImages.push({
+          id: 'img-' + Date.now() + '-' + i,
+          product_id: formData.id || '',
+          image_url: url,
+          alt_text: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+          sort_order: position,
+          is_primary: position === 0,
+        });
+      }
+
+      setFormData((prev) => {
+        const combined = [...(prev.images || []), ...newImages];
+        return {
+          ...prev,
+          images: combined.map((img, idx) => ({
+            ...img,
+            sort_order: idx,
+            is_primary: idx === 0,
+          })),
+        };
+      });
+    } catch (err: any) {
+      console.error('Failed to process image upload:', err);
+      alert('Error uploading image: ' + (err.message || 'Unknown error'));
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleReplaceImageFile = async (index: number, file: File) => {
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const url = await uploadSingleImage(file);
+      setFormData((prev) => {
+        const next = [...(prev.images || [])];
+        if (next[index]) {
+          next[index] = {
+            ...next[index],
+            image_url: url,
+            alt_text: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+          };
+        }
+        return { ...prev, images: next };
+      });
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleAddImageViaUrl = () => {
+    const currentCount = formData.images?.length || 0;
     const newImg: ProductImage = {
       id: 'img-' + Date.now(),
       product_id: formData.id || '',
-      image_url: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80',
-      alt_text: 'Secondary view',
-      sort_order: (formData.images?.length || 0),
-      is_primary: false,
+      image_url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
+      alt_text: formData.name ? `${formData.name} - View ${currentCount + 1}` : 'Product Showcase Image',
+      sort_order: currentCount,
+      is_primary: currentCount === 0,
     };
-    setFormData((prev) => ({ ...prev, images: [...(prev.images || []), newImg] }));
+    setFormData((prev) => {
+      const next = [...(prev.images || []), newImg];
+      return {
+        ...prev,
+        images: next.map((img, idx) => ({
+          ...img,
+          sort_order: idx,
+          is_primary: idx === 0,
+        })),
+      };
+    });
+  };
+
+  const handleMoveImage = (fromIndex: number, toIndex: number) => {
+    const images = [...(formData.images || [])];
+    if (toIndex < 0 || toIndex >= images.length) return;
+    const [item] = images.splice(fromIndex, 1);
+    images.splice(toIndex, 0, item);
+
+    const reindexed = images.map((img, idx) => ({
+      ...img,
+      sort_order: idx,
+      is_primary: idx === 0,
+    }));
+    setFormData((prev) => ({ ...prev, images: reindexed }));
+  };
+
+  const handleSetPrimary = (index: number) => {
+    handleMoveImage(index, 0);
+  };
+
+  const handleDirectOrderChange = (fromIndex: number, targetPosition1Based: number) => {
+    const toIndex = Math.max(0, Math.min((formData.images?.length || 1) - 1, targetPosition1Based - 1));
+    handleMoveImage(fromIndex, toIndex);
   };
 
   const handleRemoveImage = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: (prev.images || []).filter((_, i) => i !== index),
-    }));
+    setFormData((prev) => {
+      const remaining = (prev.images || []).filter((_, i) => i !== index);
+      return {
+        ...prev,
+        images: remaining.map((img, idx) => ({
+          ...img,
+          sort_order: idx,
+          is_primary: idx === 0,
+        })),
+      };
+    });
   };
 
   // Document helpers
@@ -434,49 +646,312 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
           </div>
 
           {/* Card 3: Media & Images */}
-          <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-brand-border pb-3">
-              <h2 className="font-orbitron font-bold text-sm text-content-primary">
-                3. PRODUCT MEDIA & PHOTOGRAPHY
-              </h2>
-              <button
-                type="button"
-                onClick={handleAddImage}
-                className="text-xs font-orbitron text-brand hover:underline flex items-center space-x-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Add Image</span>
-              </button>
+          <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border pb-4">
+              <div>
+                <h2 className="font-orbitron font-bold text-sm text-content-primary flex items-center space-x-2">
+                  <ImageIcon className="w-4 h-4 text-brand" />
+                  <span>3. PRODUCT MEDIA & PHOTOGRAPHY</span>
+                </h2>
+                <p className="text-[11px] text-content-muted mt-0.5">
+                  Upload high-resolution peptide imagery and define showcase presentation sequence (1, 2, 3...).
+                </p>
+              </div>
+              <div className="flex items-center space-x-2 shrink-0">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files) handleImageFiles(e.target.files);
+                  }}
+                />
+                <button
+                  type="button"
+                  disabled={uploadingImage}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3.5 py-1.5 bg-brand hover:bg-brand-dark text-white rounded-xl text-xs font-orbitron font-semibold flex items-center space-x-1.5 shadow-sm transition-colors disabled:opacity-50"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>{uploadingImage ? 'Uploading...' : 'Upload Photos'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openMediaLibrary(-1)}
+                  className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-brand border border-purple-200 rounded-xl text-xs font-orbitron font-medium flex items-center space-x-1.5 transition-colors"
+                  title="Choose from pre-loaded peptide catalog photos"
+                >
+                  <FolderOpen className="w-3.5 h-3.5" />
+                  <span>Catalog Library</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddImageViaUrl}
+                  className="px-3 py-1.5 bg-brand-subtle hover:bg-purple-100 text-brand border border-brand-border rounded-xl text-xs font-orbitron font-medium flex items-center space-x-1 transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add URL</span>
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              {formData.images?.map((img, idx) => (
-                <div key={img.id || idx} className="flex items-center space-x-3 p-3 rounded-2xl bg-[#FAF8FD] border border-brand-border">
-                  <div className="w-12 h-12 rounded-xl bg-white border border-brand-border overflow-hidden shrink-0 relative">
-                    <img src={img.image_url} alt="Preview" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={img.image_url}
-                      onChange={(e) => {
-                        const next = [...(formData.images || [])];
-                        next[idx].image_url = e.target.value;
-                        setFormData({ ...formData, images: next });
-                      }}
-                      placeholder="Image URL (https://...)"
-                      className="w-full px-3 py-1.5 rounded-lg border border-brand-border text-xs font-mono"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="p-1 text-content-muted hover:text-accent-danger"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+            {/* Drag & Drop Upload Zone */}
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                setDragOver(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragOver(false);
+                if (e.dataTransfer.files) {
+                  handleImageFiles(e.dataTransfer.files);
+                }
+              }}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
+                dragOver
+                  ? 'border-brand bg-purple-50/70 scale-[0.99]'
+                  : 'border-brand-border/80 bg-[#FAF8FD] hover:border-brand/60 hover:bg-purple-50/40'
+              }`}
+            >
+              <div className="max-w-md mx-auto space-y-2">
+                <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center mx-auto">
+                  {uploadingImage ? (
+                    <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <ImagePlus className="w-5 h-5" />
+                  )}
                 </div>
-              ))}
+                <div className="text-xs font-orbitron font-semibold text-content-primary">
+                  {uploadingImage ? 'Uploading & Processing Image(s)...' : 'Drag & drop product images here, or browse files'}
+                </div>
+                <p className="text-[11px] text-content-muted">
+                  Supports JPG, PNG, WebP, SVG up to 10MB each. Select multiple files to bulk upload.
+                </p>
+              </div>
+            </div>
+
+            {/* Showcase Order Guide Callout */}
+            <div className="p-3.5 rounded-2xl bg-purple-50/60 border border-purple-200/70 flex items-start space-x-2.5 text-xs text-purple-950">
+              <Sparkles className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+              <div className="space-y-0.5 leading-relaxed text-[11px]">
+                <span className="font-orbitron font-bold text-brand">SHOWCASE ORDER (1 - 2 - 3):</span>{' '}
+                <span>
+                  <strong>Position #1</strong> is the Primary Showcase Cover displayed on the Shop catalog, product cards, and hero view.
+                  Positions <strong>#2, #3, etc.</strong> are secondary gallery views. Use the <strong>↑ / ↓</strong> arrows or select <strong>Rank 1, 2, 3</strong> directly to reorder.
+                </span>
+              </div>
+            </div>
+
+            {/* Showcase Ordered Images List */}
+            <div className="space-y-3">
+              {(!formData.images || formData.images.length === 0) ? (
+                <div className="text-center py-8 text-content-muted text-xs font-orbitron border border-dashed border-brand-border rounded-2xl">
+                  No product images attached yet. Click &quot;Upload Photos&quot; or &quot;Add URL&quot; to begin.
+                </div>
+              ) : (
+                formData.images.map((img, idx) => {
+                  const isPrimary = idx === 0;
+                  const totalImages = formData.images?.length || 1;
+
+                  return (
+                    <div
+                      key={img.id || idx}
+                      className={`p-4 rounded-2xl border transition-all ${
+                        isPrimary
+                          ? 'bg-purple-50/40 border-brand/50 shadow-sm'
+                          : 'bg-[#FAF8FD] border-brand-border/80 hover:border-brand-border'
+                      }`}
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        {/* Position Badge & Thumbnail */}
+                        <div className="flex items-center space-x-3 shrink-0">
+                          {/* Rank Badge */}
+                          <div className="w-20 text-center shrink-0">
+                            {isPrimary ? (
+                              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-brand text-white font-orbitron text-[10px] font-bold shadow-sm">
+                                <Star className="w-3 h-3 fill-current text-yellow-300" />
+                                <span>#1 Cover</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-brand-border text-content-secondary font-orbitron text-[10px] font-semibold">
+                                #{idx + 1} View
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Thumbnail with Clickable Change Image Overlay */}
+                          <label
+                            className="w-16 h-16 rounded-xl bg-white border border-brand-border overflow-hidden shrink-0 relative group shadow-sm cursor-pointer block"
+                            title="Click to change this photo"
+                          >
+                            <img
+                              src={img.image_url}
+                              alt={img.alt_text || `Product view ${idx + 1}`}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-brand-dark/75 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[8px] font-orbitron font-semibold text-center p-1">
+                              <Camera className="w-3.5 h-3.5 mb-0.5 text-purple-200" />
+                              <span>CHANGE</span>
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) handleReplaceImageFile(idx, f);
+                              }}
+                            />
+                          </label>
+                        </div>
+
+                        {/* URL & Alt Text Controls */}
+                        <div className="flex-1 space-y-2 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-orbitron text-[10px] text-content-muted w-14 shrink-0">
+                              URL:
+                            </span>
+                            <input
+                              type="text"
+                              value={img.image_url}
+                              onChange={(e) => {
+                                const next = [...(formData.images || [])];
+                                next[idx].image_url = e.target.value;
+                                setFormData({ ...formData, images: next });
+                              }}
+                              placeholder="Image URL (https://... or uploaded file)"
+                              className="w-full px-3 py-1.5 rounded-lg border border-brand-border text-xs font-mono focus:outline-none focus:border-brand bg-white"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-orbitron text-[10px] text-content-muted w-14 shrink-0">
+                              Alt Text:
+                            </span>
+                            <input
+                              type="text"
+                              value={img.alt_text || ''}
+                              onChange={(e) => {
+                                const next = [...(formData.images || [])];
+                                next[idx].alt_text = e.target.value;
+                                setFormData({ ...formData, images: next });
+                              }}
+                              placeholder="e.g. Front vial label view"
+                              className="w-full px-3 py-1.5 rounded-lg border border-brand-border text-xs font-sans focus:outline-none focus:border-brand bg-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Reordering & Action Controls */}
+                        <div className="flex flex-wrap md:flex-nowrap items-center justify-between md:justify-end gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-brand-border/60">
+                          {/* Direct Rank Dropdown (1, 2, 3...) */}
+                          <div className="flex items-center space-x-1.5 bg-white px-2.5 py-1 rounded-xl border border-brand-border">
+                            <span className="text-[10px] font-orbitron text-content-muted">Rank:</span>
+                            <select
+                              value={idx + 1}
+                              onChange={(e) => handleDirectOrderChange(idx, Number(e.target.value))}
+                              aria-label={`Showcase rank for image ${idx + 1}`}
+                              className="font-orbitron font-bold text-xs text-brand bg-transparent focus:outline-none cursor-pointer"
+                            >
+                              {Array.from({ length: totalImages }, (_, i) => i + 1).map((pos) => (
+                                <option key={pos} value={pos}>
+                                  #{pos} {pos === 1 ? '(Cover)' : ''}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Up & Down Arrows */}
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveImage(idx, idx - 1)}
+                              disabled={idx === 0}
+                              title="Move up in showcase order"
+                              aria-label={`Move image ${idx + 1} up`}
+                              className="p-1.5 rounded-lg border border-brand-border bg-white text-content-secondary hover:text-brand hover:border-brand disabled:opacity-30 disabled:hover:text-content-secondary disabled:hover:border-brand-border transition-colors"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveImage(idx, idx + 1)}
+                              disabled={idx === totalImages - 1}
+                              title="Move down in showcase order"
+                              aria-label={`Move image ${idx + 1} down`}
+                              className="p-1.5 rounded-lg border border-brand-border bg-white text-content-secondary hover:text-brand hover:border-brand disabled:opacity-30 disabled:hover:text-content-secondary disabled:hover:border-brand-border transition-colors"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Set as Cover Button (if not primary) */}
+                          {!isPrimary && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetPrimary(idx)}
+                              title="Set as #1 Primary Cover image"
+                              className="px-2.5 py-1 rounded-xl bg-white hover:bg-brand hover:text-white text-brand border border-brand-border font-orbitron text-[10px] font-semibold transition-colors"
+                            >
+                              Make #1
+                            </button>
+                          )}
+
+                          {/* Prominent Change Image Button */}
+                          <label
+                            className="cursor-pointer px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-brand hover:text-white text-brand border border-purple-300 font-orbitron text-[10px] font-bold flex items-center space-x-1.5 transition-all shadow-xs"
+                            title="Change this photo by uploading a replacement file"
+                          >
+                            <Camera className="w-3.5 h-3.5" />
+                            <span>Change Image</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) handleReplaceImageFile(idx, f);
+                              }}
+                            />
+                          </label>
+
+                          {/* Choose from Library / Catalog Button */}
+                          <button
+                            type="button"
+                            onClick={() => openMediaLibrary(idx)}
+                            className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-purple-50 text-content-secondary hover:text-brand border border-brand-border font-orbitron text-[10px] font-semibold flex items-center space-x-1 transition-colors"
+                            title="Choose from catalog library of vials and boxes"
+                          >
+                            <FolderOpen className="w-3.5 h-3.5" />
+                            <span>Catalog</span>
+                          </button>
+
+                          {/* Delete Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            title="Remove image"
+                            className="p-1.5 rounded-lg text-content-muted hover:text-accent-danger hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -618,6 +1093,30 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
                 />
               </div>
 
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block font-orbitron text-[10px] text-content-muted">
+                    CATALOG SHOWCASE ORDER (1, 2, 3...)
+                  </label>
+                  <span className="font-mono text-[10px] text-brand">
+                    Priority on Shop
+                  </span>
+                </div>
+                <input
+                  type="number"
+                  name="showcase_order"
+                  min="1"
+                  step="1"
+                  value={formData.showcase_order ?? ''}
+                  onChange={handleTextChange}
+                  placeholder="e.g. 1, 2, 3 (lower shows first)"
+                  className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-mono"
+                />
+                <p className="text-[10px] text-content-muted mt-1">
+                  Products with #1, #2, #3 appear first on the shop page & showcase grid.
+                </p>
+              </div>
+
               <div className="pt-2 space-y-3 border-t border-brand-border/60">
                 <label className="flex items-center space-x-3 cursor-pointer select-none">
                   <input
@@ -673,6 +1172,135 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
         </div>
 
       </div>
+
+      {/* Media Library Modal for Selecting or Changing Photos */}
+      {libraryModalIndex !== null && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl border border-brand-border shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-brand-border flex items-center justify-between bg-[#FAF8FD]">
+              <div>
+                <h3 className="font-orbitron font-bold text-sm sm:text-base text-content-primary flex items-center space-x-2">
+                  <FolderOpen className="w-4 h-4 text-brand" />
+                  <span>
+                    {libraryModalIndex >= 0
+                      ? `CHANGE PHOTO (POSITION #${libraryModalIndex + 1})`
+                      : 'ADD PHOTO FROM CATALOG LIBRARY'}
+                  </span>
+                </h3>
+                <p className="text-xs text-content-muted mt-0.5">
+                  Choose from 58+ pre-rendered peptide vials, packaging boxes, and uploaded photos.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLibraryModalIndex(null)}
+                className="p-2 rounded-xl text-content-muted hover:text-content-primary hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Filter & Search Bar */}
+            <div className="p-4 border-b border-brand-border bg-white flex flex-col sm:flex-row gap-3 items-center justify-between">
+              {/* Category Filter Tabs */}
+              <div className="flex items-center space-x-1 overflow-x-auto w-full sm:w-auto">
+                {(['all', 'products', 'labelbox', 'uploads'] as const).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setLibraryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl font-orbitron text-xs font-semibold whitespace-nowrap transition-colors ${
+                      libraryFilter === cat
+                        ? 'bg-brand text-white shadow-xs'
+                        : 'bg-gray-100 text-content-secondary hover:bg-gray-200'
+                    }`}
+                  >
+                    {cat === 'all' && 'All Photos'}
+                    {cat === 'products' && 'Product Vials'}
+                    {cat === 'labelbox' && 'Packaging Boxes'}
+                    {cat === 'uploads' && 'Uploaded Files'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-brand absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  value={librarySearch}
+                  onChange={(e) => setLibrarySearch(e.target.value)}
+                  placeholder="Search peptide (e.g. AOD, BPC)..."
+                  className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-brand-border text-xs focus:outline-none focus:border-brand font-sans"
+                />
+              </div>
+            </div>
+
+            {/* Images Grid */}
+            <div className="p-5 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 bg-[#FCFBFD]">
+              {libraryLoading ? (
+                <div className="col-span-full py-16 text-center space-y-2">
+                  <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin mx-auto" />
+                  <p className="font-orbitron text-xs text-content-muted">Loading peptide photos...</p>
+                </div>
+              ) : (
+                libraryImages
+                  .filter((item) => {
+                    if (libraryFilter !== 'all' && item.folder !== libraryFilter) return false;
+                    if (librarySearch.trim()) {
+                      const q = librarySearch.toLowerCase().trim();
+                      return item.name.toLowerCase().includes(q) || item.url.toLowerCase().includes(q);
+                    }
+                    return true;
+                  })
+                  .map((item, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectLibraryImage(item.url, item.name)}
+                      className="group cursor-pointer bg-white border border-brand-border hover:border-brand rounded-2xl p-2 shadow-xs hover:shadow-purple-sm transition-all text-center flex flex-col justify-between"
+                    >
+                      <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8FD] border border-brand-border/60 mb-2">
+                        <img
+                          src={item.url}
+                          alt={item.name}
+                          className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-brand/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="px-2 py-1 bg-brand text-white font-orbitron text-[9px] font-bold rounded-lg shadow-sm">
+                            Select Photo
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-orbitron font-bold text-[10px] text-content-primary truncate">
+                          {item.name}
+                        </div>
+                        <div className="font-mono text-[9px] text-content-muted uppercase">
+                          {item.folder === 'labelbox' ? 'Box packaging' : item.folder === 'products' ? 'Vial' : 'Upload'}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-brand-border bg-white flex items-center justify-between text-xs">
+              <span className="text-content-muted font-sans text-[11px]">
+                Click any photo to immediately apply it.
+              </span>
+              <button
+                type="button"
+                onClick={() => setLibraryModalIndex(null)}
+                className="px-4 py-1.5 rounded-xl border border-brand-border text-content-secondary hover:bg-gray-100 font-orbitron text-xs font-semibold"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

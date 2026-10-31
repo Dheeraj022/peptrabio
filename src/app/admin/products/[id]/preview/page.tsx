@@ -45,7 +45,10 @@ export default function ProductPreviewPage() {
     return <div className="p-12 text-center font-orbitron">Product not found.</div>;
   }
 
-  const primaryImage = product.images?.[0]?.image_url || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80';
+  const primaryImage =
+    product.images?.find((i) => i.is_primary)?.image_url ||
+    product.images?.[0]?.image_url ||
+    'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80';
 
   return (
     <div className="space-y-6">
@@ -87,6 +90,7 @@ export default function ProductPreviewPage() {
                 src={primaryImage}
                 alt={product.name}
                 fill
+                unoptimized
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />

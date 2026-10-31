@@ -162,6 +162,22 @@ export function saveLocalProducts(products: Product[]): void {
     localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
   } catch (err) {
     console.error('Error saving products locally', err);
+    try {
+      // If quota exceeded due to large base64 strings, trim them so product data is never lost
+      const sanitized = products.map((p) => ({
+        ...p,
+        images: p.images?.map((img) => ({
+          ...img,
+          image_url:
+            img.image_url?.startsWith('data:') && img.image_url.length > 50000
+              ? 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80'
+              : img.image_url,
+        })),
+      }));
+      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(sanitized));
+    } catch (fallbackErr) {
+      console.error('Critical: unable to persist to localStorage', fallbackErr);
+    }
   }
 }
 
@@ -276,6 +292,7 @@ function AUDIT_LOGS_KEY() {
 
 // Global accessor functions that seamlessly support Supabase or fallback
 export async function fetchAllProducts(): Promise<Product[]> {
+  const localProducts = getLocalProducts();
   const supabase = createClient();
   if (supabase) {
     try {
@@ -284,16 +301,40 @@ export async function fetchAllProducts(): Promise<Product[]> {
         .select('*, images:product_images(*), documents:product_documents(*), references:product_references(*)')
         .order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
-        return data as Product[];
+        const remoteProducts = data as Product[];
+        const merged = localProducts.map((lp) => {
+          const remote = remoteProducts.find((rp) => rp.id === lp.id || rp.slug === lp.slug);
+          if (remote) {
+            const localImages = lp.images && lp.images.length > 0 ? lp.images : [];
+            const remoteImages = remote.images && remote.images.length > 0 ? remote.images : [];
+            return {
+              ...remote,
+              ...lp,
+              images: localImages.length > 0 ? localImages : remoteImages,
+              showcase_order: lp.showcase_order ?? remote.showcase_order,
+            };
+          }
+          return lp;
+        });
+
+        for (const rp of remoteProducts) {
+          if (!merged.some((m) => m.id === rp.id || m.slug === rp.slug)) {
+            merged.push(rp);
+          }
+        }
+        return merged;
       }
     } catch (e) {
       console.warn('Supabase fetch failed, fallback to local', e);
     }
   }
-  return getLocalProducts();
+  return localProducts;
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
+  const localProducts = getLocalProducts();
+  const localProduct = localProducts.find((p) => p.slug === slug || p.id === slug);
+
   const supabase = createClient();
   if (supabase) {
     try {
@@ -303,17 +344,29 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
         .eq('slug', slug)
         .single();
       if (!error && data) {
+        if (localProduct) {
+          const localImages = localProduct.images && localProduct.images.length > 0 ? localProduct.images : [];
+          const remoteImages = (data as any).images && (data as any).images.length > 0 ? (data as any).images : [];
+          return {
+            ...(data as Product),
+            ...localProduct,
+            images: localImages.length > 0 ? localImages : remoteImages,
+            showcase_order: localProduct.showcase_order ?? (data as any).showcase_order,
+          };
+        }
         return data as Product;
       }
     } catch {
       // fallback
     }
   }
-  const products = getLocalProducts();
-  return products.find(p => p.slug === slug) || null;
+  return localProduct || null;
 }
 
 export async function fetchProductById(id: string): Promise<Product | null> {
+  const localProducts = getLocalProducts();
+  const localProduct = localProducts.find((p) => p.id === id || p.slug === id);
+
   const supabase = createClient();
   if (supabase) {
     try {
@@ -323,32 +376,46 @@ export async function fetchProductById(id: string): Promise<Product | null> {
         .eq('id', id)
         .single();
       if (!error && data) {
+        if (localProduct) {
+          const localImages = localProduct.images && localProduct.images.length > 0 ? localProduct.images : [];
+          const remoteImages = (data as any).images && (data as any).images.length > 0 ? (data as any).images : [];
+          return {
+            ...(data as Product),
+            ...localProduct,
+            images: localImages.length > 0 ? localImages : remoteImages,
+            showcase_order: localProduct.showcase_order ?? (data as any).showcase_order,
+          };
+        }
         return data as Product;
       }
     } catch {
       // fallback
     }
   }
-  const products = getLocalProducts();
-  return products.find(p => p.id === id) || null;
+  return localProduct || null;
 }
 
 export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Product> {
   const products = getLocalProducts();
   let savedProduct: Product;
 
-  if (product.id && products.some(p => p.id === product.id)) {
-    // Update
-    const index = products.findIndex(p => p.id === product.id);
+  const matchIndex = products.findIndex((p) =>
+    (product.id && p.id === product.id) ||
+    (product.slug && p.slug === product.slug)
+  );
+
+  if (matchIndex !== -1) {
+    // Update existing product
     savedProduct = {
-      ...products[index],
+      ...products[matchIndex],
       ...product,
+      id: products[matchIndex].id,
       updated_at: new Date().toISOString(),
     } as Product;
-    products[index] = savedProduct;
+    products[matchIndex] = savedProduct;
     addAuditLog('product_updated', 'product', savedProduct.id, { name: savedProduct.name });
   } else {
-    // Create
+    // Create new product
     savedProduct = {
       id: product.id || 'prod-' + Date.now(),
       name: product.name || 'New Peptide',
@@ -370,6 +437,7 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
       stock_quantity: product.stock_quantity ?? 10,
       is_active: product.is_active ?? true,
       is_featured: product.is_featured ?? false,
+      showcase_order: product.showcase_order,
       research_use_only: true,
       storage_information: product.storage_information || 'Store at -20°C.',
       created_at: new Date().toISOString(),
@@ -432,6 +500,24 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
         research_use_only: savedProduct.research_use_only,
         storage_information: savedProduct.storage_information,
       });
+
+      // Also sync images to product_images table if live
+      if (savedProduct.images && savedProduct.images.length > 0) {
+        try {
+          await supabase.from('product_images').delete().eq('product_id', savedProduct.id);
+          const imagesToInsert = savedProduct.images.map((img, idx) => ({
+            id: img.id || `img-${savedProduct.id}-${idx}`,
+            product_id: savedProduct.id,
+            image_url: img.image_url,
+            alt_text: img.alt_text || savedProduct.name,
+            sort_order: img.sort_order ?? idx,
+            is_primary: img.is_primary ?? (idx === 0),
+          }));
+          await supabase.from('product_images').insert(imagesToInsert);
+        } catch (imgErr) {
+          console.warn('Supabase product_images sync fallback:', imgErr);
+        }
+      }
     } catch {
       // Remote sync fallback handled
     }

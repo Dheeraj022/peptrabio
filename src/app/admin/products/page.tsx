@@ -75,7 +75,7 @@ export default function AdminProductsPage() {
     showToast('Product removed from catalog.');
   };
 
-  // Filtered List
+  // Filtered List (prioritizing showcase order 1, 2, 3...)
   const filteredProducts = products.filter((p) => {
     if (selectedCategory !== 'all' && p.category !== selectedCategory) return false;
     if (selectedStatus === 'active' && !p.is_active) return false;
@@ -91,6 +91,11 @@ export default function AdminProductsPage() {
     }
 
     return true;
+  }).sort((a, b) => {
+    const orderA = a.showcase_order ?? 9999;
+    const orderB = b.showcase_order ?? 9999;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.name.localeCompare(b.name);
   });
 
   const categories = Array.from(new Set(products.map((p) => p.category).filter(Boolean)));
@@ -206,13 +211,19 @@ export default function AdminProductsPage() {
                                 src={primaryImage}
                                 alt={product.name}
                                 fill
+                                unoptimized
                                 className="object-cover"
                                 sizes="44px"
                               />
                             </div>
                             <div>
-                              <div className="font-orbitron font-bold text-sm text-content-primary">
-                                {product.name}
+                              <div className="font-orbitron font-bold text-sm text-content-primary flex items-center space-x-2">
+                                <span>{product.name}</span>
+                                {product.showcase_order !== undefined && product.showcase_order !== null && (
+                                  <span className="px-1.5 py-0.5 rounded bg-purple-100 text-brand font-orbitron text-[9px] font-bold tracking-wider">
+                                    #{product.showcase_order} SHOWCASE
+                                  </span>
+                                )}
                               </div>
                               <div className="text-[11px] font-mono text-content-muted">
                                 {product.product_code || product.slug}

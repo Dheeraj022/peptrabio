@@ -2,66 +2,12 @@ import { DiscountCode, DiscountPaymentApplicability, DiscountType } from '@/type
 
 const DISCOUNTS_STORAGE_KEY = 'peptrabio_discounts_v1';
 
-export const SEED_DISCOUNTS: DiscountCode[] = [
-  {
-    id: 'disc-peptra10',
-    code: 'PEPTRA10',
-    description: '10% Launch Research Discount (Valid on all payment options)',
-    discount_type: 'percentage',
-    discount_value: 10,
-    applicable_payment: 'both',
-    min_order_amount: 1000,
-    max_discount_amount: 2500,
-    usage_limit: 500,
-    used_count: 24,
-    is_active: true,
-    created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'disc-fullpay5',
-    code: 'FULLPAY5',
-    description: '5% Extra Instant Discount on 100% Complete Online Payment',
-    discount_type: 'percentage',
-    discount_value: 5,
-    applicable_payment: 'full',
-    min_order_amount: 1500,
-    max_discount_amount: 1500,
-    usage_limit: 300,
-    used_count: 18,
-    is_active: true,
-    created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'disc-partialcod',
-    code: 'PARTIALCOD',
-    description: '₹300 Flat Discount on Partial Advance (COD) Requisitions',
-    discount_type: 'fixed',
-    discount_value: 300,
-    applicable_payment: 'partial',
-    min_order_amount: 3000,
-    usage_limit: 200,
-    used_count: 9,
-    is_active: true,
-    created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'disc-flat500',
-    code: 'FLAT500',
-    description: 'Flat ₹500 Discount on Requisitions Above ₹4,000',
-    discount_type: 'fixed',
-    discount_value: 500,
-    applicable_payment: 'both',
-    min_order_amount: 4000,
-    usage_limit: 250,
-    used_count: 31,
-    is_active: true,
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
+// Seed list is now empty - all discount codes are generated and managed by admin
+export const SEED_DISCOUNTS: DiscountCode[] = [];
+
+// Identifiers of temporary test codes to purge from any existing local storage
+const TEMPORARY_DISCOUNT_IDS = new Set(['disc-peptra10', 'disc-fullpay5', 'disc-partialcod', 'disc-flat500']);
+const TEMPORARY_DISCOUNT_CODES = new Set(['PEPTRA10', 'FULLPAY5', 'PARTIALCOD', 'FLAT500']);
 
 function isBrowser(): boolean {
   return typeof window !== 'undefined';
@@ -69,23 +15,34 @@ function isBrowser(): boolean {
 
 /**
  * Returns currently cached discount codes synchronously from localStorage (or defaults).
+ * Automatically purges any legacy temporary discount codes.
  */
 export function getStoredDiscounts(): DiscountCode[] {
-  if (!isBrowser()) return SEED_DISCOUNTS;
+  if (!isBrowser()) return [];
   try {
     const raw = localStorage.getItem(DISCOUNTS_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(DISCOUNTS_STORAGE_KEY, JSON.stringify(SEED_DISCOUNTS));
-      return SEED_DISCOUNTS;
+      localStorage.setItem(DISCOUNTS_STORAGE_KEY, JSON.stringify([]));
+      return [];
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+    if (Array.isArray(parsed)) {
+      // Clean out any temporary codes that were previously saved
+      const cleaned = parsed.filter(
+        (d: DiscountCode) =>
+          d &&
+          !TEMPORARY_DISCOUNT_IDS.has(d.id) &&
+          !TEMPORARY_DISCOUNT_CODES.has(d.code?.trim().toUpperCase())
+      );
+      if (cleaned.length !== parsed.length) {
+        localStorage.setItem(DISCOUNTS_STORAGE_KEY, JSON.stringify(cleaned));
+      }
+      return cleaned;
     }
-    return SEED_DISCOUNTS;
+    return [];
   } catch (err) {
-    console.warn('Failed to load discounts from localStorage, using seeds:', err);
-    return SEED_DISCOUNTS;
+    console.warn('Failed to load discounts from localStorage:', err);
+    return [];
   }
 }
 
@@ -126,7 +83,12 @@ export async function fetchDiscounts(includeInactive: boolean = true): Promise<{
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data.discounts)) {
-        const remoteDiscounts = data.discounts as DiscountCode[];
+        const remoteDiscounts = (data.discounts as DiscountCode[]).filter(
+          (d) =>
+            d &&
+            !TEMPORARY_DISCOUNT_IDS.has(d.id) &&
+            !TEMPORARY_DISCOUNT_CODES.has(d.code?.trim().toUpperCase())
+        );
         
         // Merge remote and local
         const mergedMap = new Map<string, DiscountCode>();

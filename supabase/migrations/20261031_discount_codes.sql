@@ -42,65 +42,10 @@ ON discount_codes FOR ALL
 USING (true)
 WITH CHECK (true);
 
--- 4. Seed initial default discount codes
-INSERT INTO discount_codes (
-  id, code, description, discount_type, discount_value,
-  applicable_payment, min_order_amount, max_discount_amount,
-  usage_limit, used_count, is_active
-) VALUES 
-(
-  'disc-peptra10',
-  'PEPTRA10',
-  '10% Launch Research Discount (Valid on all payment options)',
-  'percentage',
-  10.00,
-  'both',
-  1000.00,
-  2500.00,
-  500,
-  24,
-  true
-),
-(
-  'disc-fullpay5',
-  'FULLPAY5',
-  '5% Extra Instant Discount on 100% Complete Online Payment',
-  'percentage',
-  5.00,
-  'full',
-  1500.00,
-  1500.00,
-  300,
-  18,
-  true
-),
-(
-  'disc-partialcod',
-  'PARTIALCOD',
-  '₹300 Flat Discount on Partial Advance (COD) Requisitions',
-  'fixed',
-  300.00,
-  'partial',
-  3000.00,
-  NULL,
-  200,
-  9,
-  true
-),
-(
-  'disc-flat500',
-  'FLAT500',
-  'Flat ₹500 Discount on Requisitions Above ₹4,000',
-  'fixed',
-  500.00,
-  'both',
-  4000.00,
-  NULL,
-  250,
-  31,
-  true
-)
-ON CONFLICT (code) DO NOTHING;
+-- 4. Purge any legacy temporary test discount codes
+DELETE FROM discount_codes 
+WHERE id IN ('disc-peptra10', 'disc-fullpay5', 'disc-partialcod', 'disc-flat500') 
+   OR UPPER(code) IN ('PEPTRA10', 'FULLPAY5', 'PARTIALCOD', 'FLAT500');
 
 -- 5. Add discount tracking columns to orders table
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_code VARCHAR(100);

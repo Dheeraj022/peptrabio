@@ -378,8 +378,35 @@ export default function AdminDiscountsPage() {
               <tbody className="divide-y divide-brand-border/60">
                 {filteredDiscounts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-12 text-content-muted font-orbitron">
-                      No discount codes found matching the filter criteria.
+                    <td colSpan={7} className="text-center py-16">
+                      <div className="max-w-md mx-auto space-y-3">
+                        <div className="w-12 h-12 rounded-2xl bg-purple-100 text-brand flex items-center justify-center mx-auto shadow-purple-sm">
+                          <Tag className="w-6 h-6" />
+                        </div>
+                        <h3 className="font-orbitron font-bold text-sm text-content-primary">
+                          {discounts.length === 0
+                            ? 'NO DISCOUNT CODES CREATED YET'
+                            : 'NO DISCOUNT CODES MATCH THE CURRENT FILTER'}
+                        </h3>
+                        <p className="text-xs text-content-secondary font-sans">
+                          {discounts.length === 0
+                            ? 'Generate your first discount promotion code applicable on Full Online payment, Partial COD, or both.'
+                            : 'Try adjusting your search query, payment filter, or status filter.'}
+                        </p>
+                        {discounts.length === 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormError(null);
+                              setIsModalOpen(true);
+                            }}
+                            className="mt-2 px-5 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-orbitron text-xs font-semibold shadow-purple-sm transition-all inline-flex items-center space-x-1.5"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>GENERATE FIRST DISCOUNT CODE</span>
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -561,7 +588,7 @@ export default function AdminDiscountsPage() {
                     required
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '') })}
-                    placeholder="e.g. WELCOME10, FLAT500, PEPTRA20"
+                    placeholder="e.g. WELCOME10, SAVE20, RESEARCH50"
                     className="w-full px-4 py-2.5 rounded-xl border border-brand-border font-mono text-sm uppercase font-bold text-brand focus:outline-none focus:border-brand"
                   />
                   <button

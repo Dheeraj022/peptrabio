@@ -773,7 +773,7 @@ export default function CheckoutPage() {
                               handleApplyPromoCode();
                             }
                           }}
-                          placeholder="e.g. PEPTRA10, FULLPAY5, FLAT500"
+                          placeholder="Enter discount or promo code..."
                           className="w-full px-4 py-2.5 rounded-xl border border-brand-border font-mono text-xs uppercase font-bold text-brand focus:outline-none focus:border-brand bg-white"
                         />
                       </div>
@@ -1168,7 +1168,7 @@ export default function CheckoutPage() {
                           handleApplyPromoCode();
                         }
                       }}
-                      placeholder="e.g. PEPTRA10, FULLPAY5"
+                      placeholder="Enter promo code"
                       className="w-full px-3 py-2 rounded-xl border border-brand-border font-mono text-xs uppercase font-bold text-brand focus:outline-none focus:border-brand bg-white"
                     />
                     <button

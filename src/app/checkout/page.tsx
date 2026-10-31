@@ -79,7 +79,7 @@ export default function CheckoutPage() {
       .catch((err) => console.warn('Payment config fetch fallback:', err));
 
     // Sync discounts from Supabase
-    fetchDiscounts(false).catch(() => {});
+    fetchDiscounts(false).catch(() => { });
   }, []);
 
   const [formData, setFormData] = useState({
@@ -566,7 +566,7 @@ export default function CheckoutPage() {
 
                     <div>
                       <label className="block text-content-muted font-orbitron text-[10px] mb-1 font-bold">
-                        INSTITUTIONAL EMAIL ADDRESS *
+                        EMAIL ADDRESS *
                       </label>
                       <input
                         type="email"
@@ -574,7 +574,7 @@ export default function CheckoutPage() {
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="researcher@lab.org"
+
                         className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                       />
                     </div>
@@ -603,7 +603,6 @@ export default function CheckoutPage() {
                         name="company"
                         value={formData.company}
                         onChange={handleInputChange}
-                        placeholder="e.g. BioCore Analytical Laboratories"
                         className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                       />
                     </div>
@@ -647,7 +646,7 @@ export default function CheckoutPage() {
                         name="apartment"
                         value={formData.apartment}
                         onChange={handleInputChange}
-                        placeholder="e.g. Lab Suite 4B"
+                        placeholder="e.g. Address Line"
                         className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-sans"
                       />
                     </div>
@@ -818,13 +817,12 @@ export default function CheckoutPage() {
                   {/* Promo Message */}
                   {promoMessage && !appliedDiscount && (
                     <p
-                      className={`text-[11px] font-sans ${
-                        promoMessage.type === 'error'
-                          ? 'text-accent-danger font-medium'
-                          : promoMessage.type === 'warning'
+                      className={`text-[11px] font-sans ${promoMessage.type === 'error'
+                        ? 'text-accent-danger font-medium'
+                        : promoMessage.type === 'warning'
                           ? 'text-amber-700 font-medium'
                           : 'text-emerald-700 font-medium'
-                      }`}
+                        }`}
                     >
                       {promoMessage.text}
                     </p>

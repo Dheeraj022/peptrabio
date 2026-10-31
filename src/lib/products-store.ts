@@ -2,7 +2,7 @@ import { Product, ProductCategory, Order, OrderStatus, PaymentStatus, AdminAudit
 import { SEED_PRODUCTS, SEED_CATEGORIES } from './seed-data';
 import { createClient } from './supabase/client';
 
-const PRODUCTS_STORAGE_KEY = 'peptrabio_products_v9';
+const PRODUCTS_STORAGE_KEY = 'peptrabio_products_v10';
 const CATEGORIES_STORAGE_KEY = 'peptrabio_categories_v6';
 const ORDERS_STORAGE_KEY = 'peptrabio_orders_v6';
 const AUDIT_LOGS_STORAGE_KEY = 'peptrabio_audit_logs_v6';
@@ -293,6 +293,28 @@ function AUDIT_LOGS_KEY() {
 // Global accessor functions that seamlessly support Supabase or fallback
 export async function fetchAllProducts(): Promise<Product[]> {
   const localProducts = getLocalProducts();
+
+  // 1. Try fetching via API route (connected to Supabase Cloud)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/products', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (Array.isArray(json.products) && json.products.length > 0) {
+          const apiProducts = json.products as Product[];
+          // If fetched from Supabase, merge and update local cache
+          if (json.source === 'supabase') {
+            saveLocalProducts(apiProducts);
+            return apiProducts;
+          }
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  // 2. Direct Supabase browser client fallback
   const supabase = createClient();
   if (supabase) {
     try {
@@ -308,9 +330,9 @@ export async function fetchAllProducts(): Promise<Product[]> {
             const localImages = lp.images && lp.images.length > 0 ? lp.images : [];
             const remoteImages = remote.images && remote.images.length > 0 ? remote.images : [];
             return {
-              ...remote,
               ...lp,
-              images: localImages.length > 0 ? localImages : remoteImages,
+              ...remote,
+              images: remoteImages.length > 0 ? remoteImages : localImages,
               showcase_order: lp.showcase_order ?? remote.showcase_order,
             };
           }
@@ -471,6 +493,15 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
   }
 
   saveLocalProducts(products);
+
+  // Background cloud sync via server API endpoint (uses Admin Service Role)
+  if (isBrowser()) {
+    fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(savedProduct),
+    }).catch((e) => console.warn('Background product API sync note:', e));
+  }
 
   // If live Supabase client exists, attempt remote sync
   const supabase = createClient();

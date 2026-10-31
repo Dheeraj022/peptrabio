@@ -89,6 +89,8 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const categories = getLocalCategories();
+  const [pricingCurrency, setPricingCurrency] = useState<'INR' | 'USD'>('INR');
+  const exchangeRate = 86.5;
 
   // Media Library Modal state
   const [libraryModalIndex, setLibraryModalIndex] = useState<number | null>(null);
@@ -1032,51 +1034,140 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
           
           {/* Commerce / Inventory Card */}
           <div className="bg-white border border-brand-border rounded-3xl p-6 space-y-4 shadow-sm">
-            <h2 className="font-orbitron font-bold text-sm text-content-primary border-b border-brand-border pb-3">
-              COMMERCE & INVENTORY
-            </h2>
+            <div className="flex items-center justify-between border-b border-brand-border pb-3">
+              <h2 className="font-orbitron font-bold text-sm text-content-primary">
+                COMMERCE & INVENTORY
+              </h2>
+              {/* Currency Toggle */}
+              <div className="flex items-center bg-[#FAF8FD] p-1 rounded-xl border border-brand-border">
+                <button
+                  type="button"
+                  onClick={() => setPricingCurrency('INR')}
+                  className={`px-2.5 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all ${
+                    pricingCurrency === 'INR'
+                      ? 'bg-brand text-white shadow-xs'
+                      : 'text-content-muted hover:text-content-primary'
+                  }`}
+                >
+                  ₹ INR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPricingCurrency('USD')}
+                  className={`px-2.5 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all ${
+                    pricingCurrency === 'USD'
+                      ? 'bg-brand text-white shadow-xs'
+                      : 'text-content-muted hover:text-content-primary'
+                  }`}
+                >
+                  $ USD
+                </button>
+              </div>
+            </div>
 
             <div className="space-y-4 text-xs font-sans">
+              {/* Unit Price */}
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="block font-orbitron text-[10px] text-content-muted">
-                    UNIT PRICE *
+                    UNIT PRICE ({pricingCurrency}) *
                   </label>
                   <span className="font-mono text-[10px] text-brand font-semibold">
-                    {formatPrice(formData.price || 0)}
+                    {pricingCurrency === 'INR'
+                      ? `Base: $${Number(formData.price || 0).toFixed(2)} USD`
+                      : `Store: ${formatPrice(formData.price || 0)}`}
                   </span>
                 </div>
-                <input
-                  type="number"
-                  step="0.01"
-                  required
-                  name="price"
-                  value={formData.price ?? 50}
-                  onChange={handleTextChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-base font-orbitron font-bold text-brand"
-                />
+                <div className="relative">
+                  <span className="absolute left-3.5 top-2.5 font-orbitron font-bold text-sm text-brand pointer-events-none">
+                    {pricingCurrency === 'INR' ? '₹' : '$'}
+                  </span>
+                  <input
+                    type="number"
+                    step={pricingCurrency === 'INR' ? '1' : '0.01'}
+                    required
+                    value={
+                      pricingCurrency === 'INR'
+                        ? formData.price !== undefined
+                          ? Math.round(Number(formData.price) * exchangeRate * 100) / 100
+                          : ''
+                        : (formData.price ?? '')
+                    }
+                    onChange={(e) => {
+                      const val = e.target.value === '' ? undefined : Number(e.target.value);
+                      if (val === undefined) {
+                        setFormData((prev) => ({ ...prev, price: undefined }));
+                      } else if (pricingCurrency === 'INR') {
+                        setFormData((prev) => ({ ...prev, price: Math.round((val / exchangeRate) * 10000) / 10000 }));
+                      } else {
+                        setFormData((prev) => ({ ...prev, price: val }));
+                      }
+                    }}
+                    placeholder={pricingCurrency === 'INR' ? 'e.g. 1211' : 'e.g. 14.00'}
+                    className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-base font-orbitron font-bold text-brand"
+                  />
+                </div>
+                <div className="flex justify-between items-center mt-1 text-[10px] text-content-muted">
+                  <span>
+                    Store displays:{' '}
+                    <strong className="text-brand font-mono font-semibold">
+                      {formatPrice(formData.price || 0)}
+                    </strong>
+                  </span>
+                  <span>1 USD = ₹{exchangeRate}</span>
+                </div>
               </div>
 
+              {/* Compare-at Original Price */}
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="block font-orbitron text-[10px] text-content-muted">
-                    COMPARE-AT ORIGINAL PRICE
+                    COMPARE-AT ORIGINAL PRICE ({pricingCurrency})
                   </label>
                   {formData.compare_at_price && (
                     <span className="font-mono text-[10px] text-content-muted">
-                      {formatPrice(formData.compare_at_price)}
+                      {pricingCurrency === 'INR'
+                        ? `Base: $${Number(formData.compare_at_price).toFixed(2)} USD`
+                        : `Store: ${formatPrice(formData.compare_at_price)}`}
                     </span>
                   )}
                 </div>
-                <input
-                  type="number"
-                  step="0.01"
-                  name="compare_at_price"
-                  value={formData.compare_at_price || ''}
-                  onChange={handleTextChange}
-                  placeholder="Optional original price"
-                  className="w-full px-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-mono"
-                />
+                <div className="relative">
+                  <span className="absolute left-3.5 top-2.5 font-orbitron font-bold text-xs text-content-muted pointer-events-none">
+                    {pricingCurrency === 'INR' ? '₹' : '$'}
+                  </span>
+                  <input
+                    type="number"
+                    step={pricingCurrency === 'INR' ? '1' : '0.01'}
+                    value={
+                      pricingCurrency === 'INR'
+                        ? formData.compare_at_price !== undefined
+                          ? Math.round(Number(formData.compare_at_price) * exchangeRate * 100) / 100
+                          : ''
+                        : (formData.compare_at_price ?? '')
+                    }
+                    onChange={(e) => {
+                      const val = e.target.value === '' ? undefined : Number(e.target.value);
+                      if (val === undefined) {
+                        setFormData((prev) => ({ ...prev, compare_at_price: undefined }));
+                      } else if (pricingCurrency === 'INR') {
+                        setFormData((prev) => ({ ...prev, compare_at_price: Math.round((val / exchangeRate) * 10000) / 10000 }));
+                      } else {
+                        setFormData((prev) => ({ ...prev, compare_at_price: val }));
+                      }
+                    }}
+                    placeholder={pricingCurrency === 'INR' ? 'Optional original price in ₹' : 'Optional original price in $'}
+                    className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-mono"
+                  />
+                </div>
+                {formData.compare_at_price && (
+                  <p className="mt-1 text-[10px] text-content-muted">
+                    Strikethrough on store:{' '}
+                    <strong className="text-content-secondary line-through font-mono">
+                      {formatPrice(formData.compare_at_price)}
+                    </strong>
+                  </p>
+                )}
               </div>
 
               <div>

@@ -333,7 +333,7 @@ export default function AdminOrdersPage() {
                                     onClick={() => handlePaymentStatusChange(order.id, 'verified')}
                                     className="text-[9px] font-orbitron font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded-full border border-emerald-300 transition-colors shadow-xs"
                                   >
-                                    ✓ Verify Now
+                                    ✓ Mark Payment Received
                                   </button>
                                 </div>
                               )}
@@ -454,8 +454,8 @@ export default function AdminOrdersPage() {
                     className="px-3 py-1 rounded-full font-orbitron text-xs font-semibold uppercase bg-white border border-brand text-brand cursor-pointer"
                   >
                     <option value="unpaid">Unpaid</option>
-                    <option value="awaiting_verification">Awaiting Verification</option>
-                    <option value="verified">Payment Verified</option>
+                    <option value="awaiting_verification">In Processing (Verification Pending)</option>
+                    <option value="verified">Payment Received</option>
                     <option value="rejected">Payment Rejected</option>
                     <option value="refunded">Refunded</option>
                   </select>

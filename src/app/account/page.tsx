@@ -28,9 +28,12 @@ import {
   Check,
   ArrowRight,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  CreditCard,
+  QrCode as QrIcon
 } from 'lucide-react';
 import { getPaymentStatusBadge } from '@/lib/payment-config';
+import { UpiPaymentModal } from '@/components/checkout/UpiPaymentModal';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -52,32 +55,87 @@ export default function AccountPage() {
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [copiedOrderId, setCopiedOrderId] = useState<string | null>(null);
 
+  // Payment Completion Modal State
+  const [selectedPaymentOrder, setSelectedPaymentOrder] = useState<Order | null>(null);
+  const [paymentSuccessMessage, setPaymentSuccessMessage] = useState<string | null>(null);
+  const [paymentConfig, setPaymentConfig] = useState({
+    upiId: 'peptrabio@icici',
+    upiMerchantName: 'Peptra Bio Labs',
+    advancePercentage: 10,
+    whatsappSupportNumber: '919876543210',
+    currency: 'INR',
+  });
+
+  useEffect(() => {
+    fetch('/api/payment/config')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.config) {
+          setPaymentConfig(data.config);
+        }
+      })
+      .catch((err) => console.warn('Payment config fallback:', err));
+  }, []);
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login?redirect=/account');
     }
   }, [user, isLoading, router]);
 
-  useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setPhone(user.phone || '');
-      loadUserOrders();
-    }
-  }, [user]);
-
-  const loadUserOrders = async () => {
+  const loadUserOrders = async (showLoading = true) => {
     if (!user) return;
-    setOrdersLoading(true);
+    if (showLoading) setOrdersLoading(true);
     try {
       const userOrders = await fetchCustomerOrdersAsync(user.email, user.id);
       setOrders(userOrders);
     } catch {
       setOrders(fetchCustomerOrders(user.email, user.id));
     } finally {
-      setOrdersLoading(false);
+      if (showLoading) setOrdersLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setPhone(user.phone || '');
+      loadUserOrders(true);
+
+      // Listen for updates from other tabs (e.g. admin marking payment received)
+      const handleStorageChange = (e: StorageEvent) => {
+        if (!e.key || e.key === 'peptrabio_orders_v2') {
+          loadUserOrders(false);
+        }
+      };
+      window.addEventListener('storage', handleStorageChange);
+
+      // Refresh on window focus
+      const handleFocus = () => {
+        loadUserOrders(false);
+      };
+      window.addEventListener('focus', handleFocus);
+
+      // Auto-poll every 4s when an order is in processing/awaiting_verification
+      const interval = setInterval(() => {
+        setOrders((currentOrders) => {
+          const hasInProcessing = currentOrders.some((o) => o.payment_status === 'awaiting_verification');
+          if (hasInProcessing) {
+            fetchCustomerOrdersAsync(user.email, user.id)
+              .then((updated) => setOrders(updated))
+              .catch(() => setOrders(fetchCustomerOrders(user.email, user.id)));
+          }
+          return currentOrders;
+        });
+      }, 4000);
+
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('focus', handleFocus);
+        clearInterval(interval);
+      };
+    }
+  }, [user]);
 
   const getOrderTotal = (order: Order) => {
     if (order.subtotal && order.total && order.subtotal > 0) {
@@ -86,6 +144,70 @@ export default function AccountPage() {
       }
     }
     return order.total;
+  };
+
+  const isOrderPaymentPending = (order: Order) => {
+    if (order.status === 'cancelled' || order.status === 'refunded') return false;
+    if (order.payment_status === 'verified') return false;
+    if (order.payment_status === 'unpaid' || order.payment_status === 'rejected' || !order.payment_status) {
+      return true;
+    }
+    if (order.status === 'pending' && order.payment_status !== 'awaiting_verification') {
+      return true;
+    }
+    return false;
+  };
+
+  const getOrderInrAmounts = (order: Order) => {
+    const baseTotal = getOrderTotal(order);
+    const isAlreadyInr = baseTotal > 500;
+    const totalInr = isAlreadyInr ? Math.round(baseTotal) : Math.round(baseTotal * 86.5);
+
+    const advPct = (order.advance_percentage || paymentConfig.advancePercentage || 10) / 100;
+    const advanceInr = (order.advance_amount && order.advance_amount > 50)
+      ? Math.round(order.advance_amount)
+      : Math.round(totalInr * advPct);
+
+    const remainingInr = (order.remaining_cod_amount && order.remaining_cod_amount > 50)
+      ? Math.round(order.remaining_cod_amount)
+      : Math.max(0, totalInr - advanceInr);
+
+    return {
+      totalInr,
+      advanceInr,
+      remainingInr,
+      advancePercentage: order.advance_percentage || paymentConfig.advancePercentage || 10,
+    };
+  };
+
+  const handlePaymentConfirmed = async (orderId: string, details: { utrNumber: string; screenshotUrl?: string }) => {
+    const targetOrderNumber = selectedPaymentOrder?.order_number;
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id === orderId || (targetOrderNumber && o.order_number === targetOrderNumber)) {
+          return {
+            ...o,
+            payment_status: 'awaiting_verification',
+            utr_number: details.utrNumber,
+            screenshot_url: details.screenshotUrl || o.screenshot_url,
+            payment_submitted_at: new Date().toISOString(),
+          };
+        }
+        return o;
+      })
+    );
+
+    setSelectedPaymentOrder(null);
+    setPaymentSuccessMessage(
+      `UTR reference logged for requisition #${targetOrderNumber || 'order'}! Payment is in processing and will be marked received once verified by administration.`
+    );
+    setTimeout(() => setPaymentSuccessMessage(null), 8000);
+
+    try {
+      await loadUserOrders(false);
+    } catch (e) {
+      console.warn('Failed to refresh customer orders:', e);
+    }
   };
 
   if (isLoading || !user) {
@@ -419,6 +541,19 @@ export default function AccountPage() {
                           <span className="font-mono font-bold text-content-primary">
                             {formatPrice(getOrderTotal(order))}
                           </span>
+                          {isOrderPaymentPending(order) && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedPaymentOrder(order);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-orbitron text-[10px] font-bold shadow-xs transition-colors flex items-center space-x-1"
+                            >
+                              <CreditCard className="w-3 h-3" />
+                              <span>Pay Now</span>
+                            </button>
+                          )}
                           <span className="text-brand font-orbitron text-[10px] font-bold group-hover:translate-x-0.5 transition-transform">
                             Details →
                           </span>
@@ -541,6 +676,29 @@ export default function AccountPage() {
             </div>
           </div>
 
+          {/* Payment Success Toast / Banner */}
+          {paymentSuccessMessage && (
+            <div className="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-400 text-emerald-900 flex items-start justify-between gap-3 animate-in fade-in duration-300">
+              <div className="flex items-start space-x-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-orbitron font-bold text-xs uppercase tracking-wider">
+                    PAYMENT CONFIRMATION SUBMITTED
+                  </p>
+                  <p className="text-xs font-sans mt-0.5">{paymentSuccessMessage}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPaymentSuccessMessage(null)}
+                className="text-emerald-700 hover:text-emerald-900 font-bold text-base leading-none p-1"
+                aria-label="Close notification"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
           {/* Orders List */}
           {ordersLoading ? (
             <div className="text-center py-16 space-y-3">
@@ -632,6 +790,63 @@ export default function AccountPage() {
                           </span>
                         </div>
                       </div>
+
+                      {/* Payment Pending Action Banner */}
+                      {isOrderPaymentPending(order) && (
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50/90 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                          <div className="flex items-start sm:items-center space-x-2.5 text-amber-950">
+                            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5 sm:mt-0" />
+                            <div className="font-sans leading-relaxed">
+                              <span className="font-semibold text-amber-900 font-orbitron text-[11px] block sm:inline sm:mr-1">
+                                Action Required:
+                              </span>
+                              Payment is pending for this requisition. Complete your payment online to initiate laboratory preparation and priority cold-chain dispatch.
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPaymentOrder(order)}
+                            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-orbitron text-xs font-bold shrink-0 self-start sm:self-auto transition-colors shadow-sm"
+                          >
+                            <CreditCard className="w-3.5 h-3.5" />
+                            <span>Pay Now</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Payment in Processing Banner */}
+                      {order.payment_status === 'awaiting_verification' && (
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                          <div className="flex items-start sm:items-center space-x-2.5 text-amber-950">
+                            <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5 sm:mt-0 animate-pulse" />
+                            <div className="font-sans leading-relaxed">
+                              <span className="font-semibold text-amber-900 font-orbitron text-[11px] block sm:inline sm:mr-1">
+                                Payment in Processing:
+                              </span>
+                              Your UPI UTR reference ({order.utr_number || 'recorded'}) has been submitted. Payment is currently in processing and will update automatically once administration marks payment received.
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPaymentOrder(order)}
+                            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-amber-300 text-amber-900 font-orbitron text-xs font-semibold shrink-0 self-start sm:self-auto hover:bg-amber-100 transition-colors shadow-xs"
+                          >
+                            <span>View Proof</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Payment Received Banner */}
+                      {order.payment_status === 'verified' && (
+                        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 flex items-center justify-between gap-3 text-xs">
+                          <div className="flex items-center space-x-2 text-emerald-900 font-sans">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>
+                              <strong className="font-orbitron font-semibold text-emerald-950">Payment Received & Confirmed:</strong> Your requisition payment has been verified by administration.
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Live Multi-step Progress Tracker */}
                       {currentStepIndex >= 0 && (
@@ -736,7 +951,36 @@ export default function AccountPage() {
                           </button>
                         </div>
 
-                        <div className="flex items-center space-x-2">
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          {isOrderPaymentPending(order) && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedPaymentOrder(order)}
+                              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-orbitron text-xs font-bold tracking-wide shadow-md hover:shadow-lg transition-all group"
+                            >
+                              <CreditCard className="w-3.5 h-3.5 mr-1.5 transition-transform group-hover:scale-110" />
+                              <span>Complete Payment</span>
+                            </button>
+                          )}
+
+                          {order.payment_status === 'awaiting_verification' && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedPaymentOrder(order)}
+                              className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-orbitron text-xs font-semibold transition-colors shadow-xs"
+                            >
+                              <Clock className="w-3.5 h-3.5 mr-1.5 text-amber-600 animate-pulse" />
+                              <span>Payment in Processing</span>
+                            </button>
+                          )}
+
+                          {order.payment_status === 'verified' && (
+                            <span className="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-300 font-orbitron text-xs font-bold shadow-xs">
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+                              <span>Payment Received</span>
+                            </span>
+                          )}
+
                           <Link
                             href={`/support/new?category=Order%20Status&order=${encodeURIComponent(order.order_number)}`}
                             className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand text-white hover:bg-brand-dark font-orbitron text-xs font-semibold shadow-purple-sm transition-colors"
@@ -840,6 +1084,47 @@ export default function AccountPage() {
                                   </p>
                                 </div>
                               )}
+
+                              {isOrderPaymentPending(order) && (
+                                <div className="pt-3 border-t border-gray-100">
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedPaymentOrder(order)}
+                                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-orbitron text-xs font-bold flex items-center justify-center space-x-2 transition-colors shadow-sm"
+                                  >
+                                    <CreditCard className="w-3.5 h-3.5" />
+                                    <span>COMPLETE ONLINE PAYMENT NOW →</span>
+                                  </button>
+                                </div>
+                              )}
+
+                              {order.payment_status === 'awaiting_verification' && (
+                                <div className="pt-3 border-t border-gray-100">
+                                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-xs">
+                                    <div className="flex items-center space-x-1.5 text-amber-900 font-orbitron font-bold text-[11px] mb-1">
+                                      <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                                      <span>PAYMENT IN PROCESSING</span>
+                                    </div>
+                                    <p className="text-[11px] text-amber-800 font-sans leading-tight">
+                                      UTR Reference #{order.utr_number || 'recorded'} is under review. Order and account will automatically update as soon as administration marks payment received.
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+
+                              {order.payment_status === 'verified' && (
+                                <div className="pt-3 border-t border-gray-100">
+                                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs">
+                                    <div className="flex items-center space-x-1.5 text-emerald-900 font-orbitron font-bold text-[11px]">
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                      <span>PAYMENT RECEIVED & CONFIRMED</span>
+                                    </div>
+                                    <p className="text-[11px] text-emerald-800 font-sans mt-0.5 leading-tight">
+                                      Requisition payment has been verified by administration.
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
 
@@ -889,6 +1174,32 @@ export default function AccountPage() {
           </div>
         </div>
       )}
+
+      {/* Complete Payment Modal */}
+      {selectedPaymentOrder && (() => {
+        const amounts = getOrderInrAmounts(selectedPaymentOrder);
+        return (
+          <UpiPaymentModal
+            isOpen={!!selectedPaymentOrder}
+            onClose={() => setSelectedPaymentOrder(null)}
+            orderNumber={selectedPaymentOrder.order_number}
+            orderId={selectedPaymentOrder.id}
+            totalAmount={amounts.totalInr}
+            advanceAmount={amounts.advanceInr}
+            remainingCodAmount={amounts.remainingInr}
+            advancePercentage={amounts.advancePercentage}
+            initialPaymentType={selectedPaymentOrder.payment_type || 'partial'}
+            items={selectedPaymentOrder.items}
+            existingUtr={selectedPaymentOrder.utr_number || ''}
+            existingStatus={selectedPaymentOrder.payment_status || 'unpaid'}
+            upiId={paymentConfig.upiId}
+            merchantName={paymentConfig.upiMerchantName}
+            whatsappNumber={paymentConfig.whatsappSupportNumber}
+            closeButtonText="CLOSE"
+            onPaymentConfirmed={(details) => handlePaymentConfirmed(selectedPaymentOrder.id, details)}
+          />
+        );
+      })()}
 
     </div>
   );

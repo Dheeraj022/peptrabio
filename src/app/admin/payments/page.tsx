@@ -70,7 +70,7 @@ export default function AdminPaymentsPage() {
       loadOrders();
       showToast(
         action === 'verify'
-          ? `Order #${selectedOrder.order_number} payment marked as VERIFIED.`
+          ? `Order #${selectedOrder.order_number} marked as PAYMENT RECEIVED (Customer account updated).`
           : `Order #${selectedOrder.order_number} payment REJECTED.`
       );
 
@@ -177,8 +177,8 @@ export default function AdminPaymentsPage() {
           <div className="flex items-center space-x-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
             {[
               { id: 'all', label: 'All Orders' },
-              { id: 'awaiting_verification', label: `Awaiting (${awaitingCount})` },
-              { id: 'verified', label: `Verified (${verifiedCount})` },
+              { id: 'awaiting_verification', label: `In Processing (${awaitingCount})` },
+              { id: 'verified', label: `Payment Received (${verifiedCount})` },
               { id: 'rejected', label: 'Rejected' },
               { id: 'unpaid', label: 'Unpaid' },
             ].map((tab) => (
@@ -456,7 +456,7 @@ export default function AdminPaymentsPage() {
                       className="flex-1 py-3 px-5 rounded-full bg-emerald-600 text-white font-orbitron text-xs font-bold hover:bg-emerald-700 shadow-sm transition-colors flex items-center justify-center space-x-1.5"
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>MARK PAYMENT VERIFIED</span>
+                      <span>MARK PAYMENT RECEIVED</span>
                     </button>
 
                     <button

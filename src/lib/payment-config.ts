@@ -160,7 +160,7 @@ export function getPaymentStatusBadge(status: string) {
   switch (status) {
     case 'verified':
       return {
-        label: 'Payment Verified',
+        label: 'Payment Received',
         bg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
         text: 'text-emerald-700',
         border: 'border-emerald-200',
@@ -169,7 +169,7 @@ export function getPaymentStatusBadge(status: string) {
       };
     case 'awaiting_verification':
       return {
-        label: 'Awaiting Verification',
+        label: 'Payment in Processing',
         bg: 'bg-amber-50 text-amber-700 border-amber-200',
         text: 'text-amber-700',
         border: 'border-amber-200',

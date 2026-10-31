@@ -15,6 +15,7 @@ import {
   X
 } from 'lucide-react';
 import { generateWhatsAppPaymentLink } from '@/lib/payment-config';
+import { submitPaymentConfirmation } from '@/lib/products-store';
 
 interface PaymentConfirmationFormProps {
   orderId?: string;
@@ -25,8 +26,8 @@ interface PaymentConfirmationFormProps {
   whatsappNumber: string;
   onSuccess?: (details: { utrNumber: string; screenshotUrl?: string }) => void;
   alreadyConfirmed?: boolean;
-  existingUtr?: string;
-  existingStatus?: string;
+  existingUtr?: string | null;
+  existingStatus?: string | null;
 }
 
 export function PaymentConfirmationForm({
@@ -41,7 +42,7 @@ export function PaymentConfirmationForm({
   existingUtr = '',
   existingStatus = 'awaiting_verification',
 }: PaymentConfirmationFormProps) {
-  const [utrNumber, setUtrNumber] = useState<string>(existingUtr);
+  const [utrNumber, setUtrNumber] = useState<string>(existingUtr || '');
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -49,6 +50,12 @@ export function PaymentConfirmationForm({
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isSuccess, setIsSuccess] = useState<boolean>(alreadyConfirmed);
+
+  React.useEffect(() => {
+    if (existingUtr) {
+      setUtrNumber(existingUtr);
+    }
+  }, [existingUtr]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMsg('');
@@ -107,7 +114,7 @@ export function PaymentConfirmationForm({
     e.preventDefault();
     setErrorMsg('');
 
-    const cleanUtr = utrNumber.trim();
+    const cleanUtr = (utrNumber || '').trim();
     if (!cleanUtr) {
       setErrorMsg('Please enter your 12-digit UPI Reference / UTR Number.');
       return;
@@ -138,6 +145,20 @@ export function PaymentConfirmationForm({
       }
 
       setIsSuccess(true);
+
+      // Also ensure local storage store stays synchronized
+      try {
+        await submitPaymentConfirmation({
+          orderId,
+          orderNumber,
+          paymentType,
+          utrNumber: cleanUtr,
+          screenshotUrl: screenshotUrl || undefined,
+        });
+      } catch (storeErr) {
+        console.warn('Local store sync:', storeErr);
+      }
+
       if (onSuccess) {
         onSuccess({ utrNumber: cleanUtr, screenshotUrl: screenshotUrl || undefined });
       }
@@ -153,7 +174,7 @@ export function PaymentConfirmationForm({
     orderNumber,
     paymentType,
     amountPaid: amountToPay,
-    utr: utrNumber.trim() || undefined,
+    utr: (utrNumber || '').trim() || undefined,
   });
 
   return (
@@ -192,19 +213,28 @@ export function PaymentConfirmationForm({
 
       {/* Verification Pending Banner if already submitted */}
       {isSuccess ? (
-        <div className="p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-400 space-y-4 animate-in fade-in">
+        <div className="p-5 rounded-2xl bg-amber-50 border-2 border-amber-400 space-y-4 animate-in fade-in">
           <div className="flex items-start space-x-3">
-            <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <h4 className="font-orbitron font-bold text-sm text-emerald-900">
-                PAYMENT CONFIRMATION RECEIVED
+            <Clock className="w-6 h-6 text-amber-600 shrink-0 mt-0.5 animate-pulse" />
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900 font-orbitron text-[10px] font-bold uppercase tracking-wider">
+                  Payment in Processing
+                </span>
+                <span className="text-[10px] font-sans text-amber-700">Admin Verification Required</span>
+              </div>
+              <h4 className="font-orbitron font-bold text-sm text-amber-950">
+                UTR REFERENCE SUBMITTED FOR PROCESSING
               </h4>
-              <p className="text-xs text-emerald-800 font-sans leading-relaxed">
-                Payment verification is pending. Our team will verify your payment within 6–12 hours. Your order payment status will be updated after verification.
+              <p className="text-xs text-amber-900 font-sans leading-relaxed">
+                Your UPI transaction reference has been recorded and placed into <strong>processing</strong>. Submitting a reference notifies our finance team to reconcile the bank credit.
+              </p>
+              <p className="text-xs text-amber-800 font-sans leading-relaxed">
+                <strong>Payment is marked as received only when an administrator verifies and confirms the bank transfer.</strong> Once confirmed by administration, your user account and order status will automatically update to <strong>Payment Received</strong>.
               </p>
               {utrNumber && (
-                <div className="pt-1 text-xs font-mono text-emerald-900">
-                  Logged UTR / Ref: <strong>{utrNumber}</strong>
+                <div className="pt-1 text-xs font-mono text-amber-950 bg-white/80 px-3 py-1.5 rounded-xl border border-amber-300 inline-block">
+                  Logged Reference ID: <strong>{utrNumber}</strong>
                 </div>
               )}
             </div>
@@ -346,7 +376,14 @@ export function PaymentConfirmationForm({
 
           </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+          <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-[11px] font-sans text-amber-900 flex items-start space-x-2">
+            <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <span>
+              <strong>Note:</strong> Submitting this reference places your payment in <strong>processing</strong>. Payment is verified and completed only after an admin verifies receipt in the dashboard. Your user account will automatically update to <strong>Payment Received</strong>.
+            </span>
+          </div>
+
+          <div className="pt-1 flex flex-col sm:flex-row gap-3">
             <button
               type="submit"
               disabled={submitting || uploading}
@@ -357,7 +394,7 @@ export function PaymentConfirmationForm({
               }`}
             >
               <FileCheck className="w-4 h-4" />
-              <span>{submitting ? 'RECORDING CONFIRMATION...' : 'CONFIRM UPI PAYMENT'}</span>
+              <span>{submitting ? 'RECORDING REFERENCE...' : 'SUBMIT UTR FOR PROCESSING'}</span>
             </button>
 
             {/* Direct WhatsApp Option */}

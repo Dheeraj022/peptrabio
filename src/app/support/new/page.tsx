@@ -48,6 +48,7 @@ function CreateTicketForm() {
   const [verificationCode, setVerificationCode] = useState('');
 
   const [attachments, setAttachments] = useState<TicketAttachment[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [createdTicketNumber, setCreatedTicketNumber] = useState<string | null>(null);
 
@@ -57,6 +58,38 @@ function CreateTicketForm() {
       if (!customerEmail) setCustomerEmail(user.email);
     }
   }, [user]);
+
+  // Pre-fill from query params (e.g. from Product Verification or Order support button)
+  useEffect(() => {
+    const codeParam = searchParams.get('code');
+    const categoryParam = searchParams.get('category') as TicketCategory;
+    const subjectParam = searchParams.get('subject');
+    const orderParam = searchParams.get('order');
+    const productParam = searchParams.get('product');
+
+    if (codeParam) {
+      setVerificationCode(codeParam);
+      setCategory('Product Verification');
+      if (!subjectParam) {
+        setSubject(`Product Verification Support — Code: ${codeParam}`);
+      }
+    }
+    if (categoryParam && CATEGORIES.includes(categoryParam)) {
+      setCategory(categoryParam);
+    }
+    if (subjectParam) {
+      setSubject(subjectParam);
+    }
+    if (orderParam) {
+      setOrderNumber(orderParam);
+      if (!subjectParam) {
+        setSubject(`Inquiry for Order ${orderParam}`);
+      }
+    }
+    if (productParam) {
+      setProductName(productParam);
+    }
+  }, [searchParams]);
 
   if (isLoading) {
     return (
@@ -110,41 +143,6 @@ function CreateTicketForm() {
       </div>
     );
   }
-
-  // Pre-fill from query params (e.g. from Product Verification or Order support button)
-  useEffect(() => {
-    const codeParam = searchParams.get('code');
-    const categoryParam = searchParams.get('category') as TicketCategory;
-    const subjectParam = searchParams.get('subject');
-    const orderParam = searchParams.get('order');
-    const productParam = searchParams.get('product');
-
-    if (codeParam) {
-      setVerificationCode(codeParam);
-      setCategory('Product Verification');
-      if (!subjectParam) {
-        setSubject(`Product Verification Support — Code: ${codeParam}`);
-      }
-    }
-    if (categoryParam && CATEGORIES.includes(categoryParam)) {
-      setCategory(categoryParam);
-    }
-    if (subjectParam) {
-      setSubject(subjectParam);
-    }
-    if (orderParam) {
-      setOrderNumber(orderParam);
-      if (!subjectParam) {
-        setSubject(`Inquiry for Order ${orderParam}`);
-      }
-    }
-    if (productParam) {
-      setProductName(productParam);
-    }
-  }, [searchParams]);
-
-  // Handle attachment upload with server persistence
-  const [uploading, setUploading] = useState(false);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -397,9 +395,9 @@ function CreateTicketForm() {
                 onChange={(e) => setPriority(e.target.value as any)}
                 className="w-full px-4 py-3 rounded-xl border border-brand-border bg-surface-soft text-xs font-sans focus:outline-none focus:border-brand cursor-pointer"
               >
-                <option value="low">Low — General Inquiry</option>
-                <option value="normal">Normal — Standard Question</option>
-                <option value="high">High — Time-Sensitive / Order Issue</option>
+                <option value="low">General Inquiry</option>
+                <option value="normal">Standard Question</option>
+                <option value="high">Time-Sensitive / Order Issue</option>
               </select>
               <p className="text-[10px] text-content-muted font-sans mt-1">
                 Note: "Urgent" priority is assigned directly by triage support staff.

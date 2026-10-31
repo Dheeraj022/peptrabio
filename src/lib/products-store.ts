@@ -628,6 +628,8 @@ export async function confirmOrderPaymentInStore({
   return index !== -1 ? orders[index] : null;
 }
 
+export const submitPaymentConfirmation = confirmOrderPaymentInStore;
+
 export async function verifyOrderPaymentInStore({
   orderId,
   action,

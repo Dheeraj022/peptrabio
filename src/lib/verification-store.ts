@@ -3,7 +3,8 @@ import {
   VerificationCodeBatch,
   ProductVerificationScan,
   VerifyApiResponse,
-  VerificationCodeStatus
+  VerificationCodeStatus,
+  SafeProductInfo
 } from '@/types/verification';
 import { getLocalProducts } from './products-store';
 import { createClient } from './supabase/client';
@@ -294,7 +295,36 @@ export async function executeAtomicVerification(
       });
 
       if (!error && data && data.status) {
-        return data as VerifyApiResponse;
+        const rpcData: any = data;
+        const productName = rpcData.product?.name || rpcData.product_name || 'Research Peptide';
+        const batchNumber = rpcData.product?.batch_number || rpcData.batch_number || 'N/A';
+        const productCode = rpcData.product?.product_code || rpcData.product_code || 'PB-SPEC';
+
+        const safeProduct: SafeProductInfo = {
+          name: productName,
+          product_code: productCode,
+          batch_number: batchNumber,
+          size: rpcData.product?.size || rpcData.size || '5 mg',
+          purity: rpcData.product?.purity || rpcData.purity || '99%+',
+          format: rpcData.product?.format || rpcData.format || 'Lyophilized Solid',
+        };
+
+        const scanNum = rpcData.scan_number ?? rpcData.scan_count ?? 1;
+        const maxScans = rpcData.max_scans ?? 3;
+        const scansRemaining = rpcData.scans_remaining ?? Math.max(0, maxScans - scanNum);
+
+        return {
+          ...rpcData,
+          scan_number: scanNum,
+          max_scans: maxScans,
+          scans_remaining: scansRemaining,
+          code: rpcData.code || normalized,
+          product_name: productName,
+          batch_number: batchNumber,
+          product_code: productCode,
+          product: safeProduct,
+          verified_at: rpcData.verified_at || rpcData.last_verified_at || new Date().toISOString(),
+        } as VerifyApiResponse;
       }
     } catch (e) {
       console.warn('Supabase verify RPC fallback to local execution', e);
@@ -420,6 +450,9 @@ export async function executeAtomicVerification(
 
   // Fetch safe public product info
   const prod = products.find((p) => p.id === codeRec.product_id);
+  const productName = prod?.name || codeRec.product_name || 'Research Peptide';
+  const batchNumber = codeRec.batch_number || 'N/A';
+  const productCode = prod?.product_code || codeRec.product_code || 'PB-SPEC';
 
   return {
     status: 'genuine',
@@ -427,10 +460,13 @@ export async function executeAtomicVerification(
     max_scans: codeRec.max_scans,
     scans_remaining: scansRemaining,
     code: codeRec.code,
+    product_name: productName,
+    batch_number: batchNumber,
+    product_code: productCode,
     product: {
-      name: prod?.name || codeRec.product_name || 'Research Peptide',
-      product_code: prod?.product_code || codeRec.product_code || 'PB-SPEC',
-      batch_number: codeRec.batch_number,
+      name: productName,
+      product_code: productCode,
+      batch_number: batchNumber,
       size: prod?.size || '5 mg',
       purity: prod?.purity || '99%+',
       format: prod?.format || 'Lyophilized Solid'
@@ -513,6 +549,9 @@ export function executeClientVerification(code: string): VerifyApiResponse {
   saveLocalVerificationScans(scans);
 
   const prod = products.find((p) => p.id === codeRec.product_id);
+  const productName = prod?.name || codeRec.product_name || 'Research Peptide';
+  const batchNumber = codeRec.batch_number || 'N/A';
+  const productCode = prod?.product_code || codeRec.product_code || 'PB-SPEC';
 
   return {
     status: 'genuine',
@@ -520,10 +559,13 @@ export function executeClientVerification(code: string): VerifyApiResponse {
     max_scans: codeRec.max_scans,
     scans_remaining: scansRemaining,
     code: codeRec.code,
+    product_name: productName,
+    batch_number: batchNumber,
+    product_code: productCode,
     product: {
-      name: prod?.name || codeRec.product_name || 'Research Peptide',
-      product_code: prod?.product_code || codeRec.product_code || 'PB-SPEC',
-      batch_number: codeRec.batch_number,
+      name: productName,
+      product_code: productCode,
+      batch_number: batchNumber,
       size: prod?.size || '5 mg',
       purity: prod?.purity || '99%+',
       format: prod?.format || 'Lyophilized Solid'

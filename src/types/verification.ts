@@ -51,10 +51,21 @@ export type SafeProductInfo = {
 export type VerifyApiResponse = {
   status: VerificationScanResult;
   scan_number?: number;
+  scan_count?: number;
   max_scans?: number;
   scans_remaining?: number;
   code?: string;
   product?: SafeProductInfo;
+  product_name?: string;
+  batch_number?: string;
+  product_code?: string;
+  size?: string;
+  purity?: string;
+  format?: string;
+  storage?: string;
+  serial_number?: string;
+  first_verified_at?: string;
+  last_verified_at?: string;
   verified_at?: string;
   message?: string;
 };

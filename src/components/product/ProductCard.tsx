@@ -49,18 +49,13 @@ export function ProductCard({ product }: { product: Product }) {
           />
 
           {/* Top badges */}
-          <div className="absolute top-1.5 left-1.5 sm:top-2.5 sm:left-2.5 flex flex-col gap-1 items-start">
-            {product.is_featured && (
+          {product.is_featured && (
+            <div className="absolute top-1.5 left-1.5 sm:top-2.5 sm:left-2.5 flex flex-col gap-1 items-start">
               <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-brand text-white font-orbitron text-[8px] sm:text-[10px] font-bold tracking-wider rounded-full shadow-sm">
                 FEATURED
               </span>
-            )}
-            {product.category && (
-              <span className="hidden sm:inline-block px-2.5 py-1 bg-white/90 backdrop-blur-sm text-brand-dark font-orbitron text-[9px] font-semibold tracking-wider rounded-full border border-brand-border shadow-xs">
-                {product.category.toUpperCase()}
-              </span>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Quick Actions overlay on hover */}
           <div className="hidden sm:flex absolute inset-0 bg-brand-dark/20 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-2">

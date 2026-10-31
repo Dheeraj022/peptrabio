@@ -79,14 +79,21 @@ export function VerificationResultCard({
           </span>
         </div>
 
-        {/* Product Details Card */}
-        {result.product && (
-          <ProductVerificationDetails
-            product={result.product}
-            code={result.code}
-            verifiedAt={result.verified_at}
-          />
-        )}
+        {/* Product Details Card - Always Showcase Batch No & Product Name */}
+        <ProductVerificationDetails
+          product={
+            result.product || {
+              name: result.product_name || 'Research Peptide',
+              batch_number: result.batch_number || 'LOT VERIFIED',
+              product_code: result.product_code || 'PB-SPEC',
+              size: result.size || '5 mg',
+              purity: result.purity || '99%+',
+              format: result.format || 'Lyophilized Solid',
+            }
+          }
+          code={result.code}
+          verifiedAt={result.verified_at}
+        />
 
         {/* Scan 3 Special Support Card */}
         {scanNumber >= 3 && (
@@ -144,10 +151,22 @@ export function VerificationResultCard({
           </p>
         </div>
 
-        {code && (
-          <div className="p-3 bg-brand-subtle rounded-2xl border border-brand-border inline-block text-xs font-mono font-bold text-brand">
-            Code: {code}
-          </div>
+        {/* Showcase Batch No & Product Name on Limit Reached */}
+        {(result.product || result.product_name || result.batch_number) && (
+          <ProductVerificationDetails
+            product={
+              result.product || {
+                name: result.product_name || 'Research Peptide',
+                batch_number: result.batch_number || 'N/A',
+                product_code: result.product_code || 'PB-SPEC',
+                size: result.size || '5 mg',
+                purity: result.purity || '99%+',
+                format: result.format || 'Lyophilized Solid',
+              }
+            }
+            code={result.code}
+            verifiedAt={result.verified_at}
+          />
         )}
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">

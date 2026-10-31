@@ -88,6 +88,18 @@ function VerifyContent() {
         }
       }
 
+      // Ensure product and batch number are always populated on the result
+      if (!data.product) {
+        data.product = {
+          name: data.product_name || 'Research Peptide',
+          batch_number: data.batch_number || 'LOT VERIFIED',
+          product_code: data.product_code || 'PB-SPEC',
+          size: data.size || '5 mg',
+          purity: data.purity || '99%+',
+          format: data.format || 'Lyophilized Solid',
+        };
+      }
+
       setResult(data);
     } catch (err: any) {
       // Local fallback on network failure

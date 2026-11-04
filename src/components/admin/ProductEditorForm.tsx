@@ -354,9 +354,11 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
 
   const handleSubmit = async (publishStatus?: boolean) => {
     setSaving(true);
+    const resolvedActive =
+      publishStatus !== undefined ? publishStatus : (formData.is_active ?? true);
     const payload = {
       ...formData,
-      is_active: publishStatus !== undefined ? publishStatus : formData.is_active,
+      is_active: resolvedActive,
     };
     const saved = await saveOrUpdateProduct(payload);
     setSaving(false);
@@ -404,23 +406,61 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
               <span>PREVIEW</span>
             </Link>
           )}
-          <button
-            type="button"
-            onClick={() => handleSubmit(false)}
-            disabled={saving}
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-content-primary font-orbitron text-xs font-semibold rounded-full transition-all"
-          >
-            SAVE DRAFT
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSubmit(true)}
-            disabled={saving}
-            className="px-6 py-2 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-1.5 transition-all"
-          >
-            <Save className="w-3.5 h-3.5" />
-            <span>{saving ? 'SAVING...' : 'PUBLISH PRODUCT'}</span>
-          </button>
+
+          {initialProduct ? (
+            <>
+              {formData.is_active ? (
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(false)}
+                  disabled={saving}
+                  className="px-4 py-2 bg-gray-100 hover:bg-red-50 hover:text-accent-danger text-content-secondary font-orbitron text-xs font-semibold rounded-full transition-all border border-brand-border"
+                  title="Hide product from public website"
+                >
+                  DEACTIVATE
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(true)}
+                  disabled={saving}
+                  className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-orbitron text-xs font-semibold rounded-full transition-all border border-emerald-200"
+                  title="Make product visible on public website"
+                >
+                  ACTIVATE
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={saving}
+                className="px-6 py-2 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-1.5 transition-all"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{saving ? 'SAVING...' : 'SAVE CHANGES'}</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => handleSubmit(false)}
+                disabled={saving}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-content-primary font-orbitron text-xs font-semibold rounded-full transition-all"
+              >
+                SAVE DRAFT
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSubmit(true)}
+                disabled={saving}
+                className="px-6 py-2 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-1.5 transition-all"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{saving ? 'SAVING...' : 'PUBLISH PRODUCT'}</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -1262,6 +1302,72 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
 
         </div>
 
+      </div>
+
+      {/* Bottom Save Bar */}
+      <div className="bg-white border border-brand-border rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <Link
+          href="/admin/products"
+          className="inline-flex items-center text-xs font-orbitron text-content-secondary hover:text-brand"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5" />
+          <span>RETURN TO PRODUCTS LIST</span>
+        </Link>
+
+        <div className="flex items-center space-x-3 w-full sm:w-auto justify-end">
+          {initialProduct ? (
+            <>
+              {formData.is_active ? (
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(false)}
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-gray-100 hover:bg-red-50 hover:text-accent-danger text-content-secondary font-orbitron text-xs font-semibold rounded-full transition-all border border-brand-border"
+                >
+                  DEACTIVATE
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(true)}
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-orbitron text-xs font-semibold rounded-full transition-all border border-emerald-200"
+                >
+                  ACTIVATE
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={saving}
+                className="px-8 py-2.5 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-2 transition-all"
+              >
+                <Save className="w-4 h-4" />
+                <span>{saving ? 'SAVING...' : 'SAVE CHANGES'}</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => handleSubmit(false)}
+                disabled={saving}
+                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-content-primary font-orbitron text-xs font-semibold rounded-full transition-all"
+              >
+                SAVE DRAFT
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSubmit(true)}
+                disabled={saving}
+                className="px-8 py-2.5 bg-brand hover:bg-brand-dark text-white font-orbitron text-xs font-semibold rounded-full shadow-purple-sm flex items-center space-x-2 transition-all"
+              >
+                <Save className="w-4 h-4" />
+                <span>{saving ? 'SAVING...' : 'PUBLISH PRODUCT'}</span>
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Media Library Modal for Selecting or Changing Photos */}

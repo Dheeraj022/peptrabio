@@ -6,6 +6,8 @@ const PRODUCTS_STORAGE_KEY = 'peptrabio_products_v10';
 const CATEGORIES_STORAGE_KEY = 'peptrabio_categories_v6';
 const ORDERS_STORAGE_KEY = 'peptrabio_orders_v6';
 const AUDIT_LOGS_STORAGE_KEY = 'peptrabio_audit_logs_v6';
+const PRODUCT_STATUS_OVERRIDES_KEY = 'peptrabio_product_status_overrides_v1';
+const DELETED_PRODUCTS_KEY = 'peptrabio_deleted_products_v1';
 
 // Seed Initial Orders
 export const INITIAL_ORDERS: Order[] = [
@@ -142,24 +144,86 @@ function isBrowser(): boolean {
   return typeof window !== 'undefined';
 }
 
+export function getProductStatusOverrides(): Record<string, boolean> {
+  if (!isBrowser()) return {};
+  try {
+    const raw = localStorage.getItem(PRODUCT_STATUS_OVERRIDES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveProductStatusOverride(id: string, isActive: boolean): void {
+  if (!isBrowser()) return;
+  try {
+    const current = getProductStatusOverrides();
+    current[id] = isActive;
+    localStorage.setItem(PRODUCT_STATUS_OVERRIDES_KEY, JSON.stringify(current));
+  } catch (e) {
+    console.error('Failed to save product status override:', e);
+  }
+}
+
+export function getDeletedProductIds(): string[] {
+  if (!isBrowser()) return [];
+  try {
+    const raw = localStorage.getItem(DELETED_PRODUCTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function markProductDeleted(id: string): void {
+  if (!isBrowser()) return;
+  try {
+    const current = getDeletedProductIds();
+    if (!current.includes(id)) {
+      current.push(id);
+      localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(current));
+    }
+  } catch (e) {
+    console.error('Failed to mark product deleted:', e);
+  }
+}
+
+export function applyOverridesToProducts(products: Product[]): Product[] {
+  if (!isBrowser()) return products;
+  const overrides = getProductStatusOverrides();
+  const deletedIds = new Set(getDeletedProductIds());
+
+  return products
+    .filter((p) => !deletedIds.has(p.id))
+    .map((p) => {
+      if (typeof overrides[p.id] === 'boolean') {
+        return { ...p, is_active: overrides[p.id] };
+      }
+      return p;
+    });
+}
+
 export function getLocalProducts(): Product[] {
   if (!isBrowser()) return SEED_PRODUCTS;
   try {
     const raw = localStorage.getItem(PRODUCTS_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(SEED_PRODUCTS));
-      return SEED_PRODUCTS;
+      const initialized = applyOverridesToProducts(SEED_PRODUCTS);
+      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(initialized));
+      return initialized;
     }
-    return JSON.parse(raw);
+    const parsed: Product[] = JSON.parse(raw);
+    return applyOverridesToProducts(parsed);
   } catch {
-    return SEED_PRODUCTS;
+    return applyOverridesToProducts(SEED_PRODUCTS);
   }
 }
 
 export function saveLocalProducts(products: Product[]): void {
   if (!isBrowser()) return;
   try {
-    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
+    const withOverrides = applyOverridesToProducts(products);
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(withOverrides));
   } catch (err) {
     console.error('Error saving products locally', err);
     try {
@@ -174,7 +238,8 @@ export function saveLocalProducts(products: Product[]): void {
               : img.image_url,
         })),
       }));
-      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(sanitized));
+      const withOverrides = applyOverridesToProducts(sanitized);
+      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(withOverrides));
     } catch (fallbackErr) {
       console.error('Critical: unable to persist to localStorage', fallbackErr);
     }
@@ -302,11 +367,10 @@ export async function fetchAllProducts(): Promise<Product[]> {
         const json = await res.json();
         if (Array.isArray(json.products) && json.products.length > 0) {
           const apiProducts = json.products as Product[];
-          // If fetched from Supabase, merge and update local cache
-          if (json.source === 'supabase') {
-            saveLocalProducts(apiProducts);
-            return apiProducts;
-          }
+          // Apply local overrides and persist
+          const resolved = applyOverridesToProducts(apiProducts);
+          saveLocalProducts(resolved);
+          return resolved;
         }
       }
     } catch {
@@ -332,6 +396,7 @@ export async function fetchAllProducts(): Promise<Product[]> {
             return {
               ...lp,
               ...remote,
+              is_active: lp.is_active,
               images: remoteImages.length > 0 ? remoteImages : localImages,
               showcase_order: lp.showcase_order ?? remote.showcase_order,
             };
@@ -344,7 +409,9 @@ export async function fetchAllProducts(): Promise<Product[]> {
             merged.push(rp);
           }
         }
-        return merged;
+        const resolved = applyOverridesToProducts(merged);
+        saveLocalProducts(resolved);
+        return resolved;
       }
     } catch (e) {
       console.warn('Supabase fetch failed, fallback to local', e);
@@ -492,6 +559,9 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
     addAuditLog('product_created', 'product', savedProduct.id, { name: savedProduct.name });
   }
 
+  if (typeof savedProduct.is_active === 'boolean') {
+    saveProductStatusOverride(savedProduct.id, savedProduct.is_active);
+  }
   saveLocalProducts(products);
 
   // Background cloud sync via server API endpoint (uses Admin Service Role)
@@ -558,6 +628,7 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
 }
 
 export async function deleteProductById(id: string): Promise<boolean> {
+  markProductDeleted(id);
   const products = getLocalProducts();
   const target = products.find(p => p.id === id);
   const filtered = products.filter(p => p.id !== id);
@@ -565,6 +636,17 @@ export async function deleteProductById(id: string): Promise<boolean> {
 
   if (target) {
     addAuditLog('product_deleted', 'product', id, { name: target.name });
+  }
+
+  // Sync delete to server API (admin service role)
+  if (isBrowser()) {
+    try {
+      fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      }).catch((e) => console.warn('API product delete sync note:', e));
+    } catch {
+      // ignore
+    }
   }
 
   const supabase = createClient();
@@ -583,16 +665,57 @@ export async function toggleProductActive(id: string): Promise<Product | null> {
   const index = products.findIndex(p => p.id === id);
   if (index === -1) return null;
 
-  products[index].is_active = !products[index].is_active;
+  const newActiveState = !products[index].is_active;
+  products[index].is_active = newActiveState;
   products[index].updated_at = new Date().toISOString();
+
+  // Save override immediately so subsequent fetches respect it
+  saveProductStatusOverride(id, newActiveState);
   saveLocalProducts(products);
 
   addAuditLog(
-    products[index].is_active ? 'product_activated' : 'product_deactivated',
+    newActiveState ? 'product_activated' : 'product_deactivated',
     'product',
     id,
-    { name: products[index].name, is_active: products[index].is_active }
+    { name: products[index].name, is_active: newActiveState }
   );
+
+  // Sync to server API (admin service role)
+  if (isBrowser()) {
+    try {
+      fetch('/api/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          is_active: newActiveState,
+        }),
+      }).catch(async () => {
+        // Fallback upsert
+        try {
+          await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(products[index]),
+          });
+        } catch {
+          // handled
+        }
+      });
+    } catch (e) {
+      console.warn('API product status sync note:', e);
+    }
+  }
+
+  // Direct Supabase client sync
+  const supabase = createClient();
+  if (supabase) {
+    try {
+      await supabase.from('products').update({ is_active: newActiveState }).eq('id', id);
+    } catch {
+      // ignore
+    }
+  }
 
   return products[index];
 }

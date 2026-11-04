@@ -8,6 +8,7 @@ import { useCurrency } from '@/context/CurrencyContext';
 import { Product } from '@/types';
 import {
   getLocalProducts,
+  fetchAllProducts,
   deleteProductById,
   toggleProductActive,
   saveOrUpdateProduct
@@ -35,8 +36,16 @@ export default function AdminProductsPage() {
   const [deleteModalId, setDeleteModalId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState('');
 
-  const loadData = () => {
+  const loadData = async () => {
+    // 1. Immediately show local state
     setProducts(getLocalProducts());
+    // 2. Refresh from server/Supabase in background
+    try {
+      const fresh = await fetchAllProducts();
+      setProducts(fresh);
+    } catch {
+      // Local fallback already in place
+    }
   };
 
   useEffect(() => {
@@ -49,9 +58,23 @@ export default function AdminProductsPage() {
   };
 
   const handleToggleStatus = async (id: string) => {
-    await toggleProductActive(id);
-    loadData();
-    showToast('Product status updated.');
+    // Optimistic UI update
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, is_active: !p.is_active } : p))
+    );
+    const updated = await toggleProductActive(id);
+    if (updated) {
+      setProducts((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, is_active: updated.is_active } : p))
+      );
+      showToast(
+        updated.is_active
+          ? 'Product activated and visible on website.'
+          : 'Product deactivated and hidden from website.'
+      );
+    } else {
+      loadData();
+    }
   };
 
   const handleDuplicate = async (prod: Product) => {
@@ -69,9 +92,9 @@ export default function AdminProductsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    await deleteProductById(id);
+    setProducts((prev) => prev.filter((p) => p.id !== id));
     setDeleteModalId(null);
-    loadData();
+    await deleteProductById(id);
     showToast('Product removed from catalog.');
   };
 

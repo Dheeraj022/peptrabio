@@ -90,7 +90,7 @@ export default function ProductDetailPage() {
         setProduct(prod);
         const all = await fetchAllProducts();
         const related = all
-          .filter((p) => p.id !== prod.id && (p.category === prod.category || p.is_featured))
+          .filter((p) => p.id !== prod.id && p.is_active && (p.category === prod.category || p.is_featured))
           .slice(0, 4);
         setRelatedProducts(related);
 
@@ -440,7 +440,9 @@ export default function ProductDetailPage() {
             >
               <ShoppingBag className="w-4 h-4" />
               <span>
-                {isOutOfStock
+                {!product.is_active
+                  ? 'PRODUCT CURRENTLY UNAVAILABLE'
+                  : isOutOfStock
                   ? 'OUT OF STOCK'
                   : `Add to Cart — ${formatPrice(product.price * quantity)}`}
               </span>
@@ -1279,7 +1281,7 @@ export default function ProductDetailPage() {
               }`}
             >
               <ShoppingBag className="w-3.5 h-3.5" />
-              <span>{isOutOfStock ? 'OUT' : 'BUY NOW'}</span>
+              <span>{!product.is_active ? 'UNAVAILABLE' : isOutOfStock ? 'OUT' : 'BUY NOW'}</span>
             </button>
           </div>
         </div>

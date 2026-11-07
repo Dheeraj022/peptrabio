@@ -367,8 +367,46 @@ export async function fetchAllProducts(): Promise<Product[]> {
         const json = await res.json();
         if (Array.isArray(json.products) && json.products.length > 0) {
           const apiProducts = json.products as Product[];
-          // Apply local overrides and persist
-          const resolved = applyOverridesToProducts(apiProducts);
+
+          // If the API returned seed products, preserve local products (which may hold admin updates)
+          if (json.source === 'seed') {
+            return localProducts;
+          }
+
+          // Intelligent merge by updated_at so recent price and inventory updates are preserved
+          const localMap = new Map<string, Product>();
+          localProducts.forEach((p) => localMap.set(p.id, p));
+
+          const merged = apiProducts.map((remote) => {
+            const local = localMap.get(remote.id);
+            if (!local) return remote;
+
+            const localTime = local.updated_at ? new Date(local.updated_at).getTime() : 0;
+            const remoteTime = remote.updated_at ? new Date(remote.updated_at).getTime() : 0;
+
+            if (localTime > remoteTime) {
+              return {
+                ...remote,
+                ...local,
+                images: local.images && local.images.length > 0 ? local.images : remote.images,
+                showcase_order: local.showcase_order ?? remote.showcase_order,
+              };
+            }
+
+            return {
+              ...local,
+              ...remote,
+              showcase_order: local.showcase_order ?? remote.showcase_order,
+            };
+          });
+
+          for (const lp of localProducts) {
+            if (!merged.some((m) => m.id === lp.id)) {
+              merged.push(lp);
+            }
+          }
+
+          const resolved = applyOverridesToProducts(merged);
           saveLocalProducts(resolved);
           return resolved;
         }
@@ -564,13 +602,31 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
   }
   saveLocalProducts(products);
 
-  // Background cloud sync via server API endpoint (uses Admin Service Role)
+  // Synchronize to server API (uses Admin Service Role for Supabase)
   if (isBrowser()) {
-    fetch('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(savedProduct),
-    }).catch((e) => console.warn('Background product API sync note:', e));
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(savedProduct),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.product) {
+          savedProduct = { ...savedProduct, ...json.product };
+          const idx = products.findIndex((p) => p.id === savedProduct.id);
+          if (idx !== -1) {
+            products[idx] = { ...products[idx], ...savedProduct };
+            saveLocalProducts(products);
+          }
+        }
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        console.warn('API /api/products POST warning:', errJson);
+      }
+    } catch (e) {
+      console.warn('Background product API sync note:', e);
+    }
   }
 
   // If live Supabase client exists, attempt remote sync
@@ -593,13 +649,14 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
         purity: savedProduct.purity,
         size: savedProduct.size,
         format: savedProduct.format,
-        price: savedProduct.price,
-        compare_at_price: savedProduct.compare_at_price,
-        stock_quantity: savedProduct.stock_quantity,
+        price: Number(savedProduct.price) || 0,
+        compare_at_price: savedProduct.compare_at_price ? Number(savedProduct.compare_at_price) : null,
+        stock_quantity: Number(savedProduct.stock_quantity) || 0,
         is_active: savedProduct.is_active,
         is_featured: savedProduct.is_featured,
         research_use_only: savedProduct.research_use_only,
         storage_information: savedProduct.storage_information,
+        updated_at: new Date().toISOString(),
       });
 
       // Also sync images to product_images table if live

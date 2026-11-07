@@ -92,6 +92,59 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
   const [pricingCurrency, setPricingCurrency] = useState<'INR' | 'USD'>('INR');
   const exchangeRate = 86.5;
 
+  const toPriceString = (val?: number, curr: 'INR' | 'USD' = 'INR') => {
+    if (val === undefined || val === null || isNaN(val)) return '';
+    if (curr === 'INR') {
+      const inr = Math.round(val * exchangeRate * 100) / 100;
+      return inr % 1 === 0 ? String(Math.round(inr)) : String(inr);
+    }
+    return String(Number(val.toFixed(2)));
+  };
+
+  const [priceInput, setPriceInput] = useState<string>(() =>
+    toPriceString(initialProduct?.price, 'INR')
+  );
+  const [compareAtInput, setCompareAtInput] = useState<string>(() =>
+    toPriceString(initialProduct?.compare_at_price, 'INR')
+  );
+
+  const handleCurrencyToggle = (nextCurr: 'INR' | 'USD') => {
+    if (nextCurr === pricingCurrency) return;
+    setPricingCurrency(nextCurr);
+    setPriceInput(toPriceString(formData.price, nextCurr));
+    setCompareAtInput(toPriceString(formData.compare_at_price, nextCurr));
+  };
+
+  const handlePriceChange = (valStr: string) => {
+    setPriceInput(valStr);
+    if (valStr.trim() === '') {
+      setFormData((prev) => ({ ...prev, price: undefined }));
+      return;
+    }
+    const num = Number(valStr);
+    if (!isNaN(num)) {
+      setFormData((prev) => ({
+        ...prev,
+        price: pricingCurrency === 'INR' ? num / exchangeRate : num,
+      }));
+    }
+  };
+
+  const handleCompareAtChange = (valStr: string) => {
+    setCompareAtInput(valStr);
+    if (valStr.trim() === '') {
+      setFormData((prev) => ({ ...prev, compare_at_price: undefined }));
+      return;
+    }
+    const num = Number(valStr);
+    if (!isNaN(num)) {
+      setFormData((prev) => ({
+        ...prev,
+        compare_at_price: pricingCurrency === 'INR' ? num / exchangeRate : num,
+      }));
+    }
+  };
+
   // Media Library Modal state
   const [libraryModalIndex, setLibraryModalIndex] = useState<number | null>(null);
   const [libraryImages, setLibraryImages] = useState<{ url: string; name: string; folder: string }[]>([]);
@@ -356,8 +409,29 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
     setSaving(true);
     const resolvedActive =
       publishStatus !== undefined ? publishStatus : (formData.is_active ?? true);
+
+    let finalPrice = formData.price;
+    if ((finalPrice === undefined || isNaN(finalPrice)) && priceInput.trim() !== '') {
+      const pNum = Number(priceInput);
+      if (!isNaN(pNum)) {
+        finalPrice = pricingCurrency === 'INR' ? pNum / exchangeRate : pNum;
+      }
+    }
+
+    let finalCompareAt = formData.compare_at_price;
+    if (compareAtInput.trim() !== '') {
+      const cNum = Number(compareAtInput);
+      if (!isNaN(cNum)) {
+        finalCompareAt = pricingCurrency === 'INR' ? cNum / exchangeRate : cNum;
+      }
+    } else {
+      finalCompareAt = undefined;
+    }
+
     const payload = {
       ...formData,
+      price: finalPrice ?? 0,
+      compare_at_price: finalCompareAt,
       is_active: resolvedActive,
     };
     const saved = await saveOrUpdateProduct(payload);
@@ -365,7 +439,7 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
     setSuccessToast(true);
     setTimeout(() => {
       router.push('/admin/products');
-    }, 800);
+    }, 600);
   };
 
   return (
@@ -1082,7 +1156,7 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
               <div className="flex items-center bg-[#FAF8FD] p-1 rounded-xl border border-brand-border">
                 <button
                   type="button"
-                  onClick={() => setPricingCurrency('INR')}
+                  onClick={() => handleCurrencyToggle('INR')}
                   className={`px-2.5 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all ${
                     pricingCurrency === 'INR'
                       ? 'bg-brand text-white shadow-xs'
@@ -1093,7 +1167,7 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPricingCurrency('USD')}
+                  onClick={() => handleCurrencyToggle('USD')}
                   className={`px-2.5 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all ${
                     pricingCurrency === 'USD'
                       ? 'bg-brand text-white shadow-xs'
@@ -1126,24 +1200,9 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
                     type="number"
                     step={pricingCurrency === 'INR' ? '1' : '0.01'}
                     required
-                    value={
-                      pricingCurrency === 'INR'
-                        ? formData.price !== undefined
-                          ? Math.round(Number(formData.price) * exchangeRate * 100) / 100
-                          : ''
-                        : (formData.price ?? '')
-                    }
-                    onChange={(e) => {
-                      const val = e.target.value === '' ? undefined : Number(e.target.value);
-                      if (val === undefined) {
-                        setFormData((prev) => ({ ...prev, price: undefined }));
-                      } else if (pricingCurrency === 'INR') {
-                        setFormData((prev) => ({ ...prev, price: Math.round((val / exchangeRate) * 10000) / 10000 }));
-                      } else {
-                        setFormData((prev) => ({ ...prev, price: val }));
-                      }
-                    }}
-                    placeholder={pricingCurrency === 'INR' ? 'e.g. 1211' : 'e.g. 14.00'}
+                    value={priceInput}
+                    onChange={(e) => handlePriceChange(e.target.value)}
+                    placeholder={pricingCurrency === 'INR' ? 'e.g. 999' : 'e.g. 14.00'}
                     className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-base font-orbitron font-bold text-brand"
                   />
                 </div>
@@ -1151,7 +1210,7 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
                   <span>
                     Store displays:{' '}
                     <strong className="text-brand font-mono font-semibold">
-                      {formatPrice(formData.price || 0)}
+                      {formData.price !== undefined ? formatPrice(formData.price) : '—'}
                     </strong>
                   </span>
                   <span>1 USD = ₹{exchangeRate}</span>
@@ -1179,24 +1238,9 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
                   <input
                     type="number"
                     step={pricingCurrency === 'INR' ? '1' : '0.01'}
-                    value={
-                      pricingCurrency === 'INR'
-                        ? formData.compare_at_price !== undefined
-                          ? Math.round(Number(formData.compare_at_price) * exchangeRate * 100) / 100
-                          : ''
-                        : (formData.compare_at_price ?? '')
-                    }
-                    onChange={(e) => {
-                      const val = e.target.value === '' ? undefined : Number(e.target.value);
-                      if (val === undefined) {
-                        setFormData((prev) => ({ ...prev, compare_at_price: undefined }));
-                      } else if (pricingCurrency === 'INR') {
-                        setFormData((prev) => ({ ...prev, compare_at_price: Math.round((val / exchangeRate) * 10000) / 10000 }));
-                      } else {
-                        setFormData((prev) => ({ ...prev, compare_at_price: val }));
-                      }
-                    }}
-                    placeholder={pricingCurrency === 'INR' ? 'Optional original price in ₹' : 'Optional original price in $'}
+                    value={compareAtInput}
+                    onChange={(e) => handleCompareAtChange(e.target.value)}
+                    placeholder={pricingCurrency === 'INR' ? 'Optional original price in ₹ (e.g. 1299)' : 'Optional original price in $ (e.g. 18.00)'}
                     className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-brand-border focus:outline-none focus:border-brand text-xs font-mono"
                   />
                 </div>

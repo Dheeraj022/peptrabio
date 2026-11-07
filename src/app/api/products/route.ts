@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Supabase admin client unavailable' }, { status: 503 });
     }
 
-    // Upsert into products table
+    // Upsert into products table (using columns matching products table schema)
     const productRecord = {
       id: product.id,
       name: product.name,
@@ -69,7 +69,6 @@ export async function POST(req: NextRequest) {
       stock_quantity: Number(product.stock_quantity) || 0,
       is_active: typeof product.is_active === 'boolean' ? product.is_active : true,
       is_featured: product.is_featured ?? false,
-      showcase_order: product.showcase_order !== undefined ? product.showcase_order : null,
       research_use_only: true,
       storage_information: product.storage_information || 'Store at -20°C.',
       updated_at: new Date().toISOString(),
@@ -119,10 +118,20 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Supabase admin client unavailable' }, { status: 503 });
     }
 
+    const { showcase_order, ...cleanUpdates } = updates;
     const updatePayload: Record<string, any> = {
-      ...updates,
+      ...cleanUpdates,
       updated_at: new Date().toISOString(),
     };
+    if (updatePayload.price !== undefined) {
+      updatePayload.price = Number(updatePayload.price) || 0;
+    }
+    if (updatePayload.compare_at_price !== undefined) {
+      updatePayload.compare_at_price = updatePayload.compare_at_price ? Number(updatePayload.compare_at_price) : null;
+    }
+    if (updatePayload.stock_quantity !== undefined) {
+      updatePayload.stock_quantity = Number(updatePayload.stock_quantity) || 0;
+    }
 
     // Check if product exists in Supabase
     const { data: existing } = await supabase
@@ -151,16 +160,15 @@ export async function PATCH(req: NextRequest) {
           purity: seedProduct.purity || '99%+',
           size: seedProduct.size || '5 mg',
           format: seedProduct.format || 'Lyophilized Solid',
-          price: Number(seedProduct.price) || 0,
-          compare_at_price: seedProduct.compare_at_price ? Number(seedProduct.compare_at_price) : null,
-          stock_quantity: Number(seedProduct.stock_quantity) || 0,
+          price: updatePayload.price !== undefined ? updatePayload.price : (Number(seedProduct.price) || 0),
+          compare_at_price: updatePayload.compare_at_price !== undefined ? updatePayload.compare_at_price : (seedProduct.compare_at_price ? Number(seedProduct.compare_at_price) : null),
+          stock_quantity: updatePayload.stock_quantity !== undefined ? updatePayload.stock_quantity : (Number(seedProduct.stock_quantity) || 0),
           is_active: typeof updates.is_active === 'boolean' ? updates.is_active : (seedProduct.is_active ?? true),
           is_featured: seedProduct.is_featured ?? false,
-          showcase_order: seedProduct.showcase_order !== undefined ? seedProduct.showcase_order : null,
           research_use_only: true,
           storage_information: seedProduct.storage_information || 'Store at -20°C.',
           updated_at: new Date().toISOString(),
-          ...updates,
+          ...cleanUpdates,
         };
 
         const { error: insertErr } = await supabase.from('products').upsert(fullRecord);

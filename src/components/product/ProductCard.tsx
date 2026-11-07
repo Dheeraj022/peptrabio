@@ -21,6 +21,10 @@ export function ProductCard({ product }: { product: Product }) {
 
   const isOutOfStock = product.stock_quantity <= 0 || !product.is_active;
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 10;
+  const hasDiscount = Boolean(product.compare_at_price && product.compare_at_price > product.price);
+  const discountPercent = hasDiscount
+    ? Math.round((((product.compare_at_price as number) - product.price) / (product.compare_at_price as number)) * 100)
+    : 0;
 
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -49,10 +53,18 @@ export function ProductCard({ product }: { product: Product }) {
           />
 
           {/* Top badges */}
-          {product.is_featured && (
-            <div className="absolute top-1.5 left-1.5 sm:top-2.5 sm:left-2.5 flex flex-col gap-1 items-start">
+          <div className="absolute top-1.5 left-1.5 sm:top-2.5 sm:left-2.5 flex flex-col gap-1 items-start z-10 pointer-events-none">
+            {product.is_featured && (
               <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-brand text-white font-orbitron text-[8px] sm:text-[10px] font-bold tracking-wider rounded-full shadow-sm">
                 FEATURED
+              </span>
+            )}
+          </div>
+
+          {discountPercent > 0 && (
+            <div className="absolute top-1.5 right-1.5 sm:top-2.5 sm:right-2.5 z-10 pointer-events-none">
+              <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-emerald-600 text-white font-orbitron text-[8px] sm:text-[9px] font-bold tracking-wider rounded-full shadow-xs">
+                {discountPercent}% OFF
               </span>
             </div>
           )}
@@ -98,34 +110,40 @@ export function ProductCard({ product }: { product: Product }) {
 
       {/* Pricing, Stock Status & CTAs */}
       <div className="pt-2 sm:pt-3 border-t border-brand-border/60">
-        <div className="flex items-baseline justify-between mb-2 sm:mb-3">
-          <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
+        <div className="flex items-baseline justify-between mb-2 sm:mb-3 gap-1">
+          <div className="flex flex-wrap items-baseline gap-1 sm:gap-1.5">
             <span className="font-sans font-bold text-sm sm:text-lg text-content-primary tracking-tight">
               {formatPrice(product.price)}
             </span>
-            {product.compare_at_price && product.compare_at_price > product.price && (
-              <span className="font-sans font-medium text-[10px] sm:text-xs text-content-muted line-through hidden xs:inline">
-                {formatPrice(product.compare_at_price)}
+            {hasDiscount && (
+              <span className="font-sans text-[10px] sm:text-xs text-content-muted inline-flex items-center gap-0.5 sm:gap-1">
+                <span className="text-[9px] sm:text-[10px] font-orbitron font-medium text-gray-400">MRP</span>
+                <span className="line-through">{formatPrice(product.compare_at_price as number)}</span>
+              </span>
+            )}
+            {discountPercent > 0 && (
+              <span className="font-orbitron text-[8px] sm:text-[9px] font-bold text-accent-success bg-emerald-50 border border-emerald-200/60 px-1 py-0.2 rounded">
+                {discountPercent}% OFF
               </span>
             )}
           </div>
 
           {/* Stock Indicator */}
-          <div className="text-[8px] sm:text-[11px] font-orbitron flex items-center">
+          <div className="text-[8px] sm:text-[11px] font-orbitron flex items-center shrink-0">
             {isOutOfStock ? (
               <span className="text-accent-danger flex items-center font-medium">
                 <XCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
-                <span className="hidden xs:inline">OUT OF </span>STOCK
+                <span>OUT OF STOCK</span>
               </span>
             ) : isLowStock ? (
               <span className="text-accent-warning flex items-center font-medium">
                 <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
-                LOW
+                <span>LOW</span>
               </span>
             ) : (
               <span className="text-accent-success flex items-center font-medium">
                 <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
-                <span className="hidden xs:inline">IN </span>STOCK
+                <span>IN STOCK</span>
               </span>
             )}
           </div>

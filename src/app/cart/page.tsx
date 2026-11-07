@@ -150,6 +150,11 @@ export default function CartPage() {
                         <div className="font-sans font-bold text-base text-content-primary tracking-tight">
                           {formatPrice(item.product.price * item.quantity)}
                         </div>
+                        {item.product.compare_at_price && item.product.compare_at_price > item.product.price && (
+                          <div className="text-[10px] text-content-muted font-sans">
+                            MRP <span className="line-through">{formatPrice(item.product.compare_at_price * item.quantity)}</span>
+                          </div>
+                        )}
                         <div className="text-[11px] text-content-muted font-sans hidden sm:block">
                           {formatPrice(item.product.price)} / vial
                         </div>

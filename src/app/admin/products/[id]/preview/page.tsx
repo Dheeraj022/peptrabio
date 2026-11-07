@@ -109,8 +109,15 @@ export default function ProductPreviewPage() {
             <div className="text-xs font-orbitron text-brand font-semibold">{product.category}</div>
             <h1 className="text-3xl font-orbitron font-extrabold text-content-primary">{product.name}</h1>
             
-            <div className="p-4 rounded-2xl bg-brand-subtle border border-brand-border flex items-baseline justify-between">
-              <span className="font-orbitron font-extrabold text-3xl text-brand">{formatPrice(product.price)}</span>
+            <div className="p-4 rounded-2xl bg-brand-subtle border border-brand-border flex items-baseline justify-between flex-wrap gap-2">
+              <div className="flex items-baseline gap-3">
+                <span className="font-orbitron font-extrabold text-3xl text-brand">{formatPrice(product.price)}</span>
+                {product.compare_at_price && product.compare_at_price > product.price && (
+                  <span className="text-sm font-sans text-content-muted">
+                    MRP <span className="line-through">{formatPrice(product.compare_at_price)}</span>
+                  </span>
+                )}
+              </div>
               <span className="text-xs text-content-muted font-sans">Per {product.size} Vial</span>
             </div>
 

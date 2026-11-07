@@ -133,8 +133,15 @@ export function CartDrawer() {
                         </div>
 
                         {/* Price */}
-                        <div className="font-sans font-bold text-brand text-sm tracking-tight">
-                          {formatPrice(item.product.price * item.quantity)}
+                        <div className="text-right">
+                          <div className="font-sans font-bold text-brand text-sm tracking-tight">
+                            {formatPrice(item.product.price * item.quantity)}
+                          </div>
+                          {item.product.compare_at_price && item.product.compare_at_price > item.product.price && (
+                            <div className="font-sans text-[10px] text-content-muted">
+                              MRP <span className="line-through">{formatPrice(item.product.compare_at_price * item.quantity)}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

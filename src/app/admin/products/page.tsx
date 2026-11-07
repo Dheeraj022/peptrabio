@@ -267,8 +267,15 @@ export default function AdminProductsPage() {
                         </td>
 
                         {/* Price */}
-                        <td className="py-3 px-4 font-mono font-bold text-content-primary">
-                          {formatPrice(product.price)}
+                        <td className="py-3 px-4">
+                          <div className="font-mono font-bold text-content-primary">
+                            {formatPrice(product.price)}
+                          </div>
+                          {product.compare_at_price && product.compare_at_price > product.price && (
+                            <div className="text-[10px] font-mono text-content-muted">
+                              MRP: <span className="line-through">{formatPrice(product.compare_at_price)}</span>
+                            </div>
+                          )}
                         </td>
 
                         {/* Stock */}

@@ -387,14 +387,21 @@ export default function ProductDetailPage() {
           {/* Pricing Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-brand-subtle border border-brand-border/80">
             <div>
-              <div className="flex items-baseline space-x-3">
+              <div className="flex items-baseline space-x-3 flex-wrap gap-y-1">
                 <span className="font-sans font-extrabold text-2xl sm:text-3xl lg:text-4xl text-brand tracking-tight">
                   {formatPrice(product.price)}
                 </span>
                 {product.compare_at_price && product.compare_at_price > product.price && (
-                  <span className="font-sans font-medium text-sm sm:text-base text-content-muted line-through">
-                    {formatPrice(product.compare_at_price)}
-                  </span>
+                  <div className="inline-flex items-center gap-2">
+                    <span className="font-sans font-medium text-sm sm:text-base text-content-muted">
+                      MRP <span className="line-through">{formatPrice(product.compare_at_price)}</span>
+                    </span>
+                    {Math.round(((product.compare_at_price - product.price) / product.compare_at_price) * 100) > 0 && (
+                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-orbitron text-[10px] sm:text-xs font-bold">
+                        {Math.round(((product.compare_at_price - product.price) / product.compare_at_price) * 100)}% OFF
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="text-[11px] text-content-muted font-sans mt-1">

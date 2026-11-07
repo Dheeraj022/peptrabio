@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -95,8 +95,12 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
   const toPriceString = (val?: number, curr: 'INR' | 'USD' = 'INR') => {
     if (val === undefined || val === null || isNaN(val)) return '';
     if (curr === 'INR') {
-      const inr = Math.round(val * exchangeRate * 100) / 100;
-      return inr % 1 === 0 ? String(Math.round(inr)) : String(inr);
+      const inr = val * exchangeRate;
+      if (Math.abs(inr - Math.round(inr)) < 0.25) {
+        return String(Math.round(inr));
+      }
+      const rounded = Math.round(inr * 100) / 100;
+      return rounded % 1 === 0 ? String(Math.round(rounded)) : String(rounded);
     }
     return String(Number(val.toFixed(2)));
   };
@@ -107,6 +111,17 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
   const [compareAtInput, setCompareAtInput] = useState<string>(() =>
     toPriceString(initialProduct?.compare_at_price, 'INR')
   );
+
+  useEffect(() => {
+    if (initialProduct) {
+      setFormData((prev) => ({
+        ...prev,
+        ...initialProduct,
+      }));
+      setPriceInput(toPriceString(initialProduct.price, pricingCurrency));
+      setCompareAtInput(toPriceString(initialProduct.compare_at_price, pricingCurrency));
+    }
+  }, [initialProduct?.id, initialProduct?.price, initialProduct?.compare_at_price]);
 
   const handleCurrencyToggle = (nextCurr: 'INR' | 'USD') => {
     if (nextCurr === pricingCurrency) return;
@@ -121,7 +136,8 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
       setFormData((prev) => ({ ...prev, price: undefined }));
       return;
     }
-    const num = Number(valStr);
+    const cleanStr = valStr.replace(/,/g, '').trim();
+    const num = Number(cleanStr);
     if (!isNaN(num)) {
       setFormData((prev) => ({
         ...prev,
@@ -136,7 +152,8 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
       setFormData((prev) => ({ ...prev, compare_at_price: undefined }));
       return;
     }
-    const num = Number(valStr);
+    const cleanStr = valStr.replace(/,/g, '').trim();
+    const num = Number(cleanStr);
     if (!isNaN(num)) {
       setFormData((prev) => ({
         ...prev,
@@ -410,27 +427,28 @@ export function ProductEditorForm({ initialProduct }: { initialProduct?: Product
     const resolvedActive =
       publishStatus !== undefined ? publishStatus : (formData.is_active ?? true);
 
-    let finalPrice = formData.price;
-    if ((finalPrice === undefined || isNaN(finalPrice)) && priceInput.trim() !== '') {
-      const pNum = Number(priceInput);
+    // Derive final price directly from priceInput if specified
+    let finalPrice: number = Number(formData.price) || 0;
+    if (priceInput.trim() !== '') {
+      const cleanPrice = priceInput.replace(/,/g, '').trim();
+      const pNum = Number(cleanPrice);
       if (!isNaN(pNum)) {
         finalPrice = pricingCurrency === 'INR' ? pNum / exchangeRate : pNum;
       }
     }
 
-    let finalCompareAt = formData.compare_at_price;
+    let finalCompareAt: number | undefined = undefined;
     if (compareAtInput.trim() !== '') {
-      const cNum = Number(compareAtInput);
+      const cleanCompare = compareAtInput.replace(/,/g, '').trim();
+      const cNum = Number(cleanCompare);
       if (!isNaN(cNum)) {
         finalCompareAt = pricingCurrency === 'INR' ? cNum / exchangeRate : cNum;
       }
-    } else {
-      finalCompareAt = undefined;
     }
 
     const payload = {
       ...formData,
-      price: finalPrice ?? 0,
+      price: finalPrice,
       compare_at_price: finalCompareAt,
       is_active: resolvedActive,
     };

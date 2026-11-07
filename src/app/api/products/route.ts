@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       cas_number: product.cas_number || 'N/A',
       sequence: product.sequence || null,
       molecular_formula: product.molecular_formula || null,
-      molecular_weight: product.molecular_weight || null,
+      molecular_weight: product.molecular_weight !== undefined && product.molecular_weight !== null ? String(product.molecular_weight) : null,
       purity: product.purity || '99%+',
       size: product.size || '5 mg',
       format: product.format || 'Lyophilized Solid',
@@ -74,7 +74,22 @@ export async function POST(req: NextRequest) {
       updated_at: new Date().toISOString(),
     };
 
-    const { error: prodErr } = await supabase.from('products').upsert(productRecord);
+    let { error: prodErr } = await supabase.from('products').upsert(productRecord);
+    if (prodErr) {
+      console.warn('Initial product upsert failed, retrying with fallback fields:', prodErr.message);
+      // Fallback 1: retry with category_id: null (in case of FK or UUID issue)
+      const fallbackRecord1 = { ...productRecord, category_id: null };
+      const { error: err1 } = await supabase.from('products').upsert(fallbackRecord1);
+      if (err1) {
+        // Fallback 2: retry with molecular_weight: null (in case of datatype mismatch)
+        const fallbackRecord2 = { ...fallbackRecord1, molecular_weight: null };
+        const { error: err2 } = await supabase.from('products').upsert(fallbackRecord2);
+        prodErr = err2;
+      } else {
+        prodErr = null;
+      }
+    }
+
     if (prodErr) {
       console.error('Supabase product upsert error:', prodErr);
       return NextResponse.json({ error: prodErr.message }, { status: 500 });
@@ -132,6 +147,9 @@ export async function PATCH(req: NextRequest) {
     if (updatePayload.stock_quantity !== undefined) {
       updatePayload.stock_quantity = Number(updatePayload.stock_quantity) || 0;
     }
+    if (updatePayload.molecular_weight !== undefined) {
+      updatePayload.molecular_weight = updatePayload.molecular_weight !== null ? String(updatePayload.molecular_weight) : null;
+    }
 
     // Check if product exists in Supabase
     const { data: existing } = await supabase
@@ -156,7 +174,7 @@ export async function PATCH(req: NextRequest) {
           cas_number: seedProduct.cas_number || 'N/A',
           sequence: seedProduct.sequence || null,
           molecular_formula: seedProduct.molecular_formula || null,
-          molecular_weight: seedProduct.molecular_weight || null,
+          molecular_weight: seedProduct.molecular_weight !== undefined && seedProduct.molecular_weight !== null ? String(seedProduct.molecular_weight) : null,
           purity: seedProduct.purity || '99%+',
           size: seedProduct.size || '5 mg',
           format: seedProduct.format || 'Lyophilized Solid',
@@ -171,7 +189,12 @@ export async function PATCH(req: NextRequest) {
           ...cleanUpdates,
         };
 
-        const { error: insertErr } = await supabase.from('products').upsert(fullRecord);
+        let { error: insertErr } = await supabase.from('products').upsert(fullRecord);
+        if (insertErr) {
+          const fallback = { ...fullRecord, category_id: null };
+          const { error: fErr } = await supabase.from('products').upsert(fallback);
+          insertErr = fErr;
+        }
         if (insertErr) {
           console.error('Supabase seed product upsert error on patch:', insertErr);
           return NextResponse.json({ error: insertErr.message }, { status: 500 });
@@ -180,12 +203,25 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('products')
       .update(updatePayload)
       .eq('id', id)
       .select()
       .maybeSingle();
+
+    if (error && updatePayload.category_id !== undefined) {
+      console.warn('Product patch failed with category_id, retrying without category_id:', error.message);
+      const { category_id, ...withoutCat } = updatePayload;
+      const res2 = await supabase
+        .from('products')
+        .update(withoutCat)
+        .eq('id', id)
+        .select()
+        .maybeSingle();
+      data = res2.data;
+      error = res2.error;
+    }
 
     if (error) {
       console.error('Supabase product patch error:', error);

@@ -7,6 +7,7 @@ const CATEGORIES_STORAGE_KEY = 'peptrabio_categories_v6';
 const ORDERS_STORAGE_KEY = 'peptrabio_orders_v6';
 const AUDIT_LOGS_STORAGE_KEY = 'peptrabio_audit_logs_v6';
 const PRODUCT_STATUS_OVERRIDES_KEY = 'peptrabio_product_status_overrides_v1';
+const PRODUCT_PRICE_OVERRIDES_KEY = 'peptrabio_product_price_overrides_v1';
 const DELETED_PRODUCTS_KEY = 'peptrabio_deleted_products_v1';
 
 // Seed Initial Orders
@@ -165,6 +166,37 @@ export function saveProductStatusOverride(id: string, isActive: boolean): void {
   }
 }
 
+export interface ProductPriceOverride {
+  price: number;
+  compare_at_price?: number;
+  updated_at: string;
+}
+
+export function getProductPriceOverrides(): Record<string, ProductPriceOverride> {
+  if (!isBrowser()) return {};
+  try {
+    const raw = localStorage.getItem(PRODUCT_PRICE_OVERRIDES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveProductPriceOverride(id: string, price: number, compare_at_price?: number): void {
+  if (!isBrowser()) return;
+  try {
+    const current = getProductPriceOverrides();
+    current[id] = {
+      price,
+      compare_at_price,
+      updated_at: new Date().toISOString(),
+    };
+    localStorage.setItem(PRODUCT_PRICE_OVERRIDES_KEY, JSON.stringify(current));
+  } catch (e) {
+    console.error('Failed to save product price override:', e);
+  }
+}
+
 export function getDeletedProductIds(): string[] {
   if (!isBrowser()) return [];
   try {
@@ -190,16 +222,24 @@ export function markProductDeleted(id: string): void {
 
 export function applyOverridesToProducts(products: Product[]): Product[] {
   if (!isBrowser()) return products;
-  const overrides = getProductStatusOverrides();
+  const statusOverrides = getProductStatusOverrides();
+  const priceOverrides = getProductPriceOverrides();
   const deletedIds = new Set(getDeletedProductIds());
 
   return products
     .filter((p) => !deletedIds.has(p.id))
     .map((p) => {
-      if (typeof overrides[p.id] === 'boolean') {
-        return { ...p, is_active: overrides[p.id] };
+      let updated = { ...p };
+      if (typeof statusOverrides[p.id] === 'boolean') {
+        updated.is_active = statusOverrides[p.id];
       }
-      return p;
+      if (priceOverrides[p.id]) {
+        updated.price = priceOverrides[p.id].price;
+        if (priceOverrides[p.id].compare_at_price !== undefined) {
+          updated.compare_at_price = priceOverrides[p.id].compare_at_price;
+        }
+      }
+      return updated;
     });
 }
 
@@ -432,8 +472,10 @@ export async function fetchAllProducts(): Promise<Product[]> {
             const localImages = lp.images && lp.images.length > 0 ? lp.images : [];
             const remoteImages = remote.images && remote.images.length > 0 ? remote.images : [];
             return {
-              ...lp,
               ...remote,
+              ...lp,
+              price: lp.price,
+              compare_at_price: lp.compare_at_price,
               is_active: lp.is_active,
               images: remoteImages.length > 0 ? remoteImages : localImages,
               showcase_order: lp.showcase_order ?? remote.showcase_order,
@@ -455,7 +497,7 @@ export async function fetchAllProducts(): Promise<Product[]> {
       console.warn('Supabase fetch failed, fallback to local', e);
     }
   }
-  return localProducts;
+  return applyOverridesToProducts(localProducts);
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
@@ -474,20 +516,25 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
         if (localProduct) {
           const localImages = localProduct.images && localProduct.images.length > 0 ? localProduct.images : [];
           const remoteImages = (data as any).images && (data as any).images.length > 0 ? (data as any).images : [];
-          return {
+          const combined = {
             ...(data as Product),
             ...localProduct,
+            price: localProduct.price,
+            compare_at_price: localProduct.compare_at_price,
+            is_active: localProduct.is_active,
             images: localImages.length > 0 ? localImages : remoteImages,
             showcase_order: localProduct.showcase_order ?? (data as any).showcase_order,
           };
+          return applyOverridesToProducts([combined])[0] || combined;
         }
-        return data as Product;
+        const prod = data as Product;
+        return applyOverridesToProducts([prod])[0] || prod;
       }
     } catch {
       // fallback
     }
   }
-  return localProduct || null;
+  return localProduct ? (applyOverridesToProducts([localProduct])[0] || localProduct) : null;
 }
 
 export async function fetchProductById(id: string): Promise<Product | null> {
@@ -506,20 +553,25 @@ export async function fetchProductById(id: string): Promise<Product | null> {
         if (localProduct) {
           const localImages = localProduct.images && localProduct.images.length > 0 ? localProduct.images : [];
           const remoteImages = (data as any).images && (data as any).images.length > 0 ? (data as any).images : [];
-          return {
+          const combined = {
             ...(data as Product),
             ...localProduct,
+            price: localProduct.price,
+            compare_at_price: localProduct.compare_at_price,
+            is_active: localProduct.is_active,
             images: localImages.length > 0 ? localImages : remoteImages,
             showcase_order: localProduct.showcase_order ?? (data as any).showcase_order,
           };
+          return applyOverridesToProducts([combined])[0] || combined;
         }
-        return data as Product;
+        const prod = data as Product;
+        return applyOverridesToProducts([prod])[0] || prod;
       }
     } catch {
       // fallback
     }
   }
-  return localProduct || null;
+  return localProduct ? (applyOverridesToProducts([localProduct])[0] || localProduct) : null;
 }
 
 export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Product> {
@@ -600,6 +652,9 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
   if (typeof savedProduct.is_active === 'boolean') {
     saveProductStatusOverride(savedProduct.id, savedProduct.is_active);
   }
+  if (typeof savedProduct.price === 'number') {
+    saveProductPriceOverride(savedProduct.id, savedProduct.price, savedProduct.compare_at_price);
+  }
   saveLocalProducts(products);
 
   // Synchronize to server API (uses Admin Service Role for Supabase)
@@ -645,7 +700,7 @@ export async function saveOrUpdateProduct(product: Partial<Product>): Promise<Pr
         cas_number: savedProduct.cas_number,
         sequence: savedProduct.sequence,
         molecular_formula: savedProduct.molecular_formula,
-        molecular_weight: savedProduct.molecular_weight,
+        molecular_weight: savedProduct.molecular_weight !== undefined && savedProduct.molecular_weight !== null ? String(savedProduct.molecular_weight) : null,
         purity: savedProduct.purity,
         size: savedProduct.size,
         format: savedProduct.format,

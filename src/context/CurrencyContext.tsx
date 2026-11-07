@@ -99,10 +99,13 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     if (typeof amountInUSD !== 'number' || isNaN(amountInUSD)) {
       return `${currentConfig.symbol}0.00`;
     }
-    const converted = convertPrice(amountInUSD);
+    let converted = convertPrice(amountInUSD);
     
     // Format based on locale for neat thousands separators
     if (currency === 'INR') {
+      if (Math.abs(converted - Math.round(converted)) < 0.25) {
+        converted = Math.round(converted);
+      }
       return `₹${converted.toLocaleString('en-IN', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -138,7 +141,11 @@ export function useCurrency() {
     return {
       currency: 'INR' as SupportedCurrency,
       setCurrency: () => {},
-      formatPrice: (amount: number) => `₹${((amount || 0) * 86.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      formatPrice: (amount: number) => {
+        let val = (amount || 0) * 86.5;
+        if (Math.abs(val - Math.round(val)) < 0.25) val = Math.round(val);
+        return `₹${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      },
       convertPrice: (amount: number) => (amount || 0) * 86.5,
       currencyConfig: CURRENCIES.INR,
       availableCurrencies: Object.values(CURRENCIES),

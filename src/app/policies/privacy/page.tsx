@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Lock, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Privacy & Data Protection Policy',
+  description:
+    'Learn how Peptra Bio protects researcher privacy, order records, institutional requisition data, and payment information under industry standard encryption.',
+  path: '/policies/privacy',
+  keywords: ['privacy policy', 'researcher data protection', 'institutional confidentiality'],
+});
 
 export default function PrivacyPage() {
   return (

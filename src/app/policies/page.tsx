@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -11,8 +12,27 @@ import {
   ArrowRight,
   Lock
 } from 'lucide-react';
+import { constructMetadata, generateBreadcrumbSchema } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Compliance, Quality & Legal Policies Directory',
+  description:
+    'Overview of Peptra Bio regulatory policies, Research Use Only declarations, laboratory terms of service, cold-chain shipping standards, and privacy statements.',
+  path: '/policies',
+  keywords: [
+    'Peptra Bio policies',
+    'research use policy',
+    'laboratory terms of sale',
+    'peptide shipping standards',
+    'research compliance',
+  ],
+});
 
 export default function PoliciesHubPage() {
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Policies', url: '/policies' },
+  ]);
   const policies = [
     {
       title: 'Research Use Policy',
@@ -73,7 +93,14 @@ export default function PoliciesHubPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
       
       {/* Title */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -142,5 +169,6 @@ export default function PoliciesHubPage() {
       </div>
 
     </div>
+    </>
   );
 }

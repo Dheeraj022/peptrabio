@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Legal & Scientific Disclaimer',
+  description:
+    'Official legal and scientific disclaimer concerning in vitro research materials, lack of medical claims, and buyer research handling responsibilities.',
+  path: '/policies/disclaimer',
+  keywords: ['peptide legal disclaimer', 'scientific disclaimer', 'in vitro research notice'],
+});
 
 export default function DisclaimerPage() {
   return (

@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Truck, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Cold-Chain Shipping & Packaging Protocols',
+  description:
+    'Temperature-controlled shipping protocols, insulated packaging, lyophilized compound stability, and expedited courier dispatch timelines.',
+  path: '/policies/shipping',
+  keywords: ['peptide cold chain shipping', 'lyophilized peptide transport', 'insulated packaging standards'],
+});
 
 export default function ShippingPolicyPage() {
   return (

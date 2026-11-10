@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { ShieldAlert, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Research Use Only (RUO) Policy & Statement',
+  description:
+    'Mandatory Research Use Only compliance statement. All Peptra Bio peptides and chemical reagents are synthesized strictly for in vitro laboratory investigations and non-clinical research.',
+  path: '/policies/research-use',
+  keywords: ['research use only policy', 'RUO declaration', 'peptide non-clinical mandate', 'laboratory peptide compliance'],
+});
 
 export default function ResearchUsePolicyPage() {
   return (

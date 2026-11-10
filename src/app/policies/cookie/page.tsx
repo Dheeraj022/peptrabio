@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Cookie, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Cookie Policy & Session Management',
+  description:
+    'Overview of technical session cookies, age gate verification storage, and catalog preferences utilized on Peptra Bio.',
+  path: '/policies/cookie',
+  keywords: ['cookie policy', 'technical session cookies', 'peptrabio cookies'],
+});
 
 export default function CookiePolicyPage() {
   return (

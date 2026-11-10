@@ -68,6 +68,11 @@ export function Footer() {
                   Research Blog & Guides →
                 </Link>
               </li>
+              <li>
+                <Link href="/sitemap" className="text-purple-300 hover:underline font-orbitron text-[11px] block pt-1">
+                  HTML Catalog Sitemap →
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -179,6 +184,7 @@ export function Footer() {
           <div className="flex space-x-4 font-orbitron text-[10px]">
             <Link href="/policies/research-use" className="hover:text-purple-400">RESEARCH ONLY</Link>
             <Link href="/policies/disclaimer" className="hover:text-purple-400">LEGAL DISCLAIMER</Link>
+            <Link href="/sitemap" className="hover:text-purple-400">SITEMAP</Link>
             <Link href="/account" className="hover:text-purple-400">ACCOUNT PORTAL</Link>
           </div>
         </div>

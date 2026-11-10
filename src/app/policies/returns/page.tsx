@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { RotateCcw, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Laboratory Return & Damaged Vial Policy',
+  description:
+    'Chain-of-custody protocols, transit damage inspection standards, and reporting procedures for research-grade chemical materials.',
+  path: '/policies/returns',
+  keywords: ['peptide return policy', 'chain of custody', 'damaged vial replacement'],
+});
 
 export default function ReturnsPolicyPage() {
   return (

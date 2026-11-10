@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { FileText, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Terms of Sale & Laboratory Service',
+  description:
+    'Institutional procurement terms and conditions governing the purchase, supply, shipping, and handling of research chemical compounds and peptide sequences.',
+  path: '/policies/terms',
+  keywords: ['terms of sale', 'peptide procurement terms', 'laboratory service terms'],
+});
 
 export default function TermsPage() {
   return (

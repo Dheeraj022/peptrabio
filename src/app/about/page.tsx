@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   FileCheck2,
   Atom,
@@ -10,10 +11,38 @@ import {
   CheckCircle2,
   ArrowRight
 } from 'lucide-react';
+import { constructMetadata, generateBreadcrumbSchema } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'About Peptra Bio | rDNA Peptide Synthesis & Analytical Standards',
+  description:
+    'Learn about Peptra Bio laboratory synthesis protocols, synthetic peptide rDNA technology, HPLC & mass spectrometry purification standards, and strict research-only mandate.',
+  path: '/about',
+  keywords: [
+    'about Peptra Bio',
+    'peptide synthesis facility',
+    'rDNA peptide technology',
+    'HPLC verified peptides laboratory',
+    'scientific peptide supplier',
+    'Cambridge MA biotechnology',
+  ],
+});
 
 export default function AboutPage() {
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'About Us', url: '/about' },
+  ]);
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       
       {/* Hero */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -143,5 +172,6 @@ export default function AboutPage() {
       </div>
 
     </div>
+    </>
   );
 }

@@ -10,6 +10,12 @@ import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { AuthProvider } from '@/context/AuthContext';
 
+import {
+  constructMetadata,
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+} from '@/lib/seo-config';
+
 const orbitron = Orbitron({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800', '900'],
@@ -24,22 +30,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'PEPTRA BIO — Advanced Research Peptide Materials',
-  description:
-    'Precision synthesized research-grade peptides, neuropeptides, and cellular research materials with certified HPLC purity documentation for laboratory investigation.',
-  keywords: [
-    'research peptides',
-    'analytical chemistry',
-    'laboratory research',
-    'Selank research',
-    'Semax research',
-    'BPC-157 research',
-    'HPLC verified peptides',
-  ],
-  openGraph: {
-    title: 'PEPTRA BIO — Research Peptide Materials',
-    description: 'Precision synthesized research peptides with verified analytical batch documentation.',
-    type: 'website',
+  ...constructMetadata({
+    title: 'PEPTRA BIO — Advanced Research Peptide Materials',
+    description:
+      'Precision synthesized research-grade peptides, neuropeptides, and cellular research materials with certified HPLC purity documentation for laboratory investigation.',
+    path: '/',
+  }),
+  title: {
+    default: 'PEPTRA BIO — Advanced Research Peptide Materials',
+    template: '%s | PEPTRA BIO',
   },
   icons: {
     icon: '/images/logo.png',
@@ -52,8 +51,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgSchema = generateOrganizationSchema();
+  const websiteSchema = generateWebSiteSchema();
+
   return (
     <html lang="en" className={`${orbitron.variable} ${inter.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(orgSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-tech-grid">
         <AuthProvider>
           <CurrencyProvider>

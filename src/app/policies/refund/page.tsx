@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { DollarSign, ArrowLeft } from 'lucide-react';
+import { constructMetadata } from '@/lib/seo-config';
+
+export const metadata: Metadata = constructMetadata({
+  title: 'Refund & Non-Conforming Material Policy',
+  description:
+    'Refund criteria, non-conforming batch claims, technical review procedures, and payment reversal timelines for verified laboratory requisitions.',
+  path: '/policies/refund',
+  keywords: ['peptide refund policy', 'non conforming material claim', 'analytical batch refund'],
+});
 
 export default function RefundPolicyPage() {
   return (

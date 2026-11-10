@@ -22,7 +22,7 @@ export function Footer() {
 
           {/* Brand & Mission */}
           <div className="lg:col-span-2 space-y-4">
-            <Logo size="lg" variant="footer" />
+            <Logo size="footer" variant="footer" src="/Peptra%20Bio%20Futuristic%20DNA%20Logo.png" />
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-sm">
               Peptra Bio utilizes synthetic peptide rDNA technology to provide ultra-pure, HPLC and MS-verified peptide sequences formulated exclusively for in vitro scientific research, biochemical analysis, and laboratory calibration.
             </p>
